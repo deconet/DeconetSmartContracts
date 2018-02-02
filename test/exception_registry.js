@@ -5,7 +5,7 @@ contract('ExceptionRegistry', function (accounts) {
     var instance = null
     return ExceptionRegistry.deployed().then(function (contract) {
       instance = contract
-      return instance.makeSale('sampleproject', 'testuser', accounts[1], {from: accounts[0]})
+      return instance.makeSale('sampleproject', 'testuser', accounts[1], 1000, {from: accounts[0]})
     }).then(function () {
       return instance.getSaleCountForBuyer.call(accounts[0])
     }).then(function (saleCount) {
@@ -18,6 +18,7 @@ contract('ExceptionRegistry', function (accounts) {
       assert.equal(sale[1], 'testuser')
       assert.equal(sale[2], accounts[1])
       assert.equal(sale[3], accounts[0])
+      assert.equal(sale[4], 1000)
     })
   })
 })

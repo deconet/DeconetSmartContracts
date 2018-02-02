@@ -9,6 +9,7 @@ contract ExceptionRegistry is Owned {
     string sellerUsername;
     address sellerAddress;
     address buyerAddress;
+    uint price;
   }
 
  mapping(address => Sale[]) sales;
@@ -18,23 +19,25 @@ contract ExceptionRegistry is Owned {
 
   // }
 
-  function makeSale(string projectName, string sellerUsername, address sellerAddress) public {
+  function makeSale(string projectName, string sellerUsername, address sellerAddress, uint price) public {
     sales[msg.sender].push(Sale({
       projectName: projectName,
       sellerUsername: sellerUsername,
       sellerAddress: sellerAddress,
-      buyerAddress: msg.sender
+      buyerAddress: msg.sender,
+      price: price
     }));
   }
   function getSaleCountForBuyer(address buyer) public view returns (uint) {
     return sales[buyer].length;
   }
-  function getSaleForBuyerAtIndex(address buyer, uint index) public view returns (string, string, address, address) {
+  function getSaleForBuyerAtIndex(address buyer, uint index) public view returns (string, string, address, address, uint) {
     return (
       sales[buyer][index].projectName,
       sales[buyer][index].sellerUsername,
       sales[buyer][index].sellerAddress,
-      sales[buyer][index].buyerAddress
+      sales[buyer][index].buyerAddress,
+      sales[buyer][index].price
     );
   }
 }
