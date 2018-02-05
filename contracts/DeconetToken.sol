@@ -16,7 +16,6 @@ import "./Owned.sol";
 // (c) BokkyPooBah / Bok Consulting Pty Ltd 2017. The MIT Licence.
 // ----------------------------------------------------------------------------
 
-
 // ----------------------------------------------------------------------------
 // Safe maths
 // ----------------------------------------------------------------------------
@@ -38,7 +37,6 @@ library SafeMath {
         c = a / b;
     }
 }
-
 
 // ----------------------------------------------------------------------------
 // ERC Token Standard #20 Interface
@@ -73,14 +71,25 @@ contract ApproveAndCallFallBack {
 contract DeconetToken is ERC20Interface, Owned {
     using SafeMath for uint;
 
+    struct Sale {
+      string projectName;
+      string sellerUsername;
+      address sellerAddress;
+      address buyerAddress;
+      uint price;
+    }
+
     string public symbol;
     string public  name;
     uint8 public decimals;
     uint public _totalSupply;
 
+    // the amount rewarded to a seller for selling a license exception
+    uint public tokenReward;
+
     mapping(address => uint) balances;
     mapping(address => mapping(address => uint)) allowed;
-
+    mapping(address => Sale[]) sales;
 
     // ------------------------------------------------------------------------
     // Constructor
@@ -88,6 +97,7 @@ contract DeconetToken is ERC20Interface, Owned {
     function DeconetToken() public {
         symbol = "DCO";
         name = "Deconet Token";
+        tokenReward = 100;
         decimals = 18;
         _totalSupply = 1000000000 * 10**uint(decimals);
         balances[owner] = _totalSupply;
@@ -192,5 +202,37 @@ contract DeconetToken is ERC20Interface, Owned {
     // ------------------------------------------------------------------------
     function transferAnyERC20Token(address tokenAddress, uint tokens) public onlyOwner returns (bool success) {
         return ERC20Interface(tokenAddress).transfer(owner, tokens);
+    }
+
+    function makeSale(string projectName, string sellerUsername, address sellerAddress, uint price) public {
+      // log the sale
+      sales[msg.sender].push(Sale({
+        projectName: projectName,
+        sellerUsername: sellerUsername,
+        sellerAddress: sellerAddress,
+        buyerAddress: msg.sender,
+        price: price
+      }));
+
+      // pay seller the ETH
+
+      // give seller some tokens for the sale as well
+      balances[owner] = balances[owner].sub(tokenReward);
+      balances[sellerAddress] = balances[sellerAddress].add(tokenReward);
+      Transfer(owner, sellerAddress, tokenReward);
+    }
+
+    function getSaleCountForBuyer(address buyer) public view returns (uint) {
+      return sales[buyer].length;
+    }
+
+    function getSaleForBuyerAtIndex(address buyer, uint index) public view returns (string, string, address, address, uint) {
+      return (
+        sales[buyer][index].projectName,
+        sales[buyer][index].sellerUsername,
+        sales[buyer][index].sellerAddress,
+        sales[buyer][index].buyerAddress,
+        sales[buyer][index].price
+      );
     }
 }

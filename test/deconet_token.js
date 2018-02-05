@@ -72,4 +72,32 @@ contract('DeconetToken', function (accounts) {
       console.log(result.logs[0].event)
     })
   })
+
+  it('should make a sale', function () {
+    var token = null
+    var balanceBefore = null
+    return Token.deployed().then(function (instance) {
+      token = instance
+      return token.balanceOf.call(accounts[2])
+    }).then(function (result) {
+      balanceBefore = result.toNumber()
+      return token.makeSale('sampleproject', 'testuser', accounts[2], 1000, {from: accounts[1]})
+    }).then(function () {
+      return token.getSaleCountForBuyer.call(accounts[1])
+    }).then(function (saleCount) {
+      // console.log('saleCount: ' + saleCount)
+      assert.equal(saleCount.toNumber(), 1)
+      return token.getSaleForBuyerAtIndex.call(accounts[1], 0)
+    }).then(function (sale) {
+      // console.log(sale)
+      assert.equal(sale[0], 'sampleproject')
+      assert.equal(sale[1], 'testuser')
+      assert.equal(sale[2], accounts[2])
+      assert.equal(sale[3], accounts[1])
+      assert.equal(sale[4], 1000)
+      return token.balanceOf.call(accounts[2])
+    }).then(function (result) {
+      assert.equal(result.toNumber(), balanceBefore + 100, 'accounts[2] was not transferred the right amount of Deconet Tokens after the sale')
+    })
+  })
 })
