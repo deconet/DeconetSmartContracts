@@ -87,9 +87,16 @@ contract DeconetToken is ERC20Interface, Owned {
     // the amount rewarded to a seller for selling a license exception
     uint public tokenReward;
 
+    // the fee this contract takes from every sale.  expressed as percent.  so a value of 3 indicated a 3% txn fee
+    uint public saleFee;
+
     mapping(address => uint) balances;
     mapping(address => mapping(address => uint)) allowed;
-    mapping(address => Sale[]) sales;
+
+    uint numSales;
+    mapping(uint => Sale) sales;
+    mapping(address => uint[]) buyerSales;
+    mapping(address => uint[]) sellerSales;
 
     // ------------------------------------------------------------------------
     // Constructor
@@ -99,6 +106,7 @@ contract DeconetToken is ERC20Interface, Owned {
         name = "Deconet Token";
         tokenReward = 100;
         decimals = 18;
+        saleFee = 10;
         _totalSupply = 1000000000 * 10**uint(decimals);
         balances[owner] = _totalSupply;
         Transfer(address(0), owner, _totalSupply);
@@ -188,15 +196,6 @@ contract DeconetToken is ERC20Interface, Owned {
         return true;
     }
 
-
-    // ------------------------------------------------------------------------
-    // Don't accept ETH
-    // ------------------------------------------------------------------------
-    function () public payable {
-        revert();
-    }
-
-
     // ------------------------------------------------------------------------
     // Owner can transfer out any accidentally sent ERC20 tokens
     // ------------------------------------------------------------------------
@@ -204,17 +203,23 @@ contract DeconetToken is ERC20Interface, Owned {
         return ERC20Interface(tokenAddress).transfer(owner, tokens);
     }
 
-    function makeSale(string projectName, string sellerUsername, address sellerAddress, uint price) public {
+    function makeSale(string projectName, string sellerUsername, address sellerAddress, uint price) public payable {
       // log the sale
-      sales[msg.sender].push(Sale({
+      uint saleID = numSales++;
+      sales[saleID] = Sale({
         projectName: projectName,
         sellerUsername: sellerUsername,
         sellerAddress: sellerAddress,
         buyerAddress: msg.sender,
         price: price
-      }));
+      });
+      buyerSales[msg.sender].push(saleID);
+      sellerSales[sellerAddress].push(saleID);
 
       // pay seller the ETH
+      // fixed point math at 2 decimal places
+      uint payout = msg.value.mul(100).div(saleFee).div(100);
+      sellerAddress.transfer(payout);
 
       // give seller some tokens for the sale as well
       balances[owner] = balances[owner].sub(tokenReward);
@@ -223,16 +228,32 @@ contract DeconetToken is ERC20Interface, Owned {
     }
 
     function getSaleCountForBuyer(address buyer) public view returns (uint) {
-      return sales[buyer].length;
+      return buyerSales[buyer].length;
     }
 
     function getSaleForBuyerAtIndex(address buyer, uint index) public view returns (string, string, address, address, uint) {
+      uint saleID = buyerSales[buyer][index];
       return (
-        sales[buyer][index].projectName,
-        sales[buyer][index].sellerUsername,
-        sales[buyer][index].sellerAddress,
-        sales[buyer][index].buyerAddress,
-        sales[buyer][index].price
+        sales[saleID].projectName,
+        sales[saleID].sellerUsername,
+        sales[saleID].sellerAddress,
+        sales[saleID].buyerAddress,
+        sales[saleID].price
+      );
+    }
+
+    function getSaleCountForSeller(address seller) public view returns (uint) {
+      return sellerSales[seller].length;
+    }
+
+    function getSaleForSellerAtIndex(address seller, uint index) public view returns (string, string, address, address, uint) {
+      uint saleID = sellerSales[seller][index];
+      return (
+        sales[saleID].projectName,
+        sales[saleID].sellerUsername,
+        sales[saleID].sellerAddress,
+        sales[saleID].buyerAddress,
+        sales[saleID].price
       );
     }
 }
