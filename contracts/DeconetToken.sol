@@ -80,6 +80,7 @@ contract DeconetToken is ERC20Interface, Owned {
       uint soldAt;
       uint rewardedTokens;
       uint networkFee;
+      bytes4 licenseId;
     }
 
     string public symbol;
@@ -206,7 +207,7 @@ contract DeconetToken is ERC20Interface, Owned {
         return ERC20Interface(tokenAddress).transfer(owner, tokens);
     }
 
-    function makeSale(string projectName, string sellerUsername, address sellerAddress) public payable {
+    function makeSale(string projectName, string sellerUsername, address sellerAddress, bytes4 licenseId) public payable {
       // pay seller the ETH
       // fixed point math at 2 decimal places
       uint fee = msg.value.mul(100).div(saleFee).div(100);
@@ -229,7 +230,8 @@ contract DeconetToken is ERC20Interface, Owned {
         price: msg.value,
         soldAt: block.timestamp,
         rewardedTokens: tokenReward,
-        networkFee: fee
+        networkFee: fee,
+        licenseId: licenseId
       });
       buyerSales[msg.sender].push(saleID);
       sellerSales[sellerAddress].push(saleID);
@@ -239,7 +241,7 @@ contract DeconetToken is ERC20Interface, Owned {
       return buyerSales[buyer].length;
     }
 
-    function getSaleForBuyerAtIndex(address buyer, uint index) public view returns (string, string, address, address, uint, uint, uint, uint) {
+    function getSaleForBuyerAtIndex(address buyer, uint index) public view returns (string, string, address, address, uint, uint, uint, uint, bytes4) {
       uint saleID = buyerSales[buyer][index];
       return (
         sales[saleID].projectName,
@@ -249,7 +251,8 @@ contract DeconetToken is ERC20Interface, Owned {
         sales[saleID].price,
         sales[saleID].soldAt,
         sales[saleID].rewardedTokens,
-        sales[saleID].networkFee
+        sales[saleID].networkFee,
+        sales[saleID].licenseId
       );
     }
 
@@ -257,7 +260,7 @@ contract DeconetToken is ERC20Interface, Owned {
       return sellerSales[seller].length;
     }
 
-    function getSaleForSellerAtIndex(address seller, uint index) public view returns (string, string, address, address, uint, uint, uint, uint) {
+    function getSaleForSellerAtIndex(address seller, uint index) public view returns (string, string, address, address, uint, uint, uint, uint, bytes4) {
       uint saleID = sellerSales[seller][index];
       return (
         sales[saleID].projectName,
@@ -267,7 +270,8 @@ contract DeconetToken is ERC20Interface, Owned {
         sales[saleID].price,
         sales[saleID].soldAt,
         sales[saleID].rewardedTokens,
-        sales[saleID].networkFee
+        sales[saleID].networkFee,
+        sales[saleID].licenseId
       );
     }
 }

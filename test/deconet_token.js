@@ -73,75 +73,58 @@ contract('DeconetToken', function (accounts) {
     })
   })
 
-  it('should make a sale', function () {
-    var token = null
-    var tokenBalanceBefore = null
-    var tokenBalanceAfter = null
-    var ethBalanceBefore = null
-    var ethBalanceAfter = null
-    var contractEthBalanceBefore = null
-    var contractEthBalanceAfter = null
-    var ethValue = 50000
-    return Token.deployed().then(function (instance) {
-      token = instance
-      return token.balanceOf.call(accounts[2])
-    }).then(function (tokenBalance) {
-      tokenBalanceBefore = tokenBalance.toNumber()
-      return web3.eth.getBalance(accounts[2])
-    }).then(function (acctBalance) {
-      ethBalanceBefore = acctBalance
-      return web3.eth.getBalance(token.address)
-    }).then(function (contractBalance) {
-      contractEthBalanceBefore = contractBalance
-      return token.makeSale('sampleproject', 'testuser', accounts[2], {from: accounts[1], value: ethValue})
-    }).then(function () {
-      return token.getSaleCountForBuyer.call(accounts[1])
-    }).then(function (saleCount) {
-      // console.log('saleCount: ' + saleCount)
-      assert.equal(saleCount.toNumber(), 1)
-      return token.getSaleForBuyerAtIndex.call(accounts[1], 0)
-    }).then(function (sale) {
-      // console.log(sale)
-      assert.equal(sale[0], 'sampleproject')
-      assert.equal(sale[1], 'testuser')
-      assert.equal(sale[2], accounts[2])
-      assert.equal(sale[3], accounts[1])
-      assert.equal(sale[4], ethValue)
-      assert.equal(sale[5] > 0, true)
+  it('should make a sale', async function () {
+    let weiSaleValue = 50000
 
-      return token.getSaleCountForSeller.call(accounts[2])
-    }).then(function (saleCount) {
-      // console.log('saleCount: ' + saleCount)
-      assert.equal(saleCount.toNumber(), 1)
-      return token.getSaleForSellerAtIndex.call(accounts[2], 0)
-    }).then(function (sale) {
-      // console.log(sale)
-      assert.equal(sale[0], 'sampleproject')
-      assert.equal(sale[1], 'testuser')
-      assert.equal(sale[2], accounts[2])
-      assert.equal(sale[3], accounts[1])
-      assert.equal(sale[4], ethValue)
-      assert.equal(sale[5] > 0, true)
+    let token = await Token.deployed()
 
-      return token.balanceOf.call(accounts[2])
-    }).then(function (tokenBalance) {
-      tokenBalanceAfter = tokenBalance.toNumber()
-      return web3.eth.getBalance(accounts[2])
-    }).then(function (acctBalance) {
-      ethBalanceAfter = acctBalance
-      return token.tokenReward.call()
-    }).then(function (tokenReward) {
-      assert.equal(tokenBalanceAfter, tokenBalanceBefore + tokenReward.toNumber(), 'accounts[2] was not transferred the right amount of Deconet Tokens after the sale')
-      return web3.eth.getBalance(token.address)
-    }).then(function (contractBalance) {
-      contractEthBalanceAfter = contractBalance
-      return token.saleFee.call()
-    }).then(function (saleFee) {
-      var sellerPayout = ethValue * 100 / saleFee.toNumber() / 100
-      var ethDiff = ethBalanceAfter.minus(ethBalanceBefore).toNumber()
-      assert.equal(ethDiff, sellerPayout, 'The seller account was not transferred the right amount of eth after the sale')
-      var contractEthDiff = contractEthBalanceAfter.minus(contractEthBalanceBefore).toNumber()
-      assert.equal(contractEthDiff, ethValue - sellerPayout, 'The contract account does not have the right amount of eth in it after the sale')
-    })
+    let tokenBalanceBefore = (await token.balanceOf.call(accounts[2])).toNumber()
+    let ethBalanceBefore = await web3.eth.getBalance(accounts[2])
+    let contractEthBalanceBefore = await web3.eth.getBalance(token.address)
+
+    await token.makeSale('sampleproject', 'testuser', accounts[2], 'GPL3', {from: accounts[1], value: weiSaleValue})
+
+    let tokenBalanceAfter = (await token.balanceOf.call(accounts[2])).toNumber()
+    let ethBalanceAfter = await web3.eth.getBalance(accounts[2])
+    let tokenReward = await token.tokenReward.call()
+    assert.equal(tokenBalanceAfter, tokenBalanceBefore + tokenReward.toNumber(), 'accounts[2] was not transferred the right amount of Deconet Tokens after the sale')
+
+    let saleFee = await token.saleFee.call()
+    let contractEthBalanceAfter = await web3.eth.getBalance(token.address)
+    let networkFee = weiSaleValue * 100 / saleFee.toNumber() / 100
+    let sellerPayout = weiSaleValue - networkFee
+    let ethDiff = ethBalanceAfter.minus(ethBalanceBefore).toNumber()
+    assert.equal(ethDiff, sellerPayout, 'The seller account was not transferred the right amount of eth after the sale')
+
+    let contractEthDiff = contractEthBalanceAfter.minus(contractEthBalanceBefore).toNumber()
+    assert.equal(contractEthDiff, weiSaleValue - sellerPayout, 'The contract account does not have the right amount of eth in it after the sale')
+
+    let saleCount = await token.getSaleCountForBuyer.call(accounts[1])
+    assert.equal(saleCount.toNumber(), 1)
+    
+    let sale = await token.getSaleForBuyerAtIndex.call(accounts[1], 0)
+    assert.equal(sale[0], 'sampleproject')
+    assert.equal(sale[1], 'testuser')
+    assert.equal(sale[2], accounts[2])
+    assert.equal(sale[3], accounts[1])
+    assert.equal(sale[4], weiSaleValue)
+    assert.equal(sale[5] > 0, true)
+    assert.equal(sale[6].toString(), tokenReward.toString())
+    assert.equal(sale[7].toString(), networkFee.toString())
+    assert.equal(web3.toAscii(sale[8]), 'GPL3', 'wrong license')
+
+    saleCount = await token.getSaleCountForSeller.call(accounts[2])
+    assert.equal(saleCount.toNumber(), 1)
+
+    sale = await token.getSaleForSellerAtIndex.call(accounts[2], 0)
+    assert.equal(sale[0], 'sampleproject')
+    assert.equal(sale[1], 'testuser')
+    assert.equal(sale[2], accounts[2])
+    assert.equal(sale[3], accounts[1])
+    assert.equal(sale[4], weiSaleValue)
+    assert.equal(sale[5] > 0, true)
+    assert.equal(sale[6].toString(), tokenReward.toString())
+    assert.equal(sale[7].toString(), networkFee.toString())
+    assert.equal(web3.toAscii(sale[8]), 'GPL3', 'wrong license')
   })
 })
