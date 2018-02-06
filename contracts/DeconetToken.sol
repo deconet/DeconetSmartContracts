@@ -77,6 +77,7 @@ contract DeconetToken is ERC20Interface, Owned {
       address sellerAddress;
       address buyerAddress;
       uint price;
+      uint soldAt;
     }
 
     string public symbol;
@@ -203,7 +204,7 @@ contract DeconetToken is ERC20Interface, Owned {
         return ERC20Interface(tokenAddress).transfer(owner, tokens);
     }
 
-    function makeSale(string projectName, string sellerUsername, address sellerAddress, uint price) public payable {
+    function makeSale(string projectName, string sellerUsername, address sellerAddress) public payable {
       // log the sale
       uint saleID = numSales++;
       sales[saleID] = Sale({
@@ -211,7 +212,8 @@ contract DeconetToken is ERC20Interface, Owned {
         sellerUsername: sellerUsername,
         sellerAddress: sellerAddress,
         buyerAddress: msg.sender,
-        price: price
+        price: msg.value,
+        soldAt: block.timestamp
       });
       buyerSales[msg.sender].push(saleID);
       sellerSales[sellerAddress].push(saleID);
@@ -231,14 +233,15 @@ contract DeconetToken is ERC20Interface, Owned {
       return buyerSales[buyer].length;
     }
 
-    function getSaleForBuyerAtIndex(address buyer, uint index) public view returns (string, string, address, address, uint) {
+    function getSaleForBuyerAtIndex(address buyer, uint index) public view returns (string, string, address, address, uint, uint) {
       uint saleID = buyerSales[buyer][index];
       return (
         sales[saleID].projectName,
         sales[saleID].sellerUsername,
         sales[saleID].sellerAddress,
         sales[saleID].buyerAddress,
-        sales[saleID].price
+        sales[saleID].price,
+        sales[saleID].soldAt
       );
     }
 
@@ -246,14 +249,15 @@ contract DeconetToken is ERC20Interface, Owned {
       return sellerSales[seller].length;
     }
 
-    function getSaleForSellerAtIndex(address seller, uint index) public view returns (string, string, address, address, uint) {
+    function getSaleForSellerAtIndex(address seller, uint index) public view returns (string, string, address, address, uint, uint) {
       uint saleID = sellerSales[seller][index];
       return (
         sales[saleID].projectName,
         sales[saleID].sellerUsername,
         sales[saleID].sellerAddress,
         sales[saleID].buyerAddress,
-        sales[saleID].price
+        sales[saleID].price,
+        sales[saleID].soldAt
       );
     }
 }

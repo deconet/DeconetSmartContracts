@@ -93,7 +93,7 @@ contract('DeconetToken', function (accounts) {
       return web3.eth.getBalance(token.address)
     }).then(function (contractBalance) {
       contractEthBalanceBefore = contractBalance
-      return token.makeSale('sampleproject', 'testuser', accounts[2], 1000, {from: accounts[1], value: ethValue})
+      return token.makeSale('sampleproject', 'testuser', accounts[2], {from: accounts[1], value: ethValue})
     }).then(function () {
       return token.getSaleCountForBuyer.call(accounts[1])
     }).then(function (saleCount) {
@@ -106,7 +106,8 @@ contract('DeconetToken', function (accounts) {
       assert.equal(sale[1], 'testuser')
       assert.equal(sale[2], accounts[2])
       assert.equal(sale[3], accounts[1])
-      assert.equal(sale[4], 1000)
+      assert.equal(sale[4], ethValue)
+      assert.equal(sale[5] > 0, true)
 
       return token.getSaleCountForSeller.call(accounts[2])
     }).then(function (saleCount) {
@@ -119,7 +120,8 @@ contract('DeconetToken', function (accounts) {
       assert.equal(sale[1], 'testuser')
       assert.equal(sale[2], accounts[2])
       assert.equal(sale[3], accounts[1])
-      assert.equal(sale[4], 1000)
+      assert.equal(sale[4], ethValue)
+      assert.equal(sale[5] > 0, true)
 
       return token.balanceOf.call(accounts[2])
     }).then(function (tokenBalance) {
