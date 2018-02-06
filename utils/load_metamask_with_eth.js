@@ -8,7 +8,7 @@ const Web3 = require('web3')
 let web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'))
 
 // where to send the tokens and eth
-let toAddress = '0xB962537314B11C6bCD6D9FF63feb048A9e91E7AE'
+let toAddress = '0xdbd360F30097fB6d938dcc8B7b62854B36160B45'
 
 // send from here. key for acct index 8 in ganache
 let fromAddress = '0x6330A553Fc93768F612722BB8c2eC78aC90B3bbc'
