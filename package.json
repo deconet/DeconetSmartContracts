@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/deconet/ExceptionRegistry.git"
+    "url": "git+https://github.com/deconet/DeconetTokens.git"
   },
   "author": "Chris Cassano / Deconet",
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/deconet/ExceptionRegistry/issues"
+    "url": "https://github.com/deconet/DeconetTokens/issues"
   },
-  "homepage": "https://github.com/deconet/ExceptionRegistry#readme",
+  "homepage": "https://github.com/deconet/DeconetTokens#readme",
   "dependencies": {
     "bignumber": "^1.1.0",
     "bignumber.js": "^6.0.0",
