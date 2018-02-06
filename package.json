@@ -1,6 +1,6 @@
 {
-  "name": "deconet-exception-registry",
-  "version": "1.0.0",
+  "name": "deconet-token",
+  "version": "1.0.1",
   "description": "",
   "main": "truffle.js",
   "directories": {
