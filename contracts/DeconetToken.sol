@@ -71,17 +71,17 @@ contract ApproveAndCallFallBack {
 contract DeconetToken is ERC20Interface, Owned {
     using SafeMath for uint;
 
-    struct Sale {
-      string projectName;
-      string sellerUsername;
-      address sellerAddress;
-      address buyerAddress;
-      uint price;
-      uint soldAt;
-      uint rewardedTokens;
-      uint networkFee;
-      bytes4 licenseId;
-    }
+    event LicenseSale(
+      string projectName,
+      string sellerUsername,
+      address indexed sellerAddress,
+      address indexed buyerAddress,
+      uint price,
+      uint soldAt,
+      uint rewardedTokens,
+      uint networkFee,
+      bytes4 licenseId
+    );
 
     string public symbol;
     string public name;
@@ -96,11 +96,6 @@ contract DeconetToken is ERC20Interface, Owned {
 
     mapping(address => uint) balances;
     mapping(address => mapping(address => uint)) allowed;
-
-    uint numSales;
-    mapping(uint => Sale) sales;
-    mapping(address => uint[]) buyerSales;
-    mapping(address => uint[]) sellerSales;
 
     // ------------------------------------------------------------------------
     // Constructor
@@ -221,57 +216,16 @@ contract DeconetToken is ERC20Interface, Owned {
       Transfer(owner, sellerAddress, tokenReward);
 
       // log the sale
-      uint saleID = numSales++;
-      sales[saleID] = Sale({
-        projectName: projectName,
-        sellerUsername: sellerUsername,
-        sellerAddress: sellerAddress,
-        buyerAddress: msg.sender,
-        price: msg.value,
-        soldAt: block.timestamp,
-        rewardedTokens: tokenReward,
-        networkFee: fee,
-        licenseId: licenseId
-      });
-      buyerSales[msg.sender].push(saleID);
-      sellerSales[sellerAddress].push(saleID);
-    }
-
-    function getSaleCountForBuyer(address buyer) public view returns (uint) {
-      return buyerSales[buyer].length;
-    }
-
-    function getSaleForBuyerAtIndex(address buyer, uint index) public view returns (string, string, address, address, uint, uint, uint, uint, bytes4) {
-      uint saleID = buyerSales[buyer][index];
-      return (
-        sales[saleID].projectName,
-        sales[saleID].sellerUsername,
-        sales[saleID].sellerAddress,
-        sales[saleID].buyerAddress,
-        sales[saleID].price,
-        sales[saleID].soldAt,
-        sales[saleID].rewardedTokens,
-        sales[saleID].networkFee,
-        sales[saleID].licenseId
-      );
-    }
-
-    function getSaleCountForSeller(address seller) public view returns (uint) {
-      return sellerSales[seller].length;
-    }
-
-    function getSaleForSellerAtIndex(address seller, uint index) public view returns (string, string, address, address, uint, uint, uint, uint, bytes4) {
-      uint saleID = sellerSales[seller][index];
-      return (
-        sales[saleID].projectName,
-        sales[saleID].sellerUsername,
-        sales[saleID].sellerAddress,
-        sales[saleID].buyerAddress,
-        sales[saleID].price,
-        sales[saleID].soldAt,
-        sales[saleID].rewardedTokens,
-        sales[saleID].networkFee,
-        sales[saleID].licenseId
+      LicenseSale(
+        projectName,
+        sellerUsername,
+        sellerAddress,
+        msg.sender,
+        msg.value,
+        block.timestamp,
+        tokenReward,
+        fee,
+        licenseId
       );
     }
 }

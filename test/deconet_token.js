@@ -2,6 +2,17 @@ var BigNumber = require('bignumber.js')
 
 var Token = artifacts.require('./DeconetToken.sol')
 
+const Promisify = (inner) =>
+  new Promise((resolve, reject) =>
+    inner((err, res) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(res);
+      }
+    })
+  );
+
 contract('DeconetToken', function (accounts) {
   var correctTotalSupply = BigNumber('1e+27')
 
@@ -99,32 +110,21 @@ contract('DeconetToken', function (accounts) {
     let contractEthDiff = contractEthBalanceAfter.minus(contractEthBalanceBefore).toNumber()
     assert.equal(contractEthDiff, weiSaleValue - sellerPayout, 'The contract account does not have the right amount of eth in it after the sale')
 
-    let saleCount = await token.getSaleCountForBuyer.call(accounts[1])
-    assert.equal(saleCount.toNumber(), 1)
+    let saleEvent = token.LicenseSale({}, {fromBlock: 0, toBlock: 'latest'})
+    let sales = await Promisify(cb => saleEvent.get(cb))
+
+    assert.equal(sales.length, 1)
     
-    let sale = await token.getSaleForBuyerAtIndex.call(accounts[1], 0)
-    assert.equal(sale[0], 'sampleproject')
-    assert.equal(sale[1], 'testuser')
-    assert.equal(sale[2], accounts[2])
-    assert.equal(sale[3], accounts[1])
-    assert.equal(sale[4], weiSaleValue)
-    assert.equal(sale[5] > 0, true)
-    assert.equal(sale[6].toString(), tokenReward.toString())
-    assert.equal(sale[7].toString(), networkFee.toString())
-    assert.equal(web3.toAscii(sale[8]), 'GPL3', 'wrong license')
+    let sale = sales[0].args
 
-    saleCount = await token.getSaleCountForSeller.call(accounts[2])
-    assert.equal(saleCount.toNumber(), 1)
-
-    sale = await token.getSaleForSellerAtIndex.call(accounts[2], 0)
-    assert.equal(sale[0], 'sampleproject')
-    assert.equal(sale[1], 'testuser')
-    assert.equal(sale[2], accounts[2])
-    assert.equal(sale[3], accounts[1])
-    assert.equal(sale[4], weiSaleValue)
-    assert.equal(sale[5] > 0, true)
-    assert.equal(sale[6].toString(), tokenReward.toString())
-    assert.equal(sale[7].toString(), networkFee.toString())
-    assert.equal(web3.toAscii(sale[8]), 'GPL3', 'wrong license')
+    assert.equal(sale.projectName, 'sampleproject')
+    assert.equal(sale.sellerUsername, 'testuser')
+    assert.equal(sale.sellerAddress, accounts[2])
+    assert.equal(sale.buyerAddress, accounts[1])
+    assert.equal(sale.price.toNumber(), weiSaleValue)
+    assert.equal(sale.soldAt.toNumber() > 0, true)
+    assert.equal(sale.rewardedTokens.toString(), tokenReward.toString())
+    assert.equal(sale.networkFee.toString(), networkFee.toString())
+    assert.equal(web3.toAscii(sale.licenseId), 'GPL3', 'wrong license')
   })
 })
