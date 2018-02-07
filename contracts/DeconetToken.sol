@@ -103,9 +103,9 @@ contract DeconetToken is ERC20Interface, Owned {
     function DeconetToken() public {
         symbol = "DCO";
         name = "Deconet Token";
-        tokenReward = 100 * 10**uint(decimals);
         decimals = 18;
         saleFee = 10;
+        tokenReward = 100 * 10**uint(decimals);
         _totalSupply = 1000000000 * 10**uint(decimals);
         balances[owner] = _totalSupply;
         Transfer(address(0), owner, _totalSupply);
