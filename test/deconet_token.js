@@ -84,6 +84,17 @@ contract('DeconetToken', function (accounts) {
     })
   })
 
+  it('should have a settable token reward', async function () {
+    let token = await Token.deployed()
+    let tokenRewardBefore = await token.tokenReward.call()
+
+    await token.setTokenReward(200000)
+
+    let tokenRewardAfter = await token.tokenReward.call()
+    assert.equal(tokenRewardAfter, 200000)
+    assert.notEqual(tokenRewardBefore, tokenRewardAfter)
+  })
+
   it('should make a sale', async function () {
     let weiSaleValue = 50000
 

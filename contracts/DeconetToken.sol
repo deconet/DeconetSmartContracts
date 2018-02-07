@@ -103,7 +103,7 @@ contract DeconetToken is ERC20Interface, Owned {
     function DeconetToken() public {
         symbol = "DCO";
         name = "Deconet Token";
-        tokenReward = 100;
+        tokenReward = 100 * 10**uint(decimals);
         decimals = 18;
         saleFee = 10;
         _totalSupply = 1000000000 * 10**uint(decimals);
@@ -200,6 +200,10 @@ contract DeconetToken is ERC20Interface, Owned {
     // ------------------------------------------------------------------------
     function transferAnyERC20Token(address tokenAddress, uint tokens) public onlyOwner returns (bool success) {
         return ERC20Interface(tokenAddress).transfer(owner, tokens);
+    }
+
+    function setTokenReward(uint newReward) public onlyOwner {
+        tokenReward = newReward;
     }
 
     function makeSale(string projectName, string sellerUsername, address sellerAddress, bytes4 licenseId) public payable {
