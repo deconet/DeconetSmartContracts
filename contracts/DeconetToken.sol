@@ -206,30 +206,34 @@ contract DeconetToken is ERC20Interface, Owned {
         tokenReward = newReward;
     }
 
-    function makeSale(string projectName, string sellerUsername, address sellerAddress, bytes4 licenseId) public payable {
-      // pay seller the ETH
-      // fixed point math at 2 decimal places
-      uint fee = msg.value.mul(100).div(saleFee).div(100);
-      uint payout = msg.value.sub(fee);
-      sellerAddress.transfer(payout);
+    function makeSale(uint moduleId) public payable {
+        // look up the registry address from relay token
+
+        // get the module info from registry
+
+        // pay seller the ETH
+        // fixed point math at 2 decimal places
+        uint fee = msg.value.mul(100).div(saleFee).div(100);
+        uint payout = msg.value.sub(fee);
+        sellerAddress.transfer(payout);
 
 
-      // give seller some tokens for the sale as well
-      balances[owner] = balances[owner].sub(tokenReward);
-      balances[sellerAddress] = balances[sellerAddress].add(tokenReward);
-      Transfer(owner, sellerAddress, tokenReward);
+        // give seller some tokens for the sale as well
+        balances[owner] = balances[owner].sub(tokenReward);
+        balances[sellerAddress] = balances[sellerAddress].add(tokenReward);
+        Transfer(owner, sellerAddress, tokenReward);
 
-      // log the sale
-      LicenseSale(
-        projectName,
-        sellerUsername,
-        sellerAddress,
-        msg.sender,
-        msg.value,
-        block.timestamp,
-        tokenReward,
-        fee,
-        licenseId
-      );
+        // log the sale
+        LicenseSale(
+            projectName,
+            sellerUsername,
+            sellerAddress,
+            msg.sender,
+            msg.value,
+            block.timestamp,
+            tokenReward,
+            fee,
+            licenseId
+        );
     }
 }
