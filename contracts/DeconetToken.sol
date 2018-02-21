@@ -2,19 +2,9 @@ pragma solidity ^0.4.19;
 
 import "./Owned.sol";
 
-// this is borrowed from the example fixed supply token contract, licensed below under the MIT License.
-// ----------------------------------------------------------------------------
-// 'FIXED' 'Example Fixed Supply Token' token contract
-//
-// Symbol      : FIXED
-// Name        : Example Fixed Supply Token
-// Total supply: 1,000,000.000000000000000000
-// Decimals    : 18
-//
-// Enjoy.
-//
-// (c) BokkyPooBah / Bok Consulting Pty Ltd 2017. The MIT Licence.
-// ----------------------------------------------------------------------------
+// this is borrowed and modified from an example mintable supply token contract which is licensed under the MIT license.  code / attribution found here: https://github.com/bokkypoobah/Tokens/blob/master/contracts/BitFwdToken.sol
+// Thanks BokkyPooBah!
+
 
 // ----------------------------------------------------------------------------
 // Safe maths
@@ -71,24 +61,14 @@ contract ApproveAndCallFallBack {
 contract DeconetToken is ERC20Interface, Owned {
     using SafeMath for uint;
 
-    event LicenseSale(
-      string projectName,
-      string sellerUsername,
-      address indexed sellerAddress,
-      address indexed buyerAddress,
-      uint price,
-      uint soldAt,
-      uint rewardedTokens,
-      uint networkFee,
-      bytes4 licenseId
-    );
-
+    // ERC20 stuff
     string public symbol;
-    string public name;
+    string public  name;
     uint8 public decimals;
     uint public _totalSupply;
+    bool public mintable;
 
-    // the amount rewarded to a seller for selling a license exception
+    // the amount rewarded to a seller for selling a license
     uint public tokenReward;
 
     // the fee this contract takes from every sale.  expressed as percent.  so a value of 3 indicated a 3% txn fee
@@ -97,16 +77,36 @@ contract DeconetToken is ERC20Interface, Owned {
     mapping(address => uint) balances;
     mapping(address => mapping(address => uint)) allowed;
 
+
+    event MintingDisabled();
+
+    event LicenseSale(
+        string projectName,
+        string sellerUsername,
+        address indexed sellerAddress,
+        address indexed buyerAddress,
+        uint price,
+        uint soldAt,
+        uint rewardedTokens,
+        uint networkFee,
+        bytes4 licenseId
+    );
+
+
     // ------------------------------------------------------------------------
     // Constructor
     // ------------------------------------------------------------------------
     function DeconetToken() public {
-        symbol = "DCO";
-        name = "Deconet Token";
+        // initial erc20 settings
+        symbol = "DTEST";
+        name = "Deconet Test Token - Not valuable";
         decimals = 18;
+        mintable = true;
+
         saleFee = 10;
         tokenReward = 100 * 10**uint(decimals);
         _totalSupply = 1000000000 * 10**uint(decimals);
+
         balances[owner] = _totalSupply;
         Transfer(address(0), owner, _totalSupply);
     }
@@ -117,6 +117,16 @@ contract DeconetToken is ERC20Interface, Owned {
     // ------------------------------------------------------------------------
     function totalSupply() public constant returns (uint) {
         return _totalSupply  - balances[address(0)];
+    }
+
+
+    // ------------------------------------------------------------------------
+    // Disable minting
+    // ------------------------------------------------------------------------
+    function disableMinting() public onlyOwner {
+        require(mintable);
+        mintable = false;
+        MintingDisabled();
     }
 
 
@@ -195,12 +205,34 @@ contract DeconetToken is ERC20Interface, Owned {
         return true;
     }
 
+
+    // ------------------------------------------------------------------------
+    // Mint tokens
+    // ------------------------------------------------------------------------
+    function mint(address tokenOwner, uint tokens) public onlyOwner returns (bool success) {
+        require(mintable);
+        balances[tokenOwner] = balances[tokenOwner].add(tokens);
+        _totalSupply = _totalSupply.add(tokens);
+        Transfer(address(0), tokenOwner, tokens);
+        return true;
+    }
+
+
+    // ------------------------------------------------------------------------
+    // Don't accept ethers
+    // ------------------------------------------------------------------------
+    function () public payable {
+        revert();
+    }
+
+
     // ------------------------------------------------------------------------
     // Owner can transfer out any accidentally sent ERC20 tokens
     // ------------------------------------------------------------------------
     function transferAnyERC20Token(address tokenAddress, uint tokens) public onlyOwner returns (bool success) {
         return ERC20Interface(tokenAddress).transfer(owner, tokens);
     }
+
 
     function setTokenReward(uint newReward) public onlyOwner {
         tokenReward = newReward;
@@ -213,27 +245,27 @@ contract DeconetToken is ERC20Interface, Owned {
 
         // pay seller the ETH
         // fixed point math at 2 decimal places
-        uint fee = msg.value.mul(100).div(saleFee).div(100);
-        uint payout = msg.value.sub(fee);
-        sellerAddress.transfer(payout);
+        // uint fee = msg.value.mul(100).div(saleFee).div(100);
+        // uint payout = msg.value.sub(fee);
+        // sellerAddress.transfer(payout);
 
 
-        // give seller some tokens for the sale as well
-        balances[owner] = balances[owner].sub(tokenReward);
-        balances[sellerAddress] = balances[sellerAddress].add(tokenReward);
-        Transfer(owner, sellerAddress, tokenReward);
+        // // give seller some tokens for the sale as well
+        // balances[owner] = balances[owner].sub(tokenReward);
+        // balances[sellerAddress] = balances[sellerAddress].add(tokenReward);
+        // Transfer(owner, sellerAddress, tokenReward);
 
-        // log the sale
-        LicenseSale(
-            projectName,
-            sellerUsername,
-            sellerAddress,
-            msg.sender,
-            msg.value,
-            block.timestamp,
-            tokenReward,
-            fee,
-            licenseId
-        );
+        // // log the sale
+        // LicenseSale(
+        //     projectName,
+        //     sellerUsername,
+        //     sellerAddress,
+        //     msg.sender,
+        //     msg.value,
+        //     block.timestamp,
+        //     tokenReward,
+        //     fee,
+        //     licenseId
+        // );
     }
 }

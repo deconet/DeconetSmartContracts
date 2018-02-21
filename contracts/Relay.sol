@@ -9,7 +9,11 @@ contract Relay is Owned {
   // ------------------------------------------------------------------------
   // Constructor, establishes ownership because contract is owned
   // ------------------------------------------------------------------------
-  function Relay() public {}
+  function Relay(address _tokenContractAddress, address _registryContractAddress) public {
+    tokenContractAddress = _tokenContractAddress;
+    registryContractAddress = _registryContractAddress;
+
+  }
 
   function setTokenContractAddress(address newAddress) public onlyOwner {
     tokenContractAddress = newAddress;

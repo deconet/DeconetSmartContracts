@@ -14,7 +14,7 @@ contract Registry is Owned {
   mapping(string => uint) moduleIds;
   mapping(uint => ModuleForSale) modules;
 
-  uint numModules;
+  uint public numModules;
 
   // ------------------------------------------------------------------------
   // Constructor, establishes ownership because contract is owned
@@ -24,31 +24,36 @@ contract Registry is Owned {
   }
 
   function listModule(uint price, string sellerUsername, string moduleName, string usernameAndProjectName) public {
-    if (moduleIds[usernameAndProjectName] != 0) {
-      bail
-    }
-    moduleIds[usernameAndProjectName] = ++numModules;
-    ModuleForSale module = modules[numModules];
+    // make sure the name isn't already taken
+    require(moduleIds[usernameAndProjectName] == 0);
+
+    numModules += 1;
+    moduleIds[usernameAndProjectName] = numModules;
+
+    var module = modules[numModules];
+
     module.price = price;
     module.sellerUsername = sellerUsername;
     module.moduleName = moduleName;
     module.sellerAddress = msg.sender;
   }
 
-  function getModuleId(string usernameAndProjectName) public returns (uint) {
+  function getModuleId(string usernameAndProjectName) public view returns (uint) {
     return moduleIds[usernameAndProjectName];
   }
 
-  function getModule(uint moduleId) public returns (uint price, string sellerUsername, string moduleName, address sellerAddress) {
-    ModuleForSale module = modules[moduleId];
+  function getModule(uint moduleId) public view returns (uint price, string sellerUsername, string moduleName, address sellerAddress) {
+    var module = modules[moduleId];
+
     price = module.price;
     sellerUsername = module.sellerUsername;
     moduleName = module.moduleName;
-    sellerAddress = module.sellerAddress
+    sellerAddress = module.sellerAddress;
   }
 
   function editModule(uint moduleId, uint price, address sellerAddress) public onlyOwner {
-    ModuleForSale module = modules[moduleId];
+    var module = modules[moduleId];
+
     module.price = price;
     module.sellerAddress = sellerAddress;
   }
