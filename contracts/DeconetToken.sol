@@ -1,6 +1,8 @@
 pragma solidity ^0.4.19;
 
 import "./Owned.sol";
+import "./Relay.sol";
+import "./Registry.sol";
 
 // this is borrowed and modified from an example mintable supply token contract which is licensed under the MIT license.  code / attribution found here: https://github.com/bokkypoobah/Tokens/blob/master/contracts/BitFwdToken.sol
 // Thanks BokkyPooBah!
@@ -74,6 +76,9 @@ contract DeconetToken is ERC20Interface, Owned {
     // the fee this contract takes from every sale.  expressed as percent.  so a value of 3 indicated a 3% txn fee
     uint public saleFee;
 
+    // address of the relay contract which holds the address of the registry contract.
+    address public relayContractAddress;
+
     mapping(address => uint) balances;
     mapping(address => mapping(address => uint)) allowed;
 
@@ -81,8 +86,8 @@ contract DeconetToken is ERC20Interface, Owned {
     event MintingDisabled();
 
     event LicenseSale(
-        string projectName,
-        string sellerUsername,
+        bytes32 moduleName,
+        bytes32 sellerUsername,
         address indexed sellerAddress,
         address indexed buyerAddress,
         uint price,
@@ -233,6 +238,9 @@ contract DeconetToken is ERC20Interface, Owned {
         return ERC20Interface(tokenAddress).transfer(owner, tokens);
     }
 
+    function setRelayContractAddress(address _relayContractAddress) public onlyOwner {
+        relayContractAddress = _relayContractAddress;
+    }
 
     function setTokenReward(uint newReward) public onlyOwner {
         tokenReward = newReward;
@@ -240,32 +248,46 @@ contract DeconetToken is ERC20Interface, Owned {
 
     function makeSale(uint moduleId) public payable {
         // look up the registry address from relay token
+        Relay relay = Relay(relayContractAddress);
+        address registryAddress = relay.registryContractAddress();
 
         // get the module info from registry
+        Registry registry = Registry(registryAddress);
+
+        uint price;
+        bytes32 sellerUsername;
+        bytes32 moduleName;
+        address sellerAddress;
+        bytes4 licenseId;
+
+        (price, sellerUsername, moduleName, sellerAddress, licenseId) = registry.getModule(moduleId);
+
+        // // make sure the customer has sent enough eth
+        require(msg.value >= price);
 
         // pay seller the ETH
         // fixed point math at 2 decimal places
-        // uint fee = msg.value.mul(100).div(saleFee).div(100);
-        // uint payout = msg.value.sub(fee);
-        // sellerAddress.transfer(payout);
+        uint fee = msg.value.mul(100).div(saleFee).div(100);
+        uint payout = msg.value.sub(fee);
+        sellerAddress.transfer(payout);
 
 
-        // // give seller some tokens for the sale as well
-        // balances[owner] = balances[owner].sub(tokenReward);
-        // balances[sellerAddress] = balances[sellerAddress].add(tokenReward);
-        // Transfer(owner, sellerAddress, tokenReward);
+        // give seller some tokens for the sale as well
+        balances[owner] = balances[owner].sub(tokenReward);
+        balances[sellerAddress] = balances[sellerAddress].add(tokenReward);
+        Transfer(owner, sellerAddress, tokenReward);
 
-        // // log the sale
-        // LicenseSale(
-        //     projectName,
-        //     sellerUsername,
-        //     sellerAddress,
-        //     msg.sender,
-        //     msg.value,
-        //     block.timestamp,
-        //     tokenReward,
-        //     fee,
-        //     licenseId
-        // );
+        // log the sale
+        LicenseSale(
+            moduleName,
+            sellerUsername,
+            sellerAddress,
+            msg.sender,
+            price,
+            block.timestamp,
+            tokenReward,
+            fee,
+            licenseId
+        );
     }
 }
