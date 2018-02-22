@@ -4,12 +4,15 @@ var Relay = artifacts.require('./Relay.sol')
 
 module.exports = function (deployer) {
   let relay, registry, deconetToken
+  console.log('Deploying relay contract')
   deployer.deploy(Relay)
   .then(() => {
     relay = Relay.at(Relay.address)
+    console.log('Deploying registry contract')
     return deployer.deploy(Registry)
   }).then(() => {
     registry = Registry.at(Registry.address)
+    console.log('Deploying token contract')
     return deployer.deploy(DeconetToken)
   }).then(() => {
     deconetToken = DeconetToken.at(DeconetToken.address)
