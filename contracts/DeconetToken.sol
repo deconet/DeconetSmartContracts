@@ -260,7 +260,7 @@ contract DeconetToken is ERC20Interface, Owned {
         address sellerAddress;
         bytes4 licenseId;
 
-        (price, sellerUsername, moduleName, sellerAddress, licenseId) = registry.getModule(moduleId);
+        (price, sellerUsername, moduleName, sellerAddress, licenseId) = registry.getModuleById(moduleId);
 
         // // make sure the customer has sent enough eth
         require(msg.value >= price);

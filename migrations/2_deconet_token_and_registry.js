@@ -13,10 +13,13 @@ module.exports = function (deployer) {
     return deployer.deploy(DeconetToken)
   }).then(() => {
     deconetToken = DeconetToken.at(DeconetToken.address)
+    console.log('Seting relay contract address to ' + relay.address)
     return deconetToken.setRelayContractAddress(relay.address)
   }).then(() => {
+    console.log('Setting token contract address to ' + deconetToken.address)
     return relay.setTokenContractAddress(deconetToken.address)
   }).then(() => {
+    console.log('Setting registry contract address to ' + registry.address)
     return relay.setRegistryContractAddress(registry.address)
   })
 }

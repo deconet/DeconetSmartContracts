@@ -1,0 +1,3539 @@
+{
+  "contractName": "Registry",
+  "abi": [
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "acceptOwnership",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "numModules",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "newOwner",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "_from",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "name": "_to",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "price",
+          "type": "uint256"
+        },
+        {
+          "name": "sellerUsername",
+          "type": "bytes32"
+        },
+        {
+          "name": "moduleName",
+          "type": "bytes32"
+        },
+        {
+          "name": "usernameAndProjectName",
+          "type": "string"
+        },
+        {
+          "name": "licenseId",
+          "type": "bytes4"
+        }
+      ],
+      "name": "listModule",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "usernameAndProjectName",
+          "type": "string"
+        }
+      ],
+      "name": "getModuleId",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "moduleId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getModuleById",
+      "outputs": [
+        {
+          "name": "price",
+          "type": "uint256"
+        },
+        {
+          "name": "sellerUsername",
+          "type": "bytes32"
+        },
+        {
+          "name": "moduleName",
+          "type": "bytes32"
+        },
+        {
+          "name": "sellerAddress",
+          "type": "address"
+        },
+        {
+          "name": "licenseId",
+          "type": "bytes4"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "usernameAndProjectName",
+          "type": "string"
+        }
+      ],
+      "name": "getModuleByName",
+      "outputs": [
+        {
+          "name": "price",
+          "type": "uint256"
+        },
+        {
+          "name": "sellerUsername",
+          "type": "bytes32"
+        },
+        {
+          "name": "moduleName",
+          "type": "bytes32"
+        },
+        {
+          "name": "sellerAddress",
+          "type": "address"
+        },
+        {
+          "name": "licenseId",
+          "type": "bytes4"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "moduleId",
+          "type": "uint256"
+        },
+        {
+          "name": "price",
+          "type": "uint256"
+        },
+        {
+          "name": "sellerAddress",
+          "type": "address"
+        },
+        {
+          "name": "licenseId",
+          "type": "bytes4"
+        }
+      ],
+      "name": "editModule",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x6060604052341561000f57600080fd5b336000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055506000600481905550610cc4806100666000396000f3006060604052600436106100a4576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff168063720ed642146100a957806376e83bcb1461017657806377913fbc1461021e57806379ba50971461028f5780638ac341c6146102a45780638da5cb5b146102cd578063944da65414610322578063d4ee1d9014610395578063f13d22c1146103ea578063f2fde38b146104f1575b600080fd5b34156100b457600080fd5b6100ca600480803590602001909190505061052a565b60405180868152602001856000191660001916815260200184600019166000191681526020018373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001827bffffffffffffffffffffffffffffffffffffffffffffffffffffffff19167bffffffffffffffffffffffffffffffffffffffffffffffffffffffff191681526020019550505050505060405180910390f35b341561018157600080fd5b61021c6004808035906020019091908035600019169060200190919080356000191690602001909190803590602001908201803590602001908080601f016020809104026020016040519081016040528093929190818152602001838380828437820191505050505050919080357bffffffffffffffffffffffffffffffffffffffffffffffffffffffff19169060200190919050506105be565b005b341561022957600080fd5b610279600480803590602001908201803590602001908080601f0160208091040260200160405190810160405280939291908181526020018383808284378201915050505050509190505061077e565b6040518082815260200191505060405180910390f35b341561029a57600080fd5b6102a26107f3565b005b34156102af57600080fd5b6102b7610992565b6040518082815260200191505060405180910390f35b34156102d857600080fd5b6102e0610998565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b341561032d57600080fd5b610393600480803590602001909190803590602001909190803573ffffffffffffffffffffffffffffffffffffffff169060200190919080357bffffffffffffffffffffffffffffffffffffffffffffffffffffffff19169060200190919050506109bd565b005b34156103a057600080fd5b6103a8610abf565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b34156103f557600080fd5b610445600480803590602001908201803590602001908080601f01602080910402602001604051908101604052809392919081815260200183838082843782019150505050505091905050610ae5565b60405180868152602001856000191660001916815260200184600019166000191681526020018373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001827bffffffffffffffffffffffffffffffffffffffffffffffffffffffff19167bffffffffffffffffffffffffffffffffffffffffffffffffffffffff191681526020019550505050505060405180910390f35b34156104fc57600080fd5b610528600480803573ffffffffffffffffffffffffffffffffffffffff16906020019091905050610bf9565b005b6000806000806000806003600088815260200190815260200160002090508060000154955080600101549450806002015493508060030160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1692508060030160149054906101000a90047c01000000000000000000000000000000000000000000000000000000000291505091939590929450565b6000806002846040518082805190602001908083835b6020831015156105f957805182526020820191506020810190506020830392506105d4565b6001836020036101000a03801982511681845116808217855250505050505090500191505090815260200160405180910390205414151561063957600080fd5b60016004600082825401925050819055506004546002846040518082805190602001908083835b6020831015156106855780518252602082019150602081019050602083039250610660565b6001836020036101000a03801982511681845116808217855250505050505090500191505090815260200160405180910390208190555060036000600454815260200190815260200160002090508581600001819055508481600101816000191690555083816002018160001916905550338160030160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550818160030160146101000a81548163ffffffff02191690837c010000000000000000000000000000000000000000000000000000000090040217905550505050505050565b60006002826040518082805190602001908083835b6020831015156107b85780518252602082019150602081019050602083039250610793565b6001836020036101000a0380198251168184511680821785525050505050509050019150509081526020016040518091039020549050919050565b600160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff1614151561084f57600080fd5b600160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff166000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e060405160405180910390a3600160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff166000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055506000600160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550565b60045481565b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b60008060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff16141515610a1a57600080fd5b600360008681526020019081526020016000209050838160000181905550828160030160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550818160030160146101000a81548163ffffffff02191690837c0100000000000000000000000000000000000000000000000000000000900402179055505050505050565b600160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b60008060008060008060006002886040518082805190602001908083835b602083101515610b285780518252602082019150602081019050602083039250610b03565b6001836020036101000a03801982511681845116808217855250505050505090500191505090815260200160405180910390205491506000821415610b6c57610bee565b6003600083815260200190815260200160002090508060000154965080600101549550806002015494508060030160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1693508060030160149054906101000a90047c01000000000000000000000000000000000000000000000000000000000292505b505091939590929450565b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff16141515610c5457600080fd5b80600160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550505600a165627a7a72305820d1791067bb8aed08f74ed95173bf0cb25e128c56465132127b9673b22ce7ef150029",
+  "deployedBytecode": "0x6060604052600436106100a4576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff168063720ed642146100a957806376e83bcb1461017657806377913fbc1461021e57806379ba50971461028f5780638ac341c6146102a45780638da5cb5b146102cd578063944da65414610322578063d4ee1d9014610395578063f13d22c1146103ea578063f2fde38b146104f1575b600080fd5b34156100b457600080fd5b6100ca600480803590602001909190505061052a565b60405180868152602001856000191660001916815260200184600019166000191681526020018373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001827bffffffffffffffffffffffffffffffffffffffffffffffffffffffff19167bffffffffffffffffffffffffffffffffffffffffffffffffffffffff191681526020019550505050505060405180910390f35b341561018157600080fd5b61021c6004808035906020019091908035600019169060200190919080356000191690602001909190803590602001908201803590602001908080601f016020809104026020016040519081016040528093929190818152602001838380828437820191505050505050919080357bffffffffffffffffffffffffffffffffffffffffffffffffffffffff19169060200190919050506105be565b005b341561022957600080fd5b610279600480803590602001908201803590602001908080601f0160208091040260200160405190810160405280939291908181526020018383808284378201915050505050509190505061077e565b6040518082815260200191505060405180910390f35b341561029a57600080fd5b6102a26107f3565b005b34156102af57600080fd5b6102b7610992565b6040518082815260200191505060405180910390f35b34156102d857600080fd5b6102e0610998565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b341561032d57600080fd5b610393600480803590602001909190803590602001909190803573ffffffffffffffffffffffffffffffffffffffff169060200190919080357bffffffffffffffffffffffffffffffffffffffffffffffffffffffff19169060200190919050506109bd565b005b34156103a057600080fd5b6103a8610abf565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b34156103f557600080fd5b610445600480803590602001908201803590602001908080601f01602080910402602001604051908101604052809392919081815260200183838082843782019150505050505091905050610ae5565b60405180868152602001856000191660001916815260200184600019166000191681526020018373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001827bffffffffffffffffffffffffffffffffffffffffffffffffffffffff19167bffffffffffffffffffffffffffffffffffffffffffffffffffffffff191681526020019550505050505060405180910390f35b34156104fc57600080fd5b610528600480803573ffffffffffffffffffffffffffffffffffffffff16906020019091905050610bf9565b005b6000806000806000806003600088815260200190815260200160002090508060000154955080600101549450806002015493508060030160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1692508060030160149054906101000a90047c01000000000000000000000000000000000000000000000000000000000291505091939590929450565b6000806002846040518082805190602001908083835b6020831015156105f957805182526020820191506020810190506020830392506105d4565b6001836020036101000a03801982511681845116808217855250505050505090500191505090815260200160405180910390205414151561063957600080fd5b60016004600082825401925050819055506004546002846040518082805190602001908083835b6020831015156106855780518252602082019150602081019050602083039250610660565b6001836020036101000a03801982511681845116808217855250505050505090500191505090815260200160405180910390208190555060036000600454815260200190815260200160002090508581600001819055508481600101816000191690555083816002018160001916905550338160030160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550818160030160146101000a81548163ffffffff02191690837c010000000000000000000000000000000000000000000000000000000090040217905550505050505050565b60006002826040518082805190602001908083835b6020831015156107b85780518252602082019150602081019050602083039250610793565b6001836020036101000a0380198251168184511680821785525050505050509050019150509081526020016040518091039020549050919050565b600160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff1614151561084f57600080fd5b600160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff166000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e060405160405180910390a3600160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff166000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055506000600160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550565b60045481565b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b60008060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff16141515610a1a57600080fd5b600360008681526020019081526020016000209050838160000181905550828160030160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550818160030160146101000a81548163ffffffff02191690837c0100000000000000000000000000000000000000000000000000000000900402179055505050505050565b600160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b60008060008060008060006002886040518082805190602001908083835b602083101515610b285780518252602082019150602081019050602083039250610b03565b6001836020036101000a03801982511681845116808217855250505050505090500191505090815260200160405180910390205491506000821415610b6c57610bee565b6003600083815260200190815260200160002090508060000154965080600101549550806002015494508060030160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1693508060030160149054906101000a90047c01000000000000000000000000000000000000000000000000000000000292505b505091939590929450565b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff16141515610c5457600080fd5b80600160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550505600a165627a7a72305820d1791067bb8aed08f74ed95173bf0cb25e128c56465132127b9673b22ce7ef150029",
+  "sourceMap": "49:2378:1:-;;;567:52;;;;;;;;210:10:0;202:5;;:18;;;;;;;;;;;;;;;;;;613:1:1;600:10;:14;;;;49:2378;;;;;;",
+  "deployedSourceMap": "49:2378:1:-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1290:380;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;623:529;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1156:130;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;395:168:0;;;;;;;;;;;;;;318:22:1;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;45:20:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;2176:249:1;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;69:23:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1674:497:1;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;298:94:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;1290:380:1;1349:10;1361:22;1385:18;1405:21;1428:16;1452:10;1465:7;:17;1473:8;1465:17;;;;;;;;;;;1452:30;;1497:6;:12;;;1489:20;;1532:6;:21;;;1515:38;;1572:6;:17;;;1559:30;;1611:6;:20;;;;;;;;;;;;1595:36;;1649:6;:16;;;;;;;;;;;;1637:28;;1290:380;;;;;;;;:::o;623:529::-;935:10;852:1;815:9;825:22;815:33;;;;;;;;;;;;;36:153:-1;66:2;61:3;58:2;51:6;36:153;;;182:3;176:5;171:3;164:6;98:2;93:3;89;82:19;;123:2;118:3;114;107:19;;148:2;143:3;139;132:19;;36:153;;;274:1;267:3;263:2;259:3;254;250;246;315:4;311:3;305;299:5;295:3;356:4;350:3;344:5;340:3;389:7;380;377:2;372:3;365:6;3:399;;;;;;;;;;;;;;;;;;;;;;;;;815:38:1;807:47;;;;;;;;875:1;861:10;;:15;;;;;;;;;;;918:10;;882:9;892:22;882:33;;;;;;;;;;;;;36:153:-1;66:2;61:3;58:2;51:6;36:153;;;182:3;176:5;171:3;164:6;98:2;93:3;89;82:19;;123:2;118:3;114;107:19;;148:2;143:3;139;132:19;;36:153;;;274:1;267:3;263:2;259:3;254;250;246;315:4;311:3;305;299:5;295:3;356:4;350:3;344:5;340:3;389:7;380;377:2;372:3;365:6;3:399;;;;;;;;;;;;;;;;;;;;;;;;882:46:1;;;;948:7;:19;956:10;;948:19;;;;;;;;;;;935:32;;989:5;974:6;:12;;:20;;;;1024:14;1000:6;:21;;:38;;;;;;;1064:10;1044:6;:17;;:30;;;;;;;1103:10;1080:6;:20;;;:33;;;;;;;;;;;;;;;;;;1138:9;1119:6;:16;;;:28;;;;;;;;;;;;;;;;;;;623:529;;;;;;:::o;1156:130::-;1229:4;1248:9;1258:22;1248:33;;;;;;;;;;;;;36:153:-1;66:2;61:3;58:2;51:6;36:153;;;182:3;176:5;171:3;164:6;98:2;93:3;89;82:19;;123:2;118:3;114;107:19;;148:2;143:3;139;132:19;;36:153;;;274:1;267:3;263:2;259:3;254;250;246;315:4;311:3;305;299:5;295:3;356:4;350:3;344:5;340:3;389:7;380;377:2;372:3;365:6;3:399;;;;;;;;;;;;;;;;;;;;;;;;;1241:40:1;;1156:130;;;:::o;395:168:0:-;457:8;;;;;;;;;;;443:22;;:10;:22;;;435:31;;;;;;;;500:8;;;;;;;;;;;472:37;;493:5;;;;;;;;;;;472:37;;;;;;;;;;;;523:8;;;;;;;;;;;515:5;;:16;;;;;;;;;;;;;;;;;;556:1;537:8;;:21;;;;;;;;;;;;;;;;;;395:168::o;318:22:1:-;;;;:::o;45:20:0:-;;;;;;;;;;;;;:::o;2176:249:1:-;2287:10;276:5:0;;;;;;;;;;;262:19;;:10;:19;;;254:28;;;;;;;;2300:7:1;:17;2308:8;2300:17;;;;;;;;;;;2287:30;;2339:5;2324:6;:12;;:20;;;;2373:13;2350:6;:20;;;:36;;;;;;;;;;;;;;;;;;2411:9;2392:6;:16;;;:28;;;;;;;;;;;;;;;;;;;2176:249;;;;;:::o;69:23:0:-;;;;;;;;;;;;;:::o;1674:497:1:-;1751:10;1763:22;1787:18;1807:21;1830:16;1854:12;1953:10;1869:9;1879:22;1869:33;;;;;;;;;;;;;36:153:-1;66:2;61:3;58:2;51:6;36:153;;;182:3;176:5;171:3;164:6;98:2;93:3;89;82:19;;123:2;118:3;114;107:19;;148:2;143:3;139;132:19;;36:153;;;274:1;267:3;263:2;259:3;254;250;246;315:4;311:3;305;299:5;295:3;356:4;350:3;344:5;340:3;389:7;380;377:2;372:3;365:6;3:399;;;;;;;;;;;;;;;;;;;;;;;;;1854:48:1;;1924:1;1912:8;:13;1908:40;;;1935:7;;1908:40;1966:7;:17;1974:8;1966:17;;;;;;;;;;;1953:30;;1998:6;:12;;;1990:20;;2033:6;:21;;;2016:38;;2073:6;:17;;;2060:30;;2112:6;:20;;;;;;;;;;;;2096:36;;2150:6;:16;;;;;;;;;;;;2138:28;;1674:497;;;;;;;;;;:::o;298:94:0:-;276:5;;;;;;;;;;;262:19;;:10;:19;;;254:28;;;;;;;;378:9;367:8;;:20;;;;;;;;;;;;;;;;;;298:94;:::o",
+  "source": "pragma solidity ^0.4.19;\n\nimport \"./Owned.sol\";\n\ncontract Registry is Owned {\n\n  struct ModuleForSale {\n      uint price;\n      bytes32 sellerUsername;\n      bytes32 moduleName;\n      address sellerAddress;\n      bytes4 licenseId;\n  }\n\n  mapping(string => uint) moduleIds;\n  mapping(uint => ModuleForSale) modules;\n\n  uint public numModules;\n\n  // ------------------------------------------------------------------------\n  // Constructor, establishes ownership because contract is owned\n  // ------------------------------------------------------------------------\n  function Registry() public {\n    numModules = 0;\n  }\n\n  function listModule(uint price, bytes32 sellerUsername, bytes32 moduleName, string usernameAndProjectName, bytes4 licenseId) public {\n    // make sure the name isn't already taken\n    require(moduleIds[usernameAndProjectName] == 0);\n\n    numModules += 1;\n    moduleIds[usernameAndProjectName] = numModules;\n\n    var module = modules[numModules];\n\n    module.price = price;\n    module.sellerUsername = sellerUsername;\n    module.moduleName = moduleName;\n    module.sellerAddress = msg.sender;\n    module.licenseId = licenseId;\n  }\n\n  function getModuleId(string usernameAndProjectName) public view returns (uint) {\n    return moduleIds[usernameAndProjectName];\n  }\n\n  function getModuleById(uint moduleId) public view returns (uint price, bytes32 sellerUsername, bytes32 moduleName, address sellerAddress, bytes4 licenseId) {\n    var module = modules[moduleId];\n\n    price = module.price;\n    sellerUsername = module.sellerUsername;\n    moduleName = module.moduleName;\n    sellerAddress = module.sellerAddress;\n    licenseId = module.licenseId;\n  }\n\n  function getModuleByName(string usernameAndProjectName) public view returns (uint price, bytes32 sellerUsername, bytes32 moduleName, address sellerAddress, bytes4 licenseId) {\n    var moduleId = moduleIds[usernameAndProjectName];\n    if (moduleId == 0) {\n      return;\n    }\n    var module = modules[moduleId];\n\n    price = module.price;\n    sellerUsername = module.sellerUsername;\n    moduleName = module.moduleName;\n    sellerAddress = module.sellerAddress;\n    licenseId = module.licenseId;\n  }\n\n\n  function editModule(uint moduleId, uint price, address sellerAddress, bytes4 licenseId) public onlyOwner {\n    var module = modules[moduleId];\n\n    module.price = price;\n    module.sellerAddress = sellerAddress;\n    module.licenseId = licenseId;\n  }\n}",
+  "sourcePath": "/Users/chris/Documents/WorkStuff/Deconet/Blockchain/DeconetToken/contracts/Registry.sol",
+  "ast": {
+    "attributes": {
+      "absolutePath": "/Users/chris/Documents/WorkStuff/Deconet/Blockchain/DeconetToken/contracts/Registry.sol",
+      "exportedSymbols": {
+        "Registry": [
+          325
+        ]
+      }
+    },
+    "children": [
+      {
+        "attributes": {
+          "literals": [
+            "solidity",
+            "^",
+            "0.4",
+            ".19"
+          ]
+        },
+        "id": 72,
+        "name": "PragmaDirective",
+        "src": "0:24:1"
+      },
+      {
+        "attributes": {
+          "SourceUnit": 71,
+          "absolutePath": "/Users/chris/Documents/WorkStuff/Deconet/Blockchain/DeconetToken/contracts/Owned.sol",
+          "file": "./Owned.sol",
+          "scope": 326,
+          "symbolAliases": [
+            null
+          ],
+          "unitAlias": ""
+        },
+        "id": 73,
+        "name": "ImportDirective",
+        "src": "26:21:1"
+      },
+      {
+        "attributes": {
+          "contractDependencies": [
+            70
+          ],
+          "contractKind": "contract",
+          "documentation": null,
+          "fullyImplemented": true,
+          "linearizedBaseContracts": [
+            325,
+            70
+          ],
+          "name": "Registry",
+          "scope": 326
+        },
+        "children": [
+          {
+            "attributes": {
+              "arguments": [
+                null
+              ]
+            },
+            "children": [
+              {
+                "attributes": {
+                  "contractScope": null,
+                  "name": "Owned",
+                  "referencedDeclaration": 70,
+                  "type": "contract Owned"
+                },
+                "id": 74,
+                "name": "UserDefinedTypeName",
+                "src": "70:5:1"
+              }
+            ],
+            "id": 75,
+            "name": "InheritanceSpecifier",
+            "src": "70:5:1"
+          },
+          {
+            "attributes": {
+              "canonicalName": "Registry.ModuleForSale",
+              "name": "ModuleForSale",
+              "scope": 325,
+              "visibility": "public"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "constant": false,
+                  "name": "price",
+                  "scope": 86,
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "type": "uint256",
+                  "value": null,
+                  "visibility": "internal"
+                },
+                "children": [
+                  {
+                    "attributes": {
+                      "name": "uint",
+                      "type": "uint256"
+                    },
+                    "id": 76,
+                    "name": "ElementaryTypeName",
+                    "src": "110:4:1"
+                  }
+                ],
+                "id": 77,
+                "name": "VariableDeclaration",
+                "src": "110:10:1"
+              },
+              {
+                "attributes": {
+                  "constant": false,
+                  "name": "sellerUsername",
+                  "scope": 86,
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "type": "bytes32",
+                  "value": null,
+                  "visibility": "internal"
+                },
+                "children": [
+                  {
+                    "attributes": {
+                      "name": "bytes32",
+                      "type": "bytes32"
+                    },
+                    "id": 78,
+                    "name": "ElementaryTypeName",
+                    "src": "128:7:1"
+                  }
+                ],
+                "id": 79,
+                "name": "VariableDeclaration",
+                "src": "128:22:1"
+              },
+              {
+                "attributes": {
+                  "constant": false,
+                  "name": "moduleName",
+                  "scope": 86,
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "type": "bytes32",
+                  "value": null,
+                  "visibility": "internal"
+                },
+                "children": [
+                  {
+                    "attributes": {
+                      "name": "bytes32",
+                      "type": "bytes32"
+                    },
+                    "id": 80,
+                    "name": "ElementaryTypeName",
+                    "src": "158:7:1"
+                  }
+                ],
+                "id": 81,
+                "name": "VariableDeclaration",
+                "src": "158:18:1"
+              },
+              {
+                "attributes": {
+                  "constant": false,
+                  "name": "sellerAddress",
+                  "scope": 86,
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "type": "address",
+                  "value": null,
+                  "visibility": "internal"
+                },
+                "children": [
+                  {
+                    "attributes": {
+                      "name": "address",
+                      "type": "address"
+                    },
+                    "id": 82,
+                    "name": "ElementaryTypeName",
+                    "src": "184:7:1"
+                  }
+                ],
+                "id": 83,
+                "name": "VariableDeclaration",
+                "src": "184:21:1"
+              },
+              {
+                "attributes": {
+                  "constant": false,
+                  "name": "licenseId",
+                  "scope": 86,
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "type": "bytes4",
+                  "value": null,
+                  "visibility": "internal"
+                },
+                "children": [
+                  {
+                    "attributes": {
+                      "name": "bytes4",
+                      "type": "bytes4"
+                    },
+                    "id": 84,
+                    "name": "ElementaryTypeName",
+                    "src": "213:6:1"
+                  }
+                ],
+                "id": 85,
+                "name": "VariableDeclaration",
+                "src": "213:16:1"
+              }
+            ],
+            "id": 86,
+            "name": "StructDefinition",
+            "src": "81:153:1"
+          },
+          {
+            "attributes": {
+              "constant": false,
+              "name": "moduleIds",
+              "scope": 325,
+              "stateVariable": true,
+              "storageLocation": "default",
+              "type": "mapping(string memory => uint256)",
+              "value": null,
+              "visibility": "internal"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "type": "mapping(string memory => uint256)"
+                },
+                "children": [
+                  {
+                    "attributes": {
+                      "name": "string",
+                      "type": "string storage pointer"
+                    },
+                    "id": 87,
+                    "name": "ElementaryTypeName",
+                    "src": "246:6:1"
+                  },
+                  {
+                    "attributes": {
+                      "name": "uint",
+                      "type": "uint256"
+                    },
+                    "id": 88,
+                    "name": "ElementaryTypeName",
+                    "src": "256:4:1"
+                  }
+                ],
+                "id": 89,
+                "name": "Mapping",
+                "src": "238:23:1"
+              }
+            ],
+            "id": 90,
+            "name": "VariableDeclaration",
+            "src": "238:33:1"
+          },
+          {
+            "attributes": {
+              "constant": false,
+              "name": "modules",
+              "scope": 325,
+              "stateVariable": true,
+              "storageLocation": "default",
+              "type": "mapping(uint256 => struct Registry.ModuleForSale storage ref)",
+              "value": null,
+              "visibility": "internal"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "type": "mapping(uint256 => struct Registry.ModuleForSale storage ref)"
+                },
+                "children": [
+                  {
+                    "attributes": {
+                      "name": "uint",
+                      "type": "uint256"
+                    },
+                    "id": 91,
+                    "name": "ElementaryTypeName",
+                    "src": "283:4:1"
+                  },
+                  {
+                    "attributes": {
+                      "contractScope": null,
+                      "name": "ModuleForSale",
+                      "referencedDeclaration": 86,
+                      "type": "struct Registry.ModuleForSale storage pointer"
+                    },
+                    "id": 92,
+                    "name": "UserDefinedTypeName",
+                    "src": "291:13:1"
+                  }
+                ],
+                "id": 93,
+                "name": "Mapping",
+                "src": "275:30:1"
+              }
+            ],
+            "id": 94,
+            "name": "VariableDeclaration",
+            "src": "275:38:1"
+          },
+          {
+            "attributes": {
+              "constant": false,
+              "name": "numModules",
+              "scope": 325,
+              "stateVariable": true,
+              "storageLocation": "default",
+              "type": "uint256",
+              "value": null,
+              "visibility": "public"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "name": "uint",
+                  "type": "uint256"
+                },
+                "id": 95,
+                "name": "ElementaryTypeName",
+                "src": "318:4:1"
+              }
+            ],
+            "id": 96,
+            "name": "VariableDeclaration",
+            "src": "318:22:1"
+          },
+          {
+            "attributes": {
+              "constant": false,
+              "implemented": true,
+              "isConstructor": true,
+              "modifiers": [
+                null
+              ],
+              "name": "Registry",
+              "payable": false,
+              "scope": 325,
+              "stateMutability": "nonpayable",
+              "superFunction": null,
+              "visibility": "public"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "parameters": [
+                    null
+                  ]
+                },
+                "children": [],
+                "id": 97,
+                "name": "ParameterList",
+                "src": "584:2:1"
+              },
+              {
+                "attributes": {
+                  "parameters": [
+                    null
+                  ]
+                },
+                "children": [],
+                "id": 98,
+                "name": "ParameterList",
+                "src": "594:0:1"
+              },
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "attributes": {
+                          "argumentTypes": null,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "operator": "=",
+                          "type": "uint256"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "overloadedDeclarations": [
+                                null
+                              ],
+                              "referencedDeclaration": 96,
+                              "type": "uint256",
+                              "value": "numModules"
+                            },
+                            "id": 99,
+                            "name": "Identifier",
+                            "src": "600:10:1"
+                          },
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "hexvalue": "30",
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "lValueRequested": false,
+                              "subdenomination": null,
+                              "token": "number",
+                              "type": "int_const 0",
+                              "value": "0"
+                            },
+                            "id": 100,
+                            "name": "Literal",
+                            "src": "613:1:1"
+                          }
+                        ],
+                        "id": 101,
+                        "name": "Assignment",
+                        "src": "600:14:1"
+                      }
+                    ],
+                    "id": 102,
+                    "name": "ExpressionStatement",
+                    "src": "600:14:1"
+                  }
+                ],
+                "id": 103,
+                "name": "Block",
+                "src": "594:25:1"
+              }
+            ],
+            "id": 104,
+            "name": "FunctionDefinition",
+            "src": "567:52:1"
+          },
+          {
+            "attributes": {
+              "constant": false,
+              "implemented": true,
+              "isConstructor": false,
+              "modifiers": [
+                null
+              ],
+              "name": "listModule",
+              "payable": false,
+              "scope": 325,
+              "stateMutability": "nonpayable",
+              "superFunction": null,
+              "visibility": "public"
+            },
+            "children": [
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "price",
+                      "scope": 172,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint",
+                          "type": "uint256"
+                        },
+                        "id": 105,
+                        "name": "ElementaryTypeName",
+                        "src": "643:4:1"
+                      }
+                    ],
+                    "id": 106,
+                    "name": "VariableDeclaration",
+                    "src": "643:10:1"
+                  },
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "sellerUsername",
+                      "scope": 172,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "bytes32",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "bytes32",
+                          "type": "bytes32"
+                        },
+                        "id": 107,
+                        "name": "ElementaryTypeName",
+                        "src": "655:7:1"
+                      }
+                    ],
+                    "id": 108,
+                    "name": "VariableDeclaration",
+                    "src": "655:22:1"
+                  },
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "moduleName",
+                      "scope": 172,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "bytes32",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "bytes32",
+                          "type": "bytes32"
+                        },
+                        "id": 109,
+                        "name": "ElementaryTypeName",
+                        "src": "679:7:1"
+                      }
+                    ],
+                    "id": 110,
+                    "name": "VariableDeclaration",
+                    "src": "679:18:1"
+                  },
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "usernameAndProjectName",
+                      "scope": 172,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "string memory",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "string",
+                          "type": "string storage pointer"
+                        },
+                        "id": 111,
+                        "name": "ElementaryTypeName",
+                        "src": "699:6:1"
+                      }
+                    ],
+                    "id": 112,
+                    "name": "VariableDeclaration",
+                    "src": "699:29:1"
+                  },
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "licenseId",
+                      "scope": 172,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "bytes4",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "bytes4",
+                          "type": "bytes4"
+                        },
+                        "id": 113,
+                        "name": "ElementaryTypeName",
+                        "src": "730:6:1"
+                      }
+                    ],
+                    "id": 114,
+                    "name": "VariableDeclaration",
+                    "src": "730:16:1"
+                  }
+                ],
+                "id": 115,
+                "name": "ParameterList",
+                "src": "642:105:1"
+              },
+              {
+                "attributes": {
+                  "parameters": [
+                    null
+                  ]
+                },
+                "children": [],
+                "id": 116,
+                "name": "ParameterList",
+                "src": "755:0:1"
+              },
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "attributes": {
+                          "argumentTypes": null,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "isStructConstructorCall": false,
+                          "lValueRequested": false,
+                          "names": [
+                            null
+                          ],
+                          "type": "tuple()",
+                          "type_conversion": false
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "argumentTypes": [
+                                {
+                                  "typeIdentifier": "t_bool",
+                                  "typeString": "bool"
+                                }
+                              ],
+                              "overloadedDeclarations": [
+                                null
+                              ],
+                              "referencedDeclaration": 340,
+                              "type": "function (bool) pure",
+                              "value": "require"
+                            },
+                            "id": 117,
+                            "name": "Identifier",
+                            "src": "807:7:1"
+                          },
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "commonType": {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              },
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "operator": "==",
+                              "type": "bool"
+                            },
+                            "children": [
+                              {
+                                "attributes": {
+                                  "argumentTypes": null,
+                                  "isConstant": false,
+                                  "isLValue": true,
+                                  "isPure": false,
+                                  "lValueRequested": false,
+                                  "type": "uint256"
+                                },
+                                "children": [
+                                  {
+                                    "attributes": {
+                                      "argumentTypes": null,
+                                      "overloadedDeclarations": [
+                                        null
+                                      ],
+                                      "referencedDeclaration": 90,
+                                      "type": "mapping(string memory => uint256)",
+                                      "value": "moduleIds"
+                                    },
+                                    "id": 118,
+                                    "name": "Identifier",
+                                    "src": "815:9:1"
+                                  },
+                                  {
+                                    "attributes": {
+                                      "argumentTypes": null,
+                                      "overloadedDeclarations": [
+                                        null
+                                      ],
+                                      "referencedDeclaration": 112,
+                                      "type": "string memory",
+                                      "value": "usernameAndProjectName"
+                                    },
+                                    "id": 119,
+                                    "name": "Identifier",
+                                    "src": "825:22:1"
+                                  }
+                                ],
+                                "id": 120,
+                                "name": "IndexAccess",
+                                "src": "815:33:1"
+                              },
+                              {
+                                "attributes": {
+                                  "argumentTypes": null,
+                                  "hexvalue": "30",
+                                  "isConstant": false,
+                                  "isLValue": false,
+                                  "isPure": true,
+                                  "lValueRequested": false,
+                                  "subdenomination": null,
+                                  "token": "number",
+                                  "type": "int_const 0",
+                                  "value": "0"
+                                },
+                                "id": 121,
+                                "name": "Literal",
+                                "src": "852:1:1"
+                              }
+                            ],
+                            "id": 122,
+                            "name": "BinaryOperation",
+                            "src": "815:38:1"
+                          }
+                        ],
+                        "id": 123,
+                        "name": "FunctionCall",
+                        "src": "807:47:1"
+                      }
+                    ],
+                    "id": 124,
+                    "name": "ExpressionStatement",
+                    "src": "807:47:1"
+                  },
+                  {
+                    "children": [
+                      {
+                        "attributes": {
+                          "argumentTypes": null,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "operator": "+=",
+                          "type": "uint256"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "overloadedDeclarations": [
+                                null
+                              ],
+                              "referencedDeclaration": 96,
+                              "type": "uint256",
+                              "value": "numModules"
+                            },
+                            "id": 125,
+                            "name": "Identifier",
+                            "src": "861:10:1"
+                          },
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "hexvalue": "31",
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "lValueRequested": false,
+                              "subdenomination": null,
+                              "token": "number",
+                              "type": "int_const 1",
+                              "value": "1"
+                            },
+                            "id": 126,
+                            "name": "Literal",
+                            "src": "875:1:1"
+                          }
+                        ],
+                        "id": 127,
+                        "name": "Assignment",
+                        "src": "861:15:1"
+                      }
+                    ],
+                    "id": 128,
+                    "name": "ExpressionStatement",
+                    "src": "861:15:1"
+                  },
+                  {
+                    "children": [
+                      {
+                        "attributes": {
+                          "argumentTypes": null,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "operator": "=",
+                          "type": "uint256"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "isConstant": false,
+                              "isLValue": true,
+                              "isPure": false,
+                              "lValueRequested": true,
+                              "type": "uint256"
+                            },
+                            "children": [
+                              {
+                                "attributes": {
+                                  "argumentTypes": null,
+                                  "overloadedDeclarations": [
+                                    null
+                                  ],
+                                  "referencedDeclaration": 90,
+                                  "type": "mapping(string memory => uint256)",
+                                  "value": "moduleIds"
+                                },
+                                "id": 129,
+                                "name": "Identifier",
+                                "src": "882:9:1"
+                              },
+                              {
+                                "attributes": {
+                                  "argumentTypes": null,
+                                  "overloadedDeclarations": [
+                                    null
+                                  ],
+                                  "referencedDeclaration": 112,
+                                  "type": "string memory",
+                                  "value": "usernameAndProjectName"
+                                },
+                                "id": 130,
+                                "name": "Identifier",
+                                "src": "892:22:1"
+                              }
+                            ],
+                            "id": 131,
+                            "name": "IndexAccess",
+                            "src": "882:33:1"
+                          },
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "overloadedDeclarations": [
+                                null
+                              ],
+                              "referencedDeclaration": 96,
+                              "type": "uint256",
+                              "value": "numModules"
+                            },
+                            "id": 132,
+                            "name": "Identifier",
+                            "src": "918:10:1"
+                          }
+                        ],
+                        "id": 133,
+                        "name": "Assignment",
+                        "src": "882:46:1"
+                      }
+                    ],
+                    "id": 134,
+                    "name": "ExpressionStatement",
+                    "src": "882:46:1"
+                  },
+                  {
+                    "attributes": {
+                      "assignments": [
+                        135
+                      ]
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "constant": false,
+                          "name": "module",
+                          "scope": 172,
+                          "stateVariable": false,
+                          "storageLocation": "default",
+                          "type": "struct Registry.ModuleForSale storage pointer",
+                          "typeName": null,
+                          "value": null,
+                          "visibility": "internal"
+                        },
+                        "children": [],
+                        "id": 135,
+                        "name": "VariableDeclaration",
+                        "src": "935:10:1"
+                      },
+                      {
+                        "attributes": {
+                          "argumentTypes": null,
+                          "isConstant": false,
+                          "isLValue": true,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "type": "struct Registry.ModuleForSale storage ref"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "overloadedDeclarations": [
+                                null
+                              ],
+                              "referencedDeclaration": 94,
+                              "type": "mapping(uint256 => struct Registry.ModuleForSale storage ref)",
+                              "value": "modules"
+                            },
+                            "id": 136,
+                            "name": "Identifier",
+                            "src": "948:7:1"
+                          },
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "overloadedDeclarations": [
+                                null
+                              ],
+                              "referencedDeclaration": 96,
+                              "type": "uint256",
+                              "value": "numModules"
+                            },
+                            "id": 137,
+                            "name": "Identifier",
+                            "src": "956:10:1"
+                          }
+                        ],
+                        "id": 138,
+                        "name": "IndexAccess",
+                        "src": "948:19:1"
+                      }
+                    ],
+                    "id": 139,
+                    "name": "VariableDeclarationStatement",
+                    "src": "935:32:1"
+                  },
+                  {
+                    "children": [
+                      {
+                        "attributes": {
+                          "argumentTypes": null,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "operator": "=",
+                          "type": "uint256"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "isConstant": false,
+                              "isLValue": true,
+                              "isPure": false,
+                              "lValueRequested": true,
+                              "member_name": "price",
+                              "referencedDeclaration": 77,
+                              "type": "uint256"
+                            },
+                            "children": [
+                              {
+                                "attributes": {
+                                  "argumentTypes": null,
+                                  "overloadedDeclarations": [
+                                    null
+                                  ],
+                                  "referencedDeclaration": 135,
+                                  "type": "struct Registry.ModuleForSale storage pointer",
+                                  "value": "module"
+                                },
+                                "id": 140,
+                                "name": "Identifier",
+                                "src": "974:6:1"
+                              }
+                            ],
+                            "id": 142,
+                            "name": "MemberAccess",
+                            "src": "974:12:1"
+                          },
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "overloadedDeclarations": [
+                                null
+                              ],
+                              "referencedDeclaration": 106,
+                              "type": "uint256",
+                              "value": "price"
+                            },
+                            "id": 143,
+                            "name": "Identifier",
+                            "src": "989:5:1"
+                          }
+                        ],
+                        "id": 144,
+                        "name": "Assignment",
+                        "src": "974:20:1"
+                      }
+                    ],
+                    "id": 145,
+                    "name": "ExpressionStatement",
+                    "src": "974:20:1"
+                  },
+                  {
+                    "children": [
+                      {
+                        "attributes": {
+                          "argumentTypes": null,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "operator": "=",
+                          "type": "bytes32"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "isConstant": false,
+                              "isLValue": true,
+                              "isPure": false,
+                              "lValueRequested": true,
+                              "member_name": "sellerUsername",
+                              "referencedDeclaration": 79,
+                              "type": "bytes32"
+                            },
+                            "children": [
+                              {
+                                "attributes": {
+                                  "argumentTypes": null,
+                                  "overloadedDeclarations": [
+                                    null
+                                  ],
+                                  "referencedDeclaration": 135,
+                                  "type": "struct Registry.ModuleForSale storage pointer",
+                                  "value": "module"
+                                },
+                                "id": 146,
+                                "name": "Identifier",
+                                "src": "1000:6:1"
+                              }
+                            ],
+                            "id": 148,
+                            "name": "MemberAccess",
+                            "src": "1000:21:1"
+                          },
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "overloadedDeclarations": [
+                                null
+                              ],
+                              "referencedDeclaration": 108,
+                              "type": "bytes32",
+                              "value": "sellerUsername"
+                            },
+                            "id": 149,
+                            "name": "Identifier",
+                            "src": "1024:14:1"
+                          }
+                        ],
+                        "id": 150,
+                        "name": "Assignment",
+                        "src": "1000:38:1"
+                      }
+                    ],
+                    "id": 151,
+                    "name": "ExpressionStatement",
+                    "src": "1000:38:1"
+                  },
+                  {
+                    "children": [
+                      {
+                        "attributes": {
+                          "argumentTypes": null,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "operator": "=",
+                          "type": "bytes32"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "isConstant": false,
+                              "isLValue": true,
+                              "isPure": false,
+                              "lValueRequested": true,
+                              "member_name": "moduleName",
+                              "referencedDeclaration": 81,
+                              "type": "bytes32"
+                            },
+                            "children": [
+                              {
+                                "attributes": {
+                                  "argumentTypes": null,
+                                  "overloadedDeclarations": [
+                                    null
+                                  ],
+                                  "referencedDeclaration": 135,
+                                  "type": "struct Registry.ModuleForSale storage pointer",
+                                  "value": "module"
+                                },
+                                "id": 152,
+                                "name": "Identifier",
+                                "src": "1044:6:1"
+                              }
+                            ],
+                            "id": 154,
+                            "name": "MemberAccess",
+                            "src": "1044:17:1"
+                          },
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "overloadedDeclarations": [
+                                null
+                              ],
+                              "referencedDeclaration": 110,
+                              "type": "bytes32",
+                              "value": "moduleName"
+                            },
+                            "id": 155,
+                            "name": "Identifier",
+                            "src": "1064:10:1"
+                          }
+                        ],
+                        "id": 156,
+                        "name": "Assignment",
+                        "src": "1044:30:1"
+                      }
+                    ],
+                    "id": 157,
+                    "name": "ExpressionStatement",
+                    "src": "1044:30:1"
+                  },
+                  {
+                    "children": [
+                      {
+                        "attributes": {
+                          "argumentTypes": null,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "operator": "=",
+                          "type": "address"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "isConstant": false,
+                              "isLValue": true,
+                              "isPure": false,
+                              "lValueRequested": true,
+                              "member_name": "sellerAddress",
+                              "referencedDeclaration": 83,
+                              "type": "address"
+                            },
+                            "children": [
+                              {
+                                "attributes": {
+                                  "argumentTypes": null,
+                                  "overloadedDeclarations": [
+                                    null
+                                  ],
+                                  "referencedDeclaration": 135,
+                                  "type": "struct Registry.ModuleForSale storage pointer",
+                                  "value": "module"
+                                },
+                                "id": 158,
+                                "name": "Identifier",
+                                "src": "1080:6:1"
+                              }
+                            ],
+                            "id": 160,
+                            "name": "MemberAccess",
+                            "src": "1080:20:1"
+                          },
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "member_name": "sender",
+                              "referencedDeclaration": null,
+                              "type": "address"
+                            },
+                            "children": [
+                              {
+                                "attributes": {
+                                  "argumentTypes": null,
+                                  "overloadedDeclarations": [
+                                    null
+                                  ],
+                                  "referencedDeclaration": 337,
+                                  "type": "msg",
+                                  "value": "msg"
+                                },
+                                "id": 161,
+                                "name": "Identifier",
+                                "src": "1103:3:1"
+                              }
+                            ],
+                            "id": 162,
+                            "name": "MemberAccess",
+                            "src": "1103:10:1"
+                          }
+                        ],
+                        "id": 163,
+                        "name": "Assignment",
+                        "src": "1080:33:1"
+                      }
+                    ],
+                    "id": 164,
+                    "name": "ExpressionStatement",
+                    "src": "1080:33:1"
+                  },
+                  {
+                    "children": [
+                      {
+                        "attributes": {
+                          "argumentTypes": null,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "operator": "=",
+                          "type": "bytes4"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "isConstant": false,
+                              "isLValue": true,
+                              "isPure": false,
+                              "lValueRequested": true,
+                              "member_name": "licenseId",
+                              "referencedDeclaration": 85,
+                              "type": "bytes4"
+                            },
+                            "children": [
+                              {
+                                "attributes": {
+                                  "argumentTypes": null,
+                                  "overloadedDeclarations": [
+                                    null
+                                  ],
+                                  "referencedDeclaration": 135,
+                                  "type": "struct Registry.ModuleForSale storage pointer",
+                                  "value": "module"
+                                },
+                                "id": 165,
+                                "name": "Identifier",
+                                "src": "1119:6:1"
+                              }
+                            ],
+                            "id": 167,
+                            "name": "MemberAccess",
+                            "src": "1119:16:1"
+                          },
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "overloadedDeclarations": [
+                                null
+                              ],
+                              "referencedDeclaration": 114,
+                              "type": "bytes4",
+                              "value": "licenseId"
+                            },
+                            "id": 168,
+                            "name": "Identifier",
+                            "src": "1138:9:1"
+                          }
+                        ],
+                        "id": 169,
+                        "name": "Assignment",
+                        "src": "1119:28:1"
+                      }
+                    ],
+                    "id": 170,
+                    "name": "ExpressionStatement",
+                    "src": "1119:28:1"
+                  }
+                ],
+                "id": 171,
+                "name": "Block",
+                "src": "755:397:1"
+              }
+            ],
+            "id": 172,
+            "name": "FunctionDefinition",
+            "src": "623:529:1"
+          },
+          {
+            "attributes": {
+              "constant": true,
+              "implemented": true,
+              "isConstructor": false,
+              "modifiers": [
+                null
+              ],
+              "name": "getModuleId",
+              "payable": false,
+              "scope": 325,
+              "stateMutability": "view",
+              "superFunction": null,
+              "visibility": "public"
+            },
+            "children": [
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "usernameAndProjectName",
+                      "scope": 184,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "string memory",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "string",
+                          "type": "string storage pointer"
+                        },
+                        "id": 173,
+                        "name": "ElementaryTypeName",
+                        "src": "1177:6:1"
+                      }
+                    ],
+                    "id": 174,
+                    "name": "VariableDeclaration",
+                    "src": "1177:29:1"
+                  }
+                ],
+                "id": 175,
+                "name": "ParameterList",
+                "src": "1176:31:1"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "",
+                      "scope": 184,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint",
+                          "type": "uint256"
+                        },
+                        "id": 176,
+                        "name": "ElementaryTypeName",
+                        "src": "1229:4:1"
+                      }
+                    ],
+                    "id": 177,
+                    "name": "VariableDeclaration",
+                    "src": "1229:4:1"
+                  }
+                ],
+                "id": 178,
+                "name": "ParameterList",
+                "src": "1228:6:1"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "functionReturnParameters": 178
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "argumentTypes": null,
+                          "isConstant": false,
+                          "isLValue": true,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "type": "uint256"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "overloadedDeclarations": [
+                                null
+                              ],
+                              "referencedDeclaration": 90,
+                              "type": "mapping(string memory => uint256)",
+                              "value": "moduleIds"
+                            },
+                            "id": 179,
+                            "name": "Identifier",
+                            "src": "1248:9:1"
+                          },
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "overloadedDeclarations": [
+                                null
+                              ],
+                              "referencedDeclaration": 174,
+                              "type": "string memory",
+                              "value": "usernameAndProjectName"
+                            },
+                            "id": 180,
+                            "name": "Identifier",
+                            "src": "1258:22:1"
+                          }
+                        ],
+                        "id": 181,
+                        "name": "IndexAccess",
+                        "src": "1248:33:1"
+                      }
+                    ],
+                    "id": 182,
+                    "name": "Return",
+                    "src": "1241:40:1"
+                  }
+                ],
+                "id": 183,
+                "name": "Block",
+                "src": "1235:51:1"
+              }
+            ],
+            "id": 184,
+            "name": "FunctionDefinition",
+            "src": "1156:130:1"
+          },
+          {
+            "attributes": {
+              "constant": true,
+              "implemented": true,
+              "isConstructor": false,
+              "modifiers": [
+                null
+              ],
+              "name": "getModuleById",
+              "payable": false,
+              "scope": 325,
+              "stateMutability": "view",
+              "superFunction": null,
+              "visibility": "public"
+            },
+            "children": [
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "moduleId",
+                      "scope": 230,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint",
+                          "type": "uint256"
+                        },
+                        "id": 185,
+                        "name": "ElementaryTypeName",
+                        "src": "1313:4:1"
+                      }
+                    ],
+                    "id": 186,
+                    "name": "VariableDeclaration",
+                    "src": "1313:13:1"
+                  }
+                ],
+                "id": 187,
+                "name": "ParameterList",
+                "src": "1312:15:1"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "price",
+                      "scope": 230,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint",
+                          "type": "uint256"
+                        },
+                        "id": 188,
+                        "name": "ElementaryTypeName",
+                        "src": "1349:4:1"
+                      }
+                    ],
+                    "id": 189,
+                    "name": "VariableDeclaration",
+                    "src": "1349:10:1"
+                  },
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "sellerUsername",
+                      "scope": 230,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "bytes32",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "bytes32",
+                          "type": "bytes32"
+                        },
+                        "id": 190,
+                        "name": "ElementaryTypeName",
+                        "src": "1361:7:1"
+                      }
+                    ],
+                    "id": 191,
+                    "name": "VariableDeclaration",
+                    "src": "1361:22:1"
+                  },
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "moduleName",
+                      "scope": 230,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "bytes32",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "bytes32",
+                          "type": "bytes32"
+                        },
+                        "id": 192,
+                        "name": "ElementaryTypeName",
+                        "src": "1385:7:1"
+                      }
+                    ],
+                    "id": 193,
+                    "name": "VariableDeclaration",
+                    "src": "1385:18:1"
+                  },
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "sellerAddress",
+                      "scope": 230,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "address",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "address",
+                          "type": "address"
+                        },
+                        "id": 194,
+                        "name": "ElementaryTypeName",
+                        "src": "1405:7:1"
+                      }
+                    ],
+                    "id": 195,
+                    "name": "VariableDeclaration",
+                    "src": "1405:21:1"
+                  },
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "licenseId",
+                      "scope": 230,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "bytes4",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "bytes4",
+                          "type": "bytes4"
+                        },
+                        "id": 196,
+                        "name": "ElementaryTypeName",
+                        "src": "1428:6:1"
+                      }
+                    ],
+                    "id": 197,
+                    "name": "VariableDeclaration",
+                    "src": "1428:16:1"
+                  }
+                ],
+                "id": 198,
+                "name": "ParameterList",
+                "src": "1348:97:1"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "assignments": [
+                        199
+                      ]
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "constant": false,
+                          "name": "module",
+                          "scope": 230,
+                          "stateVariable": false,
+                          "storageLocation": "default",
+                          "type": "struct Registry.ModuleForSale storage pointer",
+                          "typeName": null,
+                          "value": null,
+                          "visibility": "internal"
+                        },
+                        "children": [],
+                        "id": 199,
+                        "name": "VariableDeclaration",
+                        "src": "1452:10:1"
+                      },
+                      {
+                        "attributes": {
+                          "argumentTypes": null,
+                          "isConstant": false,
+                          "isLValue": true,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "type": "struct Registry.ModuleForSale storage ref"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "overloadedDeclarations": [
+                                null
+                              ],
+                              "referencedDeclaration": 94,
+                              "type": "mapping(uint256 => struct Registry.ModuleForSale storage ref)",
+                              "value": "modules"
+                            },
+                            "id": 200,
+                            "name": "Identifier",
+                            "src": "1465:7:1"
+                          },
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "overloadedDeclarations": [
+                                null
+                              ],
+                              "referencedDeclaration": 186,
+                              "type": "uint256",
+                              "value": "moduleId"
+                            },
+                            "id": 201,
+                            "name": "Identifier",
+                            "src": "1473:8:1"
+                          }
+                        ],
+                        "id": 202,
+                        "name": "IndexAccess",
+                        "src": "1465:17:1"
+                      }
+                    ],
+                    "id": 203,
+                    "name": "VariableDeclarationStatement",
+                    "src": "1452:30:1"
+                  },
+                  {
+                    "children": [
+                      {
+                        "attributes": {
+                          "argumentTypes": null,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "operator": "=",
+                          "type": "uint256"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "overloadedDeclarations": [
+                                null
+                              ],
+                              "referencedDeclaration": 189,
+                              "type": "uint256",
+                              "value": "price"
+                            },
+                            "id": 204,
+                            "name": "Identifier",
+                            "src": "1489:5:1"
+                          },
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "isConstant": false,
+                              "isLValue": true,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "member_name": "price",
+                              "referencedDeclaration": 77,
+                              "type": "uint256"
+                            },
+                            "children": [
+                              {
+                                "attributes": {
+                                  "argumentTypes": null,
+                                  "overloadedDeclarations": [
+                                    null
+                                  ],
+                                  "referencedDeclaration": 199,
+                                  "type": "struct Registry.ModuleForSale storage pointer",
+                                  "value": "module"
+                                },
+                                "id": 205,
+                                "name": "Identifier",
+                                "src": "1497:6:1"
+                              }
+                            ],
+                            "id": 206,
+                            "name": "MemberAccess",
+                            "src": "1497:12:1"
+                          }
+                        ],
+                        "id": 207,
+                        "name": "Assignment",
+                        "src": "1489:20:1"
+                      }
+                    ],
+                    "id": 208,
+                    "name": "ExpressionStatement",
+                    "src": "1489:20:1"
+                  },
+                  {
+                    "children": [
+                      {
+                        "attributes": {
+                          "argumentTypes": null,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "operator": "=",
+                          "type": "bytes32"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "overloadedDeclarations": [
+                                null
+                              ],
+                              "referencedDeclaration": 191,
+                              "type": "bytes32",
+                              "value": "sellerUsername"
+                            },
+                            "id": 209,
+                            "name": "Identifier",
+                            "src": "1515:14:1"
+                          },
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "isConstant": false,
+                              "isLValue": true,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "member_name": "sellerUsername",
+                              "referencedDeclaration": 79,
+                              "type": "bytes32"
+                            },
+                            "children": [
+                              {
+                                "attributes": {
+                                  "argumentTypes": null,
+                                  "overloadedDeclarations": [
+                                    null
+                                  ],
+                                  "referencedDeclaration": 199,
+                                  "type": "struct Registry.ModuleForSale storage pointer",
+                                  "value": "module"
+                                },
+                                "id": 210,
+                                "name": "Identifier",
+                                "src": "1532:6:1"
+                              }
+                            ],
+                            "id": 211,
+                            "name": "MemberAccess",
+                            "src": "1532:21:1"
+                          }
+                        ],
+                        "id": 212,
+                        "name": "Assignment",
+                        "src": "1515:38:1"
+                      }
+                    ],
+                    "id": 213,
+                    "name": "ExpressionStatement",
+                    "src": "1515:38:1"
+                  },
+                  {
+                    "children": [
+                      {
+                        "attributes": {
+                          "argumentTypes": null,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "operator": "=",
+                          "type": "bytes32"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "overloadedDeclarations": [
+                                null
+                              ],
+                              "referencedDeclaration": 193,
+                              "type": "bytes32",
+                              "value": "moduleName"
+                            },
+                            "id": 214,
+                            "name": "Identifier",
+                            "src": "1559:10:1"
+                          },
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "isConstant": false,
+                              "isLValue": true,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "member_name": "moduleName",
+                              "referencedDeclaration": 81,
+                              "type": "bytes32"
+                            },
+                            "children": [
+                              {
+                                "attributes": {
+                                  "argumentTypes": null,
+                                  "overloadedDeclarations": [
+                                    null
+                                  ],
+                                  "referencedDeclaration": 199,
+                                  "type": "struct Registry.ModuleForSale storage pointer",
+                                  "value": "module"
+                                },
+                                "id": 215,
+                                "name": "Identifier",
+                                "src": "1572:6:1"
+                              }
+                            ],
+                            "id": 216,
+                            "name": "MemberAccess",
+                            "src": "1572:17:1"
+                          }
+                        ],
+                        "id": 217,
+                        "name": "Assignment",
+                        "src": "1559:30:1"
+                      }
+                    ],
+                    "id": 218,
+                    "name": "ExpressionStatement",
+                    "src": "1559:30:1"
+                  },
+                  {
+                    "children": [
+                      {
+                        "attributes": {
+                          "argumentTypes": null,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "operator": "=",
+                          "type": "address"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "overloadedDeclarations": [
+                                null
+                              ],
+                              "referencedDeclaration": 195,
+                              "type": "address",
+                              "value": "sellerAddress"
+                            },
+                            "id": 219,
+                            "name": "Identifier",
+                            "src": "1595:13:1"
+                          },
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "isConstant": false,
+                              "isLValue": true,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "member_name": "sellerAddress",
+                              "referencedDeclaration": 83,
+                              "type": "address"
+                            },
+                            "children": [
+                              {
+                                "attributes": {
+                                  "argumentTypes": null,
+                                  "overloadedDeclarations": [
+                                    null
+                                  ],
+                                  "referencedDeclaration": 199,
+                                  "type": "struct Registry.ModuleForSale storage pointer",
+                                  "value": "module"
+                                },
+                                "id": 220,
+                                "name": "Identifier",
+                                "src": "1611:6:1"
+                              }
+                            ],
+                            "id": 221,
+                            "name": "MemberAccess",
+                            "src": "1611:20:1"
+                          }
+                        ],
+                        "id": 222,
+                        "name": "Assignment",
+                        "src": "1595:36:1"
+                      }
+                    ],
+                    "id": 223,
+                    "name": "ExpressionStatement",
+                    "src": "1595:36:1"
+                  },
+                  {
+                    "children": [
+                      {
+                        "attributes": {
+                          "argumentTypes": null,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "operator": "=",
+                          "type": "bytes4"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "overloadedDeclarations": [
+                                null
+                              ],
+                              "referencedDeclaration": 197,
+                              "type": "bytes4",
+                              "value": "licenseId"
+                            },
+                            "id": 224,
+                            "name": "Identifier",
+                            "src": "1637:9:1"
+                          },
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "isConstant": false,
+                              "isLValue": true,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "member_name": "licenseId",
+                              "referencedDeclaration": 85,
+                              "type": "bytes4"
+                            },
+                            "children": [
+                              {
+                                "attributes": {
+                                  "argumentTypes": null,
+                                  "overloadedDeclarations": [
+                                    null
+                                  ],
+                                  "referencedDeclaration": 199,
+                                  "type": "struct Registry.ModuleForSale storage pointer",
+                                  "value": "module"
+                                },
+                                "id": 225,
+                                "name": "Identifier",
+                                "src": "1649:6:1"
+                              }
+                            ],
+                            "id": 226,
+                            "name": "MemberAccess",
+                            "src": "1649:16:1"
+                          }
+                        ],
+                        "id": 227,
+                        "name": "Assignment",
+                        "src": "1637:28:1"
+                      }
+                    ],
+                    "id": 228,
+                    "name": "ExpressionStatement",
+                    "src": "1637:28:1"
+                  }
+                ],
+                "id": 229,
+                "name": "Block",
+                "src": "1446:224:1"
+              }
+            ],
+            "id": 230,
+            "name": "FunctionDefinition",
+            "src": "1290:380:1"
+          },
+          {
+            "attributes": {
+              "constant": true,
+              "implemented": true,
+              "isConstructor": false,
+              "modifiers": [
+                null
+              ],
+              "name": "getModuleByName",
+              "payable": false,
+              "scope": 325,
+              "stateMutability": "view",
+              "superFunction": null,
+              "visibility": "public"
+            },
+            "children": [
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "usernameAndProjectName",
+                      "scope": 287,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "string memory",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "string",
+                          "type": "string storage pointer"
+                        },
+                        "id": 231,
+                        "name": "ElementaryTypeName",
+                        "src": "1699:6:1"
+                      }
+                    ],
+                    "id": 232,
+                    "name": "VariableDeclaration",
+                    "src": "1699:29:1"
+                  }
+                ],
+                "id": 233,
+                "name": "ParameterList",
+                "src": "1698:31:1"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "price",
+                      "scope": 287,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint",
+                          "type": "uint256"
+                        },
+                        "id": 234,
+                        "name": "ElementaryTypeName",
+                        "src": "1751:4:1"
+                      }
+                    ],
+                    "id": 235,
+                    "name": "VariableDeclaration",
+                    "src": "1751:10:1"
+                  },
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "sellerUsername",
+                      "scope": 287,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "bytes32",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "bytes32",
+                          "type": "bytes32"
+                        },
+                        "id": 236,
+                        "name": "ElementaryTypeName",
+                        "src": "1763:7:1"
+                      }
+                    ],
+                    "id": 237,
+                    "name": "VariableDeclaration",
+                    "src": "1763:22:1"
+                  },
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "moduleName",
+                      "scope": 287,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "bytes32",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "bytes32",
+                          "type": "bytes32"
+                        },
+                        "id": 238,
+                        "name": "ElementaryTypeName",
+                        "src": "1787:7:1"
+                      }
+                    ],
+                    "id": 239,
+                    "name": "VariableDeclaration",
+                    "src": "1787:18:1"
+                  },
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "sellerAddress",
+                      "scope": 287,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "address",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "address",
+                          "type": "address"
+                        },
+                        "id": 240,
+                        "name": "ElementaryTypeName",
+                        "src": "1807:7:1"
+                      }
+                    ],
+                    "id": 241,
+                    "name": "VariableDeclaration",
+                    "src": "1807:21:1"
+                  },
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "licenseId",
+                      "scope": 287,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "bytes4",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "bytes4",
+                          "type": "bytes4"
+                        },
+                        "id": 242,
+                        "name": "ElementaryTypeName",
+                        "src": "1830:6:1"
+                      }
+                    ],
+                    "id": 243,
+                    "name": "VariableDeclaration",
+                    "src": "1830:16:1"
+                  }
+                ],
+                "id": 244,
+                "name": "ParameterList",
+                "src": "1750:97:1"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "assignments": [
+                        245
+                      ]
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "constant": false,
+                          "name": "moduleId",
+                          "scope": 287,
+                          "stateVariable": false,
+                          "storageLocation": "default",
+                          "type": "uint256",
+                          "typeName": null,
+                          "value": null,
+                          "visibility": "internal"
+                        },
+                        "children": [],
+                        "id": 245,
+                        "name": "VariableDeclaration",
+                        "src": "1854:12:1"
+                      },
+                      {
+                        "attributes": {
+                          "argumentTypes": null,
+                          "isConstant": false,
+                          "isLValue": true,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "type": "uint256"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "overloadedDeclarations": [
+                                null
+                              ],
+                              "referencedDeclaration": 90,
+                              "type": "mapping(string memory => uint256)",
+                              "value": "moduleIds"
+                            },
+                            "id": 246,
+                            "name": "Identifier",
+                            "src": "1869:9:1"
+                          },
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "overloadedDeclarations": [
+                                null
+                              ],
+                              "referencedDeclaration": 232,
+                              "type": "string memory",
+                              "value": "usernameAndProjectName"
+                            },
+                            "id": 247,
+                            "name": "Identifier",
+                            "src": "1879:22:1"
+                          }
+                        ],
+                        "id": 248,
+                        "name": "IndexAccess",
+                        "src": "1869:33:1"
+                      }
+                    ],
+                    "id": 249,
+                    "name": "VariableDeclarationStatement",
+                    "src": "1854:48:1"
+                  },
+                  {
+                    "attributes": {
+                      "falseBody": null
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "argumentTypes": null,
+                          "commonType": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          },
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "operator": "==",
+                          "type": "bool"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "overloadedDeclarations": [
+                                null
+                              ],
+                              "referencedDeclaration": 245,
+                              "type": "uint256",
+                              "value": "moduleId"
+                            },
+                            "id": 250,
+                            "name": "Identifier",
+                            "src": "1912:8:1"
+                          },
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "hexvalue": "30",
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "lValueRequested": false,
+                              "subdenomination": null,
+                              "token": "number",
+                              "type": "int_const 0",
+                              "value": "0"
+                            },
+                            "id": 251,
+                            "name": "Literal",
+                            "src": "1924:1:1"
+                          }
+                        ],
+                        "id": 252,
+                        "name": "BinaryOperation",
+                        "src": "1912:13:1"
+                      },
+                      {
+                        "children": [
+                          {
+                            "attributes": {
+                              "expression": null,
+                              "functionReturnParameters": 244
+                            },
+                            "id": 253,
+                            "name": "Return",
+                            "src": "1935:7:1"
+                          }
+                        ],
+                        "id": 254,
+                        "name": "Block",
+                        "src": "1927:21:1"
+                      }
+                    ],
+                    "id": 255,
+                    "name": "IfStatement",
+                    "src": "1908:40:1"
+                  },
+                  {
+                    "attributes": {
+                      "assignments": [
+                        256
+                      ]
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "constant": false,
+                          "name": "module",
+                          "scope": 287,
+                          "stateVariable": false,
+                          "storageLocation": "default",
+                          "type": "struct Registry.ModuleForSale storage pointer",
+                          "typeName": null,
+                          "value": null,
+                          "visibility": "internal"
+                        },
+                        "children": [],
+                        "id": 256,
+                        "name": "VariableDeclaration",
+                        "src": "1953:10:1"
+                      },
+                      {
+                        "attributes": {
+                          "argumentTypes": null,
+                          "isConstant": false,
+                          "isLValue": true,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "type": "struct Registry.ModuleForSale storage ref"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "overloadedDeclarations": [
+                                null
+                              ],
+                              "referencedDeclaration": 94,
+                              "type": "mapping(uint256 => struct Registry.ModuleForSale storage ref)",
+                              "value": "modules"
+                            },
+                            "id": 257,
+                            "name": "Identifier",
+                            "src": "1966:7:1"
+                          },
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "overloadedDeclarations": [
+                                null
+                              ],
+                              "referencedDeclaration": 245,
+                              "type": "uint256",
+                              "value": "moduleId"
+                            },
+                            "id": 258,
+                            "name": "Identifier",
+                            "src": "1974:8:1"
+                          }
+                        ],
+                        "id": 259,
+                        "name": "IndexAccess",
+                        "src": "1966:17:1"
+                      }
+                    ],
+                    "id": 260,
+                    "name": "VariableDeclarationStatement",
+                    "src": "1953:30:1"
+                  },
+                  {
+                    "children": [
+                      {
+                        "attributes": {
+                          "argumentTypes": null,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "operator": "=",
+                          "type": "uint256"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "overloadedDeclarations": [
+                                null
+                              ],
+                              "referencedDeclaration": 235,
+                              "type": "uint256",
+                              "value": "price"
+                            },
+                            "id": 261,
+                            "name": "Identifier",
+                            "src": "1990:5:1"
+                          },
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "isConstant": false,
+                              "isLValue": true,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "member_name": "price",
+                              "referencedDeclaration": 77,
+                              "type": "uint256"
+                            },
+                            "children": [
+                              {
+                                "attributes": {
+                                  "argumentTypes": null,
+                                  "overloadedDeclarations": [
+                                    null
+                                  ],
+                                  "referencedDeclaration": 256,
+                                  "type": "struct Registry.ModuleForSale storage pointer",
+                                  "value": "module"
+                                },
+                                "id": 262,
+                                "name": "Identifier",
+                                "src": "1998:6:1"
+                              }
+                            ],
+                            "id": 263,
+                            "name": "MemberAccess",
+                            "src": "1998:12:1"
+                          }
+                        ],
+                        "id": 264,
+                        "name": "Assignment",
+                        "src": "1990:20:1"
+                      }
+                    ],
+                    "id": 265,
+                    "name": "ExpressionStatement",
+                    "src": "1990:20:1"
+                  },
+                  {
+                    "children": [
+                      {
+                        "attributes": {
+                          "argumentTypes": null,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "operator": "=",
+                          "type": "bytes32"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "overloadedDeclarations": [
+                                null
+                              ],
+                              "referencedDeclaration": 237,
+                              "type": "bytes32",
+                              "value": "sellerUsername"
+                            },
+                            "id": 266,
+                            "name": "Identifier",
+                            "src": "2016:14:1"
+                          },
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "isConstant": false,
+                              "isLValue": true,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "member_name": "sellerUsername",
+                              "referencedDeclaration": 79,
+                              "type": "bytes32"
+                            },
+                            "children": [
+                              {
+                                "attributes": {
+                                  "argumentTypes": null,
+                                  "overloadedDeclarations": [
+                                    null
+                                  ],
+                                  "referencedDeclaration": 256,
+                                  "type": "struct Registry.ModuleForSale storage pointer",
+                                  "value": "module"
+                                },
+                                "id": 267,
+                                "name": "Identifier",
+                                "src": "2033:6:1"
+                              }
+                            ],
+                            "id": 268,
+                            "name": "MemberAccess",
+                            "src": "2033:21:1"
+                          }
+                        ],
+                        "id": 269,
+                        "name": "Assignment",
+                        "src": "2016:38:1"
+                      }
+                    ],
+                    "id": 270,
+                    "name": "ExpressionStatement",
+                    "src": "2016:38:1"
+                  },
+                  {
+                    "children": [
+                      {
+                        "attributes": {
+                          "argumentTypes": null,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "operator": "=",
+                          "type": "bytes32"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "overloadedDeclarations": [
+                                null
+                              ],
+                              "referencedDeclaration": 239,
+                              "type": "bytes32",
+                              "value": "moduleName"
+                            },
+                            "id": 271,
+                            "name": "Identifier",
+                            "src": "2060:10:1"
+                          },
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "isConstant": false,
+                              "isLValue": true,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "member_name": "moduleName",
+                              "referencedDeclaration": 81,
+                              "type": "bytes32"
+                            },
+                            "children": [
+                              {
+                                "attributes": {
+                                  "argumentTypes": null,
+                                  "overloadedDeclarations": [
+                                    null
+                                  ],
+                                  "referencedDeclaration": 256,
+                                  "type": "struct Registry.ModuleForSale storage pointer",
+                                  "value": "module"
+                                },
+                                "id": 272,
+                                "name": "Identifier",
+                                "src": "2073:6:1"
+                              }
+                            ],
+                            "id": 273,
+                            "name": "MemberAccess",
+                            "src": "2073:17:1"
+                          }
+                        ],
+                        "id": 274,
+                        "name": "Assignment",
+                        "src": "2060:30:1"
+                      }
+                    ],
+                    "id": 275,
+                    "name": "ExpressionStatement",
+                    "src": "2060:30:1"
+                  },
+                  {
+                    "children": [
+                      {
+                        "attributes": {
+                          "argumentTypes": null,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "operator": "=",
+                          "type": "address"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "overloadedDeclarations": [
+                                null
+                              ],
+                              "referencedDeclaration": 241,
+                              "type": "address",
+                              "value": "sellerAddress"
+                            },
+                            "id": 276,
+                            "name": "Identifier",
+                            "src": "2096:13:1"
+                          },
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "isConstant": false,
+                              "isLValue": true,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "member_name": "sellerAddress",
+                              "referencedDeclaration": 83,
+                              "type": "address"
+                            },
+                            "children": [
+                              {
+                                "attributes": {
+                                  "argumentTypes": null,
+                                  "overloadedDeclarations": [
+                                    null
+                                  ],
+                                  "referencedDeclaration": 256,
+                                  "type": "struct Registry.ModuleForSale storage pointer",
+                                  "value": "module"
+                                },
+                                "id": 277,
+                                "name": "Identifier",
+                                "src": "2112:6:1"
+                              }
+                            ],
+                            "id": 278,
+                            "name": "MemberAccess",
+                            "src": "2112:20:1"
+                          }
+                        ],
+                        "id": 279,
+                        "name": "Assignment",
+                        "src": "2096:36:1"
+                      }
+                    ],
+                    "id": 280,
+                    "name": "ExpressionStatement",
+                    "src": "2096:36:1"
+                  },
+                  {
+                    "children": [
+                      {
+                        "attributes": {
+                          "argumentTypes": null,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "operator": "=",
+                          "type": "bytes4"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "overloadedDeclarations": [
+                                null
+                              ],
+                              "referencedDeclaration": 243,
+                              "type": "bytes4",
+                              "value": "licenseId"
+                            },
+                            "id": 281,
+                            "name": "Identifier",
+                            "src": "2138:9:1"
+                          },
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "isConstant": false,
+                              "isLValue": true,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "member_name": "licenseId",
+                              "referencedDeclaration": 85,
+                              "type": "bytes4"
+                            },
+                            "children": [
+                              {
+                                "attributes": {
+                                  "argumentTypes": null,
+                                  "overloadedDeclarations": [
+                                    null
+                                  ],
+                                  "referencedDeclaration": 256,
+                                  "type": "struct Registry.ModuleForSale storage pointer",
+                                  "value": "module"
+                                },
+                                "id": 282,
+                                "name": "Identifier",
+                                "src": "2150:6:1"
+                              }
+                            ],
+                            "id": 283,
+                            "name": "MemberAccess",
+                            "src": "2150:16:1"
+                          }
+                        ],
+                        "id": 284,
+                        "name": "Assignment",
+                        "src": "2138:28:1"
+                      }
+                    ],
+                    "id": 285,
+                    "name": "ExpressionStatement",
+                    "src": "2138:28:1"
+                  }
+                ],
+                "id": 286,
+                "name": "Block",
+                "src": "1848:323:1"
+              }
+            ],
+            "id": 287,
+            "name": "FunctionDefinition",
+            "src": "1674:497:1"
+          },
+          {
+            "attributes": {
+              "constant": false,
+              "implemented": true,
+              "isConstructor": false,
+              "name": "editModule",
+              "payable": false,
+              "scope": 325,
+              "stateMutability": "nonpayable",
+              "superFunction": null,
+              "visibility": "public"
+            },
+            "children": [
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "moduleId",
+                      "scope": 324,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint",
+                          "type": "uint256"
+                        },
+                        "id": 288,
+                        "name": "ElementaryTypeName",
+                        "src": "2196:4:1"
+                      }
+                    ],
+                    "id": 289,
+                    "name": "VariableDeclaration",
+                    "src": "2196:13:1"
+                  },
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "price",
+                      "scope": 324,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint",
+                          "type": "uint256"
+                        },
+                        "id": 290,
+                        "name": "ElementaryTypeName",
+                        "src": "2211:4:1"
+                      }
+                    ],
+                    "id": 291,
+                    "name": "VariableDeclaration",
+                    "src": "2211:10:1"
+                  },
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "sellerAddress",
+                      "scope": 324,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "address",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "address",
+                          "type": "address"
+                        },
+                        "id": 292,
+                        "name": "ElementaryTypeName",
+                        "src": "2223:7:1"
+                      }
+                    ],
+                    "id": 293,
+                    "name": "VariableDeclaration",
+                    "src": "2223:21:1"
+                  },
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "licenseId",
+                      "scope": 324,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "bytes4",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "bytes4",
+                          "type": "bytes4"
+                        },
+                        "id": 294,
+                        "name": "ElementaryTypeName",
+                        "src": "2246:6:1"
+                      }
+                    ],
+                    "id": 295,
+                    "name": "VariableDeclaration",
+                    "src": "2246:16:1"
+                  }
+                ],
+                "id": 296,
+                "name": "ParameterList",
+                "src": "2195:68:1"
+              },
+              {
+                "attributes": {
+                  "parameters": [
+                    null
+                  ]
+                },
+                "children": [],
+                "id": 299,
+                "name": "ParameterList",
+                "src": "2281:0:1"
+              },
+              {
+                "attributes": {
+                  "arguments": [
+                    null
+                  ]
+                },
+                "children": [
+                  {
+                    "attributes": {
+                      "argumentTypes": null,
+                      "overloadedDeclarations": [
+                        null
+                      ],
+                      "referencedDeclaration": 31,
+                      "type": "modifier ()",
+                      "value": "onlyOwner"
+                    },
+                    "id": 297,
+                    "name": "Identifier",
+                    "src": "2271:9:1"
+                  }
+                ],
+                "id": 298,
+                "name": "ModifierInvocation",
+                "src": "2271:9:1"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "assignments": [
+                        300
+                      ]
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "constant": false,
+                          "name": "module",
+                          "scope": 324,
+                          "stateVariable": false,
+                          "storageLocation": "default",
+                          "type": "struct Registry.ModuleForSale storage pointer",
+                          "typeName": null,
+                          "value": null,
+                          "visibility": "internal"
+                        },
+                        "children": [],
+                        "id": 300,
+                        "name": "VariableDeclaration",
+                        "src": "2287:10:1"
+                      },
+                      {
+                        "attributes": {
+                          "argumentTypes": null,
+                          "isConstant": false,
+                          "isLValue": true,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "type": "struct Registry.ModuleForSale storage ref"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "overloadedDeclarations": [
+                                null
+                              ],
+                              "referencedDeclaration": 94,
+                              "type": "mapping(uint256 => struct Registry.ModuleForSale storage ref)",
+                              "value": "modules"
+                            },
+                            "id": 301,
+                            "name": "Identifier",
+                            "src": "2300:7:1"
+                          },
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "overloadedDeclarations": [
+                                null
+                              ],
+                              "referencedDeclaration": 289,
+                              "type": "uint256",
+                              "value": "moduleId"
+                            },
+                            "id": 302,
+                            "name": "Identifier",
+                            "src": "2308:8:1"
+                          }
+                        ],
+                        "id": 303,
+                        "name": "IndexAccess",
+                        "src": "2300:17:1"
+                      }
+                    ],
+                    "id": 304,
+                    "name": "VariableDeclarationStatement",
+                    "src": "2287:30:1"
+                  },
+                  {
+                    "children": [
+                      {
+                        "attributes": {
+                          "argumentTypes": null,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "operator": "=",
+                          "type": "uint256"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "isConstant": false,
+                              "isLValue": true,
+                              "isPure": false,
+                              "lValueRequested": true,
+                              "member_name": "price",
+                              "referencedDeclaration": 77,
+                              "type": "uint256"
+                            },
+                            "children": [
+                              {
+                                "attributes": {
+                                  "argumentTypes": null,
+                                  "overloadedDeclarations": [
+                                    null
+                                  ],
+                                  "referencedDeclaration": 300,
+                                  "type": "struct Registry.ModuleForSale storage pointer",
+                                  "value": "module"
+                                },
+                                "id": 305,
+                                "name": "Identifier",
+                                "src": "2324:6:1"
+                              }
+                            ],
+                            "id": 307,
+                            "name": "MemberAccess",
+                            "src": "2324:12:1"
+                          },
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "overloadedDeclarations": [
+                                null
+                              ],
+                              "referencedDeclaration": 291,
+                              "type": "uint256",
+                              "value": "price"
+                            },
+                            "id": 308,
+                            "name": "Identifier",
+                            "src": "2339:5:1"
+                          }
+                        ],
+                        "id": 309,
+                        "name": "Assignment",
+                        "src": "2324:20:1"
+                      }
+                    ],
+                    "id": 310,
+                    "name": "ExpressionStatement",
+                    "src": "2324:20:1"
+                  },
+                  {
+                    "children": [
+                      {
+                        "attributes": {
+                          "argumentTypes": null,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "operator": "=",
+                          "type": "address"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "isConstant": false,
+                              "isLValue": true,
+                              "isPure": false,
+                              "lValueRequested": true,
+                              "member_name": "sellerAddress",
+                              "referencedDeclaration": 83,
+                              "type": "address"
+                            },
+                            "children": [
+                              {
+                                "attributes": {
+                                  "argumentTypes": null,
+                                  "overloadedDeclarations": [
+                                    null
+                                  ],
+                                  "referencedDeclaration": 300,
+                                  "type": "struct Registry.ModuleForSale storage pointer",
+                                  "value": "module"
+                                },
+                                "id": 311,
+                                "name": "Identifier",
+                                "src": "2350:6:1"
+                              }
+                            ],
+                            "id": 313,
+                            "name": "MemberAccess",
+                            "src": "2350:20:1"
+                          },
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "overloadedDeclarations": [
+                                null
+                              ],
+                              "referencedDeclaration": 293,
+                              "type": "address",
+                              "value": "sellerAddress"
+                            },
+                            "id": 314,
+                            "name": "Identifier",
+                            "src": "2373:13:1"
+                          }
+                        ],
+                        "id": 315,
+                        "name": "Assignment",
+                        "src": "2350:36:1"
+                      }
+                    ],
+                    "id": 316,
+                    "name": "ExpressionStatement",
+                    "src": "2350:36:1"
+                  },
+                  {
+                    "children": [
+                      {
+                        "attributes": {
+                          "argumentTypes": null,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "operator": "=",
+                          "type": "bytes4"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "isConstant": false,
+                              "isLValue": true,
+                              "isPure": false,
+                              "lValueRequested": true,
+                              "member_name": "licenseId",
+                              "referencedDeclaration": 85,
+                              "type": "bytes4"
+                            },
+                            "children": [
+                              {
+                                "attributes": {
+                                  "argumentTypes": null,
+                                  "overloadedDeclarations": [
+                                    null
+                                  ],
+                                  "referencedDeclaration": 300,
+                                  "type": "struct Registry.ModuleForSale storage pointer",
+                                  "value": "module"
+                                },
+                                "id": 317,
+                                "name": "Identifier",
+                                "src": "2392:6:1"
+                              }
+                            ],
+                            "id": 319,
+                            "name": "MemberAccess",
+                            "src": "2392:16:1"
+                          },
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "overloadedDeclarations": [
+                                null
+                              ],
+                              "referencedDeclaration": 295,
+                              "type": "bytes4",
+                              "value": "licenseId"
+                            },
+                            "id": 320,
+                            "name": "Identifier",
+                            "src": "2411:9:1"
+                          }
+                        ],
+                        "id": 321,
+                        "name": "Assignment",
+                        "src": "2392:28:1"
+                      }
+                    ],
+                    "id": 322,
+                    "name": "ExpressionStatement",
+                    "src": "2392:28:1"
+                  }
+                ],
+                "id": 323,
+                "name": "Block",
+                "src": "2281:144:1"
+              }
+            ],
+            "id": 324,
+            "name": "FunctionDefinition",
+            "src": "2176:249:1"
+          }
+        ],
+        "id": 325,
+        "name": "ContractDefinition",
+        "src": "49:2378:1"
+      }
+    ],
+    "id": 326,
+    "name": "SourceUnit",
+    "src": "0:2427:1"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.4.19+commit.c4cbbb05.Emscripten.clang"
+  },
+  "networks": {
+    "5778": {
+      "events": {},
+      "links": {},
+      "address": "0xdd244ee64eb3fc81dbdc8d75c77aa139f0c4a48a"
+    }
+  },
+  "schemaVersion": "1.0.1",
+  "updatedAt": "2018-02-22T03:23:34.151Z"
+}

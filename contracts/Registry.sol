@@ -44,7 +44,7 @@ contract Registry is Owned {
     return moduleIds[usernameAndProjectName];
   }
 
-  function getModule(uint moduleId) public view returns (uint price, bytes32 sellerUsername, bytes32 moduleName, address sellerAddress, bytes4 licenseId) {
+  function getModuleById(uint moduleId) public view returns (uint price, bytes32 sellerUsername, bytes32 moduleName, address sellerAddress, bytes4 licenseId) {
     var module = modules[moduleId];
 
     price = module.price;
@@ -53,6 +53,21 @@ contract Registry is Owned {
     sellerAddress = module.sellerAddress;
     licenseId = module.licenseId;
   }
+
+  function getModuleByName(string usernameAndProjectName) public view returns (uint price, bytes32 sellerUsername, bytes32 moduleName, address sellerAddress, bytes4 licenseId) {
+    var moduleId = moduleIds[usernameAndProjectName];
+    if (moduleId == 0) {
+      return;
+    }
+    var module = modules[moduleId];
+
+    price = module.price;
+    sellerUsername = module.sellerUsername;
+    moduleName = module.moduleName;
+    sellerAddress = module.sellerAddress;
+    licenseId = module.licenseId;
+  }
+
 
   function editModule(uint moduleId, uint price, address sellerAddress, bytes4 licenseId) public onlyOwner {
     var module = modules[moduleId];
