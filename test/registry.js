@@ -4,6 +4,12 @@ var BigNumber = require('bignumber.js')
 var Registry = artifacts.require('./Registry.sol')
 
 contract('Registry', function (accounts) {
+  it('should have a version', async function () {
+    let registry = await Registry.deployed()
+    let version = registry.version.call({ from: accounts[4] })
+    assert.notEqual(version, 0)
+  })
+
   it('should let a user list and edit and get a module', async function () {
     let sellerUsername = uuid.v4().substr(0, 32)
     let moduleName = uuid.v4().substr(0, 32)

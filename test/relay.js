@@ -36,4 +36,10 @@ contract('Relay', function (accounts) {
     registryContractAddress = await relay.registryContractAddress.call({ from: accounts[4] })
     assert.equal(registry.address, registryContractAddress)
   })
+
+  it('should have a version', async function () {
+    let token = await Token.deployed()
+    let version = token.version.call({ from: accounts[4] })
+    assert.notEqual(version, 0)
+  })
 })

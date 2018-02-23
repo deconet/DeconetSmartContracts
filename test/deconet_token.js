@@ -180,4 +180,10 @@ contract('DeconetToken', function (accounts) {
     assert.equal(sale.networkFee.toString(), networkFee.toString())
     assert.equal(sale.licenseId, '0x00000001', 'wrong license')
   })
+
+  it('should have a version', async function () {
+    let token = await Token.deployed()
+    let version = token.version.call({ from: accounts[4] })
+    assert.notEqual(version, 0)
+  })
 })

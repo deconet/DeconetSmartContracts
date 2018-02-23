@@ -79,6 +79,8 @@ contract DeconetToken is ERC20Interface, Owned {
     // address of the relay contract which holds the address of the registry contract.
     address public relayContractAddress;
 
+    uint public version;
+
     mapping(address => uint) balances;
     mapping(address => mapping(address => uint)) allowed;
 
@@ -102,6 +104,8 @@ contract DeconetToken is ERC20Interface, Owned {
     // Constructor
     // ------------------------------------------------------------------------
     function DeconetToken() public {
+        version = 1;
+
         // initial erc20 settings
         symbol = "DTEST";
         name = "Deconet Test Token - Not valuable";

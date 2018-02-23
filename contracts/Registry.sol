@@ -16,12 +16,14 @@ contract Registry is Owned {
   mapping(uint => ModuleForSale) modules;
 
   uint public numModules;
+  uint public version;
 
   // ------------------------------------------------------------------------
   // Constructor, establishes ownership because contract is owned
   // ------------------------------------------------------------------------
   function Registry() public {
     numModules = 0;
+    version = 1;
   }
 
   function listModule(uint price, bytes32 sellerUsername, bytes32 moduleName, string usernameAndProjectName, bytes4 licenseId) public {
