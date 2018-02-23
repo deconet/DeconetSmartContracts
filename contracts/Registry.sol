@@ -69,8 +69,14 @@ contract Registry is Owned {
   }
 
 
-  function editModule(uint moduleId, uint price, address sellerAddress, bytes4 licenseId) public onlyOwner {
+  function editModule(uint moduleId, uint price, address sellerAddress, bytes4 licenseId) public {
+    require(moduleId > 0);
+
     var module = modules[moduleId];
+
+    // require that sender is the original module lister, or the contract owner
+    // the contract owner clause lets us recover a module listing if a dev loses access to their privkey
+    require(msg.sender == module.sellerAddress || msg.sender == owner);
 
     module.price = price;
     module.sellerAddress = sellerAddress;

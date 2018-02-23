@@ -31,7 +31,7 @@ contract('Registry', function (accounts) {
     assert.equal(module[3], accounts[1])
     assert.equal(module[4], licenseId)
 
-    // test editing the module
+    // test editing the module as contract owner
     let newPrice = 50000
     let newLicenseId = '0x00000002'
     await registry.editModule(moduleId, newPrice, accounts[2], newLicenseId, { from: accounts[0] })
@@ -42,6 +42,37 @@ contract('Registry', function (accounts) {
     assert.equal(web3.toAscii(module[1]), sellerUsername)
     assert.equal(web3.toAscii(module[2]), moduleName)
     assert.equal(module[3], accounts[2])
+    assert.equal(module[4], newLicenseId)
+
+    // test editing the module as module owner
+    newPrice = 25000
+    newLicenseId = '0x00000003'
+    await registry.editModule(moduleId, newPrice, accounts[3], newLicenseId, { from: accounts[2] })
+
+    module = await registry.getModuleById(moduleId, { from: accounts[4] })
+    assert.equal(module.length, 5)
+    assert.equal(module[0].toNumber(), newPrice)
+    assert.equal(web3.toAscii(module[1]), sellerUsername)
+    assert.equal(web3.toAscii(module[2]), moduleName)
+    assert.equal(module[3], accounts[3])
+    assert.equal(module[4], newLicenseId)
+
+    let exceptionGenerated = false
+    try {
+      // test editing the module as a random non-owner account (should fail)
+      await registry.editModule(moduleId, 20000, accounts[5], '0x00000004', { from: accounts[4] })
+    } catch (e) {
+      exceptionGenerated = true
+    }
+
+    assert.equal(exceptionGenerated, true)
+
+    module = await registry.getModuleById(moduleId, { from: accounts[4] })
+    assert.equal(module.length, 5)
+    assert.equal(module[0].toNumber(), newPrice)
+    assert.equal(web3.toAscii(module[1]), sellerUsername)
+    assert.equal(web3.toAscii(module[2]), moduleName)
+    assert.equal(module[3], accounts[3])
     assert.equal(module[4], newLicenseId)
   })
 
