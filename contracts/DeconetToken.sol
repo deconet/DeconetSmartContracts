@@ -104,7 +104,7 @@ contract DeconetToken is ERC20Interface, Owned {
     // Constructor
     // ------------------------------------------------------------------------
     function DeconetToken() public {
-        version = 1;
+        version = 2;
 
         // initial erc20 settings
         symbol = "DTEST";
@@ -240,6 +240,10 @@ contract DeconetToken is ERC20Interface, Owned {
     // ------------------------------------------------------------------------
     function transferAnyERC20Token(address tokenAddress, uint tokens) public onlyOwner returns (bool success) {
         return ERC20Interface(tokenAddress).transfer(owner, tokens);
+    }
+
+    function withdrawEther() public onlyOwner {
+        owner.transfer(this.balance);
     }
 
     function setRelayContractAddress(address _relayContractAddress) public onlyOwner {

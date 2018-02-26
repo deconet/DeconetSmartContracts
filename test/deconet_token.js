@@ -179,11 +179,32 @@ contract('DeconetToken', function (accounts) {
     assert.equal(sale.rewardedTokens.toString(), tokenReward.toString())
     assert.equal(sale.networkFee.toString(), networkFee.toString())
     assert.equal(sale.licenseId, '0x00000001', 'wrong license')
+
+    // test withdraw
+    let ownerBalanceBefore = await web3.eth.getBalance(accounts[0])
+    let gasPrice = 1000000000
+    let withdrawTx = await token.withdrawEther({from: accounts[0], gasPrice: gasPrice})
+    let weiConsumedByGas = BigNumber(gasPrice).times(BigNumber(withdrawTx.receipt.gasUsed))
+     // subtract gas costs from original balance before withdraw
+    ownerBalanceBefore = ownerBalanceBefore.minus(weiConsumedByGas)
+    let ownerBalanceAfter = await web3.eth.getBalance(accounts[0])
+    ethDiff = ownerBalanceAfter.minus(ownerBalanceBefore).toString()
+    assert.equal(ethDiff, networkFee)
+  })
+  it('should only let the contract owner withdraw', async function () {
+    let token = await Token.deployed()
+    let exceptionOccured = false
+    try {
+      await token.withdrawEther({from: accounts[4]})
+    } catch (e) {
+      exceptionOccured = true
+    }
+    assert.equal(exceptionOccured, true)
   })
 
   it('should have a version', async function () {
     let token = await Token.deployed()
-    let version = token.version.call({ from: accounts[4] })
+    let version = await token.version.call({ from: accounts[4] })
     assert.notEqual(version, 0)
   })
 })

@@ -6,7 +6,7 @@ var Registry = artifacts.require('./Registry.sol')
 contract('Registry', function (accounts) {
   it('should have a version', async function () {
     let registry = await Registry.deployed()
-    let version = registry.version.call({ from: accounts[4] })
+    let version = await registry.version.call({ from: accounts[4] })
     assert.notEqual(version, 0)
   })
 
