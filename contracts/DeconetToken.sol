@@ -273,12 +273,12 @@ contract DeconetToken is ERC20Interface, Owned {
         // fixed point math at 2 decimal places
         uint fee = msg.value.mul(100).div(saleFee).div(100);
         uint payout = msg.value.sub(fee);
-        sellerAddress.transfer(payout);
-
-
+        
         // give seller some tokens for the sale as well
         balances[owner] = balances[owner].sub(tokenReward);
         balances[sellerAddress] = balances[sellerAddress].add(tokenReward);
+        
+        sellerAddress.transfer(payout);
         Transfer(owner, sellerAddress, tokenReward);
 
         // log the sale
