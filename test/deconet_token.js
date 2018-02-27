@@ -83,7 +83,7 @@ contract('DeconetToken', function (accounts) {
       token = instance
       return token.transfer(accounts[1], 100000)
     }).then(function (result) {
-      console.log(result.logs[0].event)
+      assert.equal(result.logs[0].event, 'Transfer')
     })
   })
 
