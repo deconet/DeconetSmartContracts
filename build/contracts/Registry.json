@@ -260,7 +260,7 @@
       "absolutePath": "/Users/chris/Documents/WorkStuff/Deconet/Blockchain/DeconetToken/contracts/Registry.sol",
       "exportedSymbols": {
         "Registry": [
-          1100
+          1113
         ]
       }
     },
@@ -274,39 +274,39 @@
             ".19"
           ]
         },
-        "id": 824,
+        "id": 837,
         "name": "PragmaDirective",
         "src": "0:24:2"
       },
       {
         "attributes": {
-          "SourceUnit": 823,
+          "SourceUnit": 836,
           "absolutePath": "/Users/chris/Documents/WorkStuff/Deconet/Blockchain/DeconetToken/contracts/Owned.sol",
           "file": "./Owned.sol",
-          "scope": 1101,
+          "scope": 1114,
           "symbolAliases": [
             null
           ],
           "unitAlias": ""
         },
-        "id": 825,
+        "id": 838,
         "name": "ImportDirective",
         "src": "26:21:2"
       },
       {
         "attributes": {
           "contractDependencies": [
-            822
+            835
           ],
           "contractKind": "contract",
           "documentation": null,
           "fullyImplemented": true,
           "linearizedBaseContracts": [
-            1100,
-            822
+            1113,
+            835
           ],
           "name": "Registry",
-          "scope": 1101
+          "scope": 1114
         },
         "children": [
           {
@@ -320,15 +320,15 @@
                 "attributes": {
                   "contractScope": null,
                   "name": "Owned",
-                  "referencedDeclaration": 822,
+                  "referencedDeclaration": 835,
                   "type": "contract Owned"
                 },
-                "id": 826,
+                "id": 839,
                 "name": "UserDefinedTypeName",
                 "src": "70:5:2"
               }
             ],
-            "id": 827,
+            "id": 840,
             "name": "InheritanceSpecifier",
             "src": "70:5:2"
           },
@@ -336,7 +336,7 @@
             "attributes": {
               "canonicalName": "Registry.ModuleForSale",
               "name": "ModuleForSale",
-              "scope": 1100,
+              "scope": 1113,
               "visibility": "public"
             },
             "children": [
@@ -344,7 +344,7 @@
                 "attributes": {
                   "constant": false,
                   "name": "price",
-                  "scope": 838,
+                  "scope": 851,
                   "stateVariable": false,
                   "storageLocation": "default",
                   "type": "uint256",
@@ -357,12 +357,12 @@
                       "name": "uint",
                       "type": "uint256"
                     },
-                    "id": 828,
+                    "id": 841,
                     "name": "ElementaryTypeName",
                     "src": "110:4:2"
                   }
                 ],
-                "id": 829,
+                "id": 842,
                 "name": "VariableDeclaration",
                 "src": "110:10:2"
               },
@@ -370,7 +370,7 @@
                 "attributes": {
                   "constant": false,
                   "name": "sellerUsername",
-                  "scope": 838,
+                  "scope": 851,
                   "stateVariable": false,
                   "storageLocation": "default",
                   "type": "bytes32",
@@ -383,12 +383,12 @@
                       "name": "bytes32",
                       "type": "bytes32"
                     },
-                    "id": 830,
+                    "id": 843,
                     "name": "ElementaryTypeName",
                     "src": "128:7:2"
                   }
                 ],
-                "id": 831,
+                "id": 844,
                 "name": "VariableDeclaration",
                 "src": "128:22:2"
               },
@@ -396,7 +396,7 @@
                 "attributes": {
                   "constant": false,
                   "name": "moduleName",
-                  "scope": 838,
+                  "scope": 851,
                   "stateVariable": false,
                   "storageLocation": "default",
                   "type": "bytes32",
@@ -409,12 +409,12 @@
                       "name": "bytes32",
                       "type": "bytes32"
                     },
-                    "id": 832,
+                    "id": 845,
                     "name": "ElementaryTypeName",
                     "src": "158:7:2"
                   }
                 ],
-                "id": 833,
+                "id": 846,
                 "name": "VariableDeclaration",
                 "src": "158:18:2"
               },
@@ -422,7 +422,7 @@
                 "attributes": {
                   "constant": false,
                   "name": "sellerAddress",
-                  "scope": 838,
+                  "scope": 851,
                   "stateVariable": false,
                   "storageLocation": "default",
                   "type": "address",
@@ -435,12 +435,12 @@
                       "name": "address",
                       "type": "address"
                     },
-                    "id": 834,
+                    "id": 847,
                     "name": "ElementaryTypeName",
                     "src": "184:7:2"
                   }
                 ],
-                "id": 835,
+                "id": 848,
                 "name": "VariableDeclaration",
                 "src": "184:21:2"
               },
@@ -448,7 +448,7 @@
                 "attributes": {
                   "constant": false,
                   "name": "licenseId",
-                  "scope": 838,
+                  "scope": 851,
                   "stateVariable": false,
                   "storageLocation": "default",
                   "type": "bytes4",
@@ -461,17 +461,17 @@
                       "name": "bytes4",
                       "type": "bytes4"
                     },
-                    "id": 836,
+                    "id": 849,
                     "name": "ElementaryTypeName",
                     "src": "213:6:2"
                   }
                 ],
-                "id": 837,
+                "id": 850,
                 "name": "VariableDeclaration",
                 "src": "213:16:2"
               }
             ],
-            "id": 838,
+            "id": 851,
             "name": "StructDefinition",
             "src": "81:153:2"
           },
@@ -479,7 +479,7 @@
             "attributes": {
               "constant": false,
               "name": "moduleIds",
-              "scope": 1100,
+              "scope": 1113,
               "stateVariable": true,
               "storageLocation": "default",
               "type": "mapping(string memory => uint256)",
@@ -497,7 +497,7 @@
                       "name": "string",
                       "type": "string storage pointer"
                     },
-                    "id": 839,
+                    "id": 852,
                     "name": "ElementaryTypeName",
                     "src": "246:6:2"
                   },
@@ -506,17 +506,17 @@
                       "name": "uint",
                       "type": "uint256"
                     },
-                    "id": 840,
+                    "id": 853,
                     "name": "ElementaryTypeName",
                     "src": "256:4:2"
                   }
                 ],
-                "id": 841,
+                "id": 854,
                 "name": "Mapping",
                 "src": "238:23:2"
               }
             ],
-            "id": 842,
+            "id": 855,
             "name": "VariableDeclaration",
             "src": "238:33:2"
           },
@@ -524,7 +524,7 @@
             "attributes": {
               "constant": false,
               "name": "modules",
-              "scope": 1100,
+              "scope": 1113,
               "stateVariable": true,
               "storageLocation": "default",
               "type": "mapping(uint256 => struct Registry.ModuleForSale storage ref)",
@@ -542,7 +542,7 @@
                       "name": "uint",
                       "type": "uint256"
                     },
-                    "id": 843,
+                    "id": 856,
                     "name": "ElementaryTypeName",
                     "src": "283:4:2"
                   },
@@ -550,20 +550,20 @@
                     "attributes": {
                       "contractScope": null,
                       "name": "ModuleForSale",
-                      "referencedDeclaration": 838,
+                      "referencedDeclaration": 851,
                       "type": "struct Registry.ModuleForSale storage pointer"
                     },
-                    "id": 844,
+                    "id": 857,
                     "name": "UserDefinedTypeName",
                     "src": "291:13:2"
                   }
                 ],
-                "id": 845,
+                "id": 858,
                 "name": "Mapping",
                 "src": "275:30:2"
               }
             ],
-            "id": 846,
+            "id": 859,
             "name": "VariableDeclaration",
             "src": "275:38:2"
           },
@@ -571,7 +571,7 @@
             "attributes": {
               "constant": false,
               "name": "numModules",
-              "scope": 1100,
+              "scope": 1113,
               "stateVariable": true,
               "storageLocation": "default",
               "type": "uint256",
@@ -584,12 +584,12 @@
                   "name": "uint",
                   "type": "uint256"
                 },
-                "id": 847,
+                "id": 860,
                 "name": "ElementaryTypeName",
                 "src": "318:4:2"
               }
             ],
-            "id": 848,
+            "id": 861,
             "name": "VariableDeclaration",
             "src": "318:22:2"
           },
@@ -597,7 +597,7 @@
             "attributes": {
               "constant": false,
               "name": "version",
-              "scope": 1100,
+              "scope": 1113,
               "stateVariable": true,
               "storageLocation": "default",
               "type": "uint256",
@@ -610,12 +610,12 @@
                   "name": "uint",
                   "type": "uint256"
                 },
-                "id": 849,
+                "id": 862,
                 "name": "ElementaryTypeName",
                 "src": "344:4:2"
               }
             ],
-            "id": 850,
+            "id": 863,
             "name": "VariableDeclaration",
             "src": "344:19:2"
           },
@@ -629,7 +629,7 @@
               ],
               "name": "Registry",
               "payable": false,
-              "scope": 1100,
+              "scope": 1113,
               "stateMutability": "nonpayable",
               "superFunction": null,
               "visibility": "public"
@@ -642,7 +642,7 @@
                   ]
                 },
                 "children": [],
-                "id": 851,
+                "id": 864,
                 "name": "ParameterList",
                 "src": "607:2:2"
               },
@@ -653,7 +653,7 @@
                   ]
                 },
                 "children": [],
-                "id": 852,
+                "id": 865,
                 "name": "ParameterList",
                 "src": "617:0:2"
               },
@@ -678,11 +678,11 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 848,
+                              "referencedDeclaration": 861,
                               "type": "uint256",
                               "value": "numModules"
                             },
-                            "id": 853,
+                            "id": 866,
                             "name": "Identifier",
                             "src": "623:10:2"
                           },
@@ -699,17 +699,17 @@
                               "type": "int_const 0",
                               "value": "0"
                             },
-                            "id": 854,
+                            "id": 867,
                             "name": "Literal",
                             "src": "636:1:2"
                           }
                         ],
-                        "id": 855,
+                        "id": 868,
                         "name": "Assignment",
                         "src": "623:14:2"
                       }
                     ],
-                    "id": 856,
+                    "id": 869,
                     "name": "ExpressionStatement",
                     "src": "623:14:2"
                   },
@@ -732,11 +732,11 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 850,
+                              "referencedDeclaration": 863,
                               "type": "uint256",
                               "value": "version"
                             },
-                            "id": 857,
+                            "id": 870,
                             "name": "Identifier",
                             "src": "643:7:2"
                           },
@@ -753,27 +753,27 @@
                               "type": "int_const 1",
                               "value": "1"
                             },
-                            "id": 858,
+                            "id": 871,
                             "name": "Literal",
                             "src": "653:1:2"
                           }
                         ],
-                        "id": 859,
+                        "id": 872,
                         "name": "Assignment",
                         "src": "643:11:2"
                       }
                     ],
-                    "id": 860,
+                    "id": 873,
                     "name": "ExpressionStatement",
                     "src": "643:11:2"
                   }
                 ],
-                "id": 861,
+                "id": 874,
                 "name": "Block",
                 "src": "617:42:2"
               }
             ],
-            "id": 862,
+            "id": 875,
             "name": "FunctionDefinition",
             "src": "590:69:2"
           },
@@ -787,7 +787,7 @@
               ],
               "name": "listModule",
               "payable": false,
-              "scope": 1100,
+              "scope": 1113,
               "stateMutability": "nonpayable",
               "superFunction": null,
               "visibility": "public"
@@ -799,7 +799,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "price",
-                      "scope": 930,
+                      "scope": 943,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -812,12 +812,12 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 863,
+                        "id": 876,
                         "name": "ElementaryTypeName",
                         "src": "683:4:2"
                       }
                     ],
-                    "id": 864,
+                    "id": 877,
                     "name": "VariableDeclaration",
                     "src": "683:10:2"
                   },
@@ -825,7 +825,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "sellerUsername",
-                      "scope": 930,
+                      "scope": 943,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "bytes32",
@@ -838,12 +838,12 @@
                           "name": "bytes32",
                           "type": "bytes32"
                         },
-                        "id": 865,
+                        "id": 878,
                         "name": "ElementaryTypeName",
                         "src": "695:7:2"
                       }
                     ],
-                    "id": 866,
+                    "id": 879,
                     "name": "VariableDeclaration",
                     "src": "695:22:2"
                   },
@@ -851,7 +851,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "moduleName",
-                      "scope": 930,
+                      "scope": 943,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "bytes32",
@@ -864,12 +864,12 @@
                           "name": "bytes32",
                           "type": "bytes32"
                         },
-                        "id": 867,
+                        "id": 880,
                         "name": "ElementaryTypeName",
                         "src": "719:7:2"
                       }
                     ],
-                    "id": 868,
+                    "id": 881,
                     "name": "VariableDeclaration",
                     "src": "719:18:2"
                   },
@@ -877,7 +877,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "usernameAndProjectName",
-                      "scope": 930,
+                      "scope": 943,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "string memory",
@@ -890,12 +890,12 @@
                           "name": "string",
                           "type": "string storage pointer"
                         },
-                        "id": 869,
+                        "id": 882,
                         "name": "ElementaryTypeName",
                         "src": "739:6:2"
                       }
                     ],
-                    "id": 870,
+                    "id": 883,
                     "name": "VariableDeclaration",
                     "src": "739:29:2"
                   },
@@ -903,7 +903,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "licenseId",
-                      "scope": 930,
+                      "scope": 943,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "bytes4",
@@ -916,17 +916,17 @@
                           "name": "bytes4",
                           "type": "bytes4"
                         },
-                        "id": 871,
+                        "id": 884,
                         "name": "ElementaryTypeName",
                         "src": "770:6:2"
                       }
                     ],
-                    "id": 872,
+                    "id": 885,
                     "name": "VariableDeclaration",
                     "src": "770:16:2"
                   }
                 ],
-                "id": 873,
+                "id": 886,
                 "name": "ParameterList",
                 "src": "682:105:2"
               },
@@ -937,7 +937,7 @@
                   ]
                 },
                 "children": [],
-                "id": 874,
+                "id": 887,
                 "name": "ParameterList",
                 "src": "795:0:2"
               },
@@ -971,11 +971,11 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 1159,
+                              "referencedDeclaration": 1172,
                               "type": "function (bool) pure",
                               "value": "require"
                             },
-                            "id": 875,
+                            "id": 888,
                             "name": "Identifier",
                             "src": "847:7:2"
                           },
@@ -1010,11 +1010,11 @@
                                       "overloadedDeclarations": [
                                         null
                                       ],
-                                      "referencedDeclaration": 842,
+                                      "referencedDeclaration": 855,
                                       "type": "mapping(string memory => uint256)",
                                       "value": "moduleIds"
                                     },
-                                    "id": 876,
+                                    "id": 889,
                                     "name": "Identifier",
                                     "src": "855:9:2"
                                   },
@@ -1024,16 +1024,16 @@
                                       "overloadedDeclarations": [
                                         null
                                       ],
-                                      "referencedDeclaration": 870,
+                                      "referencedDeclaration": 883,
                                       "type": "string memory",
                                       "value": "usernameAndProjectName"
                                     },
-                                    "id": 877,
+                                    "id": 890,
                                     "name": "Identifier",
                                     "src": "865:22:2"
                                   }
                                 ],
-                                "id": 878,
+                                "id": 891,
                                 "name": "IndexAccess",
                                 "src": "855:33:2"
                               },
@@ -1050,22 +1050,22 @@
                                   "type": "int_const 0",
                                   "value": "0"
                                 },
-                                "id": 879,
+                                "id": 892,
                                 "name": "Literal",
                                 "src": "892:1:2"
                               }
                             ],
-                            "id": 880,
+                            "id": 893,
                             "name": "BinaryOperation",
                             "src": "855:38:2"
                           }
                         ],
-                        "id": 881,
+                        "id": 894,
                         "name": "FunctionCall",
                         "src": "847:47:2"
                       }
                     ],
-                    "id": 882,
+                    "id": 895,
                     "name": "ExpressionStatement",
                     "src": "847:47:2"
                   },
@@ -1088,11 +1088,11 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 848,
+                              "referencedDeclaration": 861,
                               "type": "uint256",
                               "value": "numModules"
                             },
-                            "id": 883,
+                            "id": 896,
                             "name": "Identifier",
                             "src": "901:10:2"
                           },
@@ -1109,17 +1109,17 @@
                               "type": "int_const 1",
                               "value": "1"
                             },
-                            "id": 884,
+                            "id": 897,
                             "name": "Literal",
                             "src": "915:1:2"
                           }
                         ],
-                        "id": 885,
+                        "id": 898,
                         "name": "Assignment",
                         "src": "901:15:2"
                       }
                     ],
-                    "id": 886,
+                    "id": 899,
                     "name": "ExpressionStatement",
                     "src": "901:15:2"
                   },
@@ -1152,11 +1152,11 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 842,
+                                  "referencedDeclaration": 855,
                                   "type": "mapping(string memory => uint256)",
                                   "value": "moduleIds"
                                 },
-                                "id": 887,
+                                "id": 900,
                                 "name": "Identifier",
                                 "src": "922:9:2"
                               },
@@ -1166,16 +1166,16 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 870,
+                                  "referencedDeclaration": 883,
                                   "type": "string memory",
                                   "value": "usernameAndProjectName"
                                 },
-                                "id": 888,
+                                "id": 901,
                                 "name": "Identifier",
                                 "src": "932:22:2"
                               }
                             ],
-                            "id": 889,
+                            "id": 902,
                             "name": "IndexAccess",
                             "src": "922:33:2"
                           },
@@ -1185,28 +1185,28 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 848,
+                              "referencedDeclaration": 861,
                               "type": "uint256",
                               "value": "numModules"
                             },
-                            "id": 890,
+                            "id": 903,
                             "name": "Identifier",
                             "src": "958:10:2"
                           }
                         ],
-                        "id": 891,
+                        "id": 904,
                         "name": "Assignment",
                         "src": "922:46:2"
                       }
                     ],
-                    "id": 892,
+                    "id": 905,
                     "name": "ExpressionStatement",
                     "src": "922:46:2"
                   },
                   {
                     "attributes": {
                       "assignments": [
-                        893
+                        906
                       ]
                     },
                     "children": [
@@ -1214,7 +1214,7 @@
                         "attributes": {
                           "constant": false,
                           "name": "module",
-                          "scope": 930,
+                          "scope": 943,
                           "stateVariable": false,
                           "storageLocation": "default",
                           "type": "struct Registry.ModuleForSale storage pointer",
@@ -1223,7 +1223,7 @@
                           "visibility": "internal"
                         },
                         "children": [],
-                        "id": 893,
+                        "id": 906,
                         "name": "VariableDeclaration",
                         "src": "975:10:2"
                       },
@@ -1243,11 +1243,11 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 846,
+                              "referencedDeclaration": 859,
                               "type": "mapping(uint256 => struct Registry.ModuleForSale storage ref)",
                               "value": "modules"
                             },
-                            "id": 894,
+                            "id": 907,
                             "name": "Identifier",
                             "src": "988:7:2"
                           },
@@ -1257,21 +1257,21 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 848,
+                              "referencedDeclaration": 861,
                               "type": "uint256",
                               "value": "numModules"
                             },
-                            "id": 895,
+                            "id": 908,
                             "name": "Identifier",
                             "src": "996:10:2"
                           }
                         ],
-                        "id": 896,
+                        "id": 909,
                         "name": "IndexAccess",
                         "src": "988:19:2"
                       }
                     ],
-                    "id": 897,
+                    "id": 910,
                     "name": "VariableDeclarationStatement",
                     "src": "975:32:2"
                   },
@@ -1296,7 +1296,7 @@
                               "isPure": false,
                               "lValueRequested": true,
                               "member_name": "price",
-                              "referencedDeclaration": 829,
+                              "referencedDeclaration": 842,
                               "type": "uint256"
                             },
                             "children": [
@@ -1306,16 +1306,16 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 893,
+                                  "referencedDeclaration": 906,
                                   "type": "struct Registry.ModuleForSale storage pointer",
                                   "value": "module"
                                 },
-                                "id": 898,
+                                "id": 911,
                                 "name": "Identifier",
                                 "src": "1014:6:2"
                               }
                             ],
-                            "id": 900,
+                            "id": 913,
                             "name": "MemberAccess",
                             "src": "1014:12:2"
                           },
@@ -1325,21 +1325,21 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 864,
+                              "referencedDeclaration": 877,
                               "type": "uint256",
                               "value": "price"
                             },
-                            "id": 901,
+                            "id": 914,
                             "name": "Identifier",
                             "src": "1029:5:2"
                           }
                         ],
-                        "id": 902,
+                        "id": 915,
                         "name": "Assignment",
                         "src": "1014:20:2"
                       }
                     ],
-                    "id": 903,
+                    "id": 916,
                     "name": "ExpressionStatement",
                     "src": "1014:20:2"
                   },
@@ -1364,7 +1364,7 @@
                               "isPure": false,
                               "lValueRequested": true,
                               "member_name": "sellerUsername",
-                              "referencedDeclaration": 831,
+                              "referencedDeclaration": 844,
                               "type": "bytes32"
                             },
                             "children": [
@@ -1374,16 +1374,16 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 893,
+                                  "referencedDeclaration": 906,
                                   "type": "struct Registry.ModuleForSale storage pointer",
                                   "value": "module"
                                 },
-                                "id": 904,
+                                "id": 917,
                                 "name": "Identifier",
                                 "src": "1040:6:2"
                               }
                             ],
-                            "id": 906,
+                            "id": 919,
                             "name": "MemberAccess",
                             "src": "1040:21:2"
                           },
@@ -1393,21 +1393,21 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 866,
+                              "referencedDeclaration": 879,
                               "type": "bytes32",
                               "value": "sellerUsername"
                             },
-                            "id": 907,
+                            "id": 920,
                             "name": "Identifier",
                             "src": "1064:14:2"
                           }
                         ],
-                        "id": 908,
+                        "id": 921,
                         "name": "Assignment",
                         "src": "1040:38:2"
                       }
                     ],
-                    "id": 909,
+                    "id": 922,
                     "name": "ExpressionStatement",
                     "src": "1040:38:2"
                   },
@@ -1432,7 +1432,7 @@
                               "isPure": false,
                               "lValueRequested": true,
                               "member_name": "moduleName",
-                              "referencedDeclaration": 833,
+                              "referencedDeclaration": 846,
                               "type": "bytes32"
                             },
                             "children": [
@@ -1442,16 +1442,16 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 893,
+                                  "referencedDeclaration": 906,
                                   "type": "struct Registry.ModuleForSale storage pointer",
                                   "value": "module"
                                 },
-                                "id": 910,
+                                "id": 923,
                                 "name": "Identifier",
                                 "src": "1084:6:2"
                               }
                             ],
-                            "id": 912,
+                            "id": 925,
                             "name": "MemberAccess",
                             "src": "1084:17:2"
                           },
@@ -1461,21 +1461,21 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 868,
+                              "referencedDeclaration": 881,
                               "type": "bytes32",
                               "value": "moduleName"
                             },
-                            "id": 913,
+                            "id": 926,
                             "name": "Identifier",
                             "src": "1104:10:2"
                           }
                         ],
-                        "id": 914,
+                        "id": 927,
                         "name": "Assignment",
                         "src": "1084:30:2"
                       }
                     ],
-                    "id": 915,
+                    "id": 928,
                     "name": "ExpressionStatement",
                     "src": "1084:30:2"
                   },
@@ -1500,7 +1500,7 @@
                               "isPure": false,
                               "lValueRequested": true,
                               "member_name": "sellerAddress",
-                              "referencedDeclaration": 835,
+                              "referencedDeclaration": 848,
                               "type": "address"
                             },
                             "children": [
@@ -1510,16 +1510,16 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 893,
+                                  "referencedDeclaration": 906,
                                   "type": "struct Registry.ModuleForSale storage pointer",
                                   "value": "module"
                                 },
-                                "id": 916,
+                                "id": 929,
                                 "name": "Identifier",
                                 "src": "1120:6:2"
                               }
                             ],
-                            "id": 918,
+                            "id": 931,
                             "name": "MemberAccess",
                             "src": "1120:20:2"
                           },
@@ -1541,26 +1541,26 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 1156,
+                                  "referencedDeclaration": 1169,
                                   "type": "msg",
                                   "value": "msg"
                                 },
-                                "id": 919,
+                                "id": 932,
                                 "name": "Identifier",
                                 "src": "1143:3:2"
                               }
                             ],
-                            "id": 920,
+                            "id": 933,
                             "name": "MemberAccess",
                             "src": "1143:10:2"
                           }
                         ],
-                        "id": 921,
+                        "id": 934,
                         "name": "Assignment",
                         "src": "1120:33:2"
                       }
                     ],
-                    "id": 922,
+                    "id": 935,
                     "name": "ExpressionStatement",
                     "src": "1120:33:2"
                   },
@@ -1585,7 +1585,7 @@
                               "isPure": false,
                               "lValueRequested": true,
                               "member_name": "licenseId",
-                              "referencedDeclaration": 837,
+                              "referencedDeclaration": 850,
                               "type": "bytes4"
                             },
                             "children": [
@@ -1595,16 +1595,16 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 893,
+                                  "referencedDeclaration": 906,
                                   "type": "struct Registry.ModuleForSale storage pointer",
                                   "value": "module"
                                 },
-                                "id": 923,
+                                "id": 936,
                                 "name": "Identifier",
                                 "src": "1159:6:2"
                               }
                             ],
-                            "id": 925,
+                            "id": 938,
                             "name": "MemberAccess",
                             "src": "1159:16:2"
                           },
@@ -1614,31 +1614,31 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 872,
+                              "referencedDeclaration": 885,
                               "type": "bytes4",
                               "value": "licenseId"
                             },
-                            "id": 926,
+                            "id": 939,
                             "name": "Identifier",
                             "src": "1178:9:2"
                           }
                         ],
-                        "id": 927,
+                        "id": 940,
                         "name": "Assignment",
                         "src": "1159:28:2"
                       }
                     ],
-                    "id": 928,
+                    "id": 941,
                     "name": "ExpressionStatement",
                     "src": "1159:28:2"
                   }
                 ],
-                "id": 929,
+                "id": 942,
                 "name": "Block",
                 "src": "795:397:2"
               }
             ],
-            "id": 930,
+            "id": 943,
             "name": "FunctionDefinition",
             "src": "663:529:2"
           },
@@ -1652,7 +1652,7 @@
               ],
               "name": "getModuleId",
               "payable": false,
-              "scope": 1100,
+              "scope": 1113,
               "stateMutability": "view",
               "superFunction": null,
               "visibility": "public"
@@ -1664,7 +1664,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "usernameAndProjectName",
-                      "scope": 942,
+                      "scope": 955,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "string memory",
@@ -1677,17 +1677,17 @@
                           "name": "string",
                           "type": "string storage pointer"
                         },
-                        "id": 931,
+                        "id": 944,
                         "name": "ElementaryTypeName",
                         "src": "1217:6:2"
                       }
                     ],
-                    "id": 932,
+                    "id": 945,
                     "name": "VariableDeclaration",
                     "src": "1217:29:2"
                   }
                 ],
-                "id": 933,
+                "id": 946,
                 "name": "ParameterList",
                 "src": "1216:31:2"
               },
@@ -1697,7 +1697,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "",
-                      "scope": 942,
+                      "scope": 955,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -1710,17 +1710,17 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 934,
+                        "id": 947,
                         "name": "ElementaryTypeName",
                         "src": "1269:4:2"
                       }
                     ],
-                    "id": 935,
+                    "id": 948,
                     "name": "VariableDeclaration",
                     "src": "1269:4:2"
                   }
                 ],
-                "id": 936,
+                "id": 949,
                 "name": "ParameterList",
                 "src": "1268:6:2"
               },
@@ -1728,7 +1728,7 @@
                 "children": [
                   {
                     "attributes": {
-                      "functionReturnParameters": 936
+                      "functionReturnParameters": 949
                     },
                     "children": [
                       {
@@ -1747,11 +1747,11 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 842,
+                              "referencedDeclaration": 855,
                               "type": "mapping(string memory => uint256)",
                               "value": "moduleIds"
                             },
-                            "id": 937,
+                            "id": 950,
                             "name": "Identifier",
                             "src": "1288:9:2"
                           },
@@ -1761,31 +1761,31 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 932,
+                              "referencedDeclaration": 945,
                               "type": "string memory",
                               "value": "usernameAndProjectName"
                             },
-                            "id": 938,
+                            "id": 951,
                             "name": "Identifier",
                             "src": "1298:22:2"
                           }
                         ],
-                        "id": 939,
+                        "id": 952,
                         "name": "IndexAccess",
                         "src": "1288:33:2"
                       }
                     ],
-                    "id": 940,
+                    "id": 953,
                     "name": "Return",
                     "src": "1281:40:2"
                   }
                 ],
-                "id": 941,
+                "id": 954,
                 "name": "Block",
                 "src": "1275:51:2"
               }
             ],
-            "id": 942,
+            "id": 955,
             "name": "FunctionDefinition",
             "src": "1196:130:2"
           },
@@ -1799,7 +1799,7 @@
               ],
               "name": "getModuleById",
               "payable": false,
-              "scope": 1100,
+              "scope": 1113,
               "stateMutability": "view",
               "superFunction": null,
               "visibility": "public"
@@ -1811,7 +1811,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "moduleId",
-                      "scope": 988,
+                      "scope": 1001,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -1824,17 +1824,17 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 943,
+                        "id": 956,
                         "name": "ElementaryTypeName",
                         "src": "1353:4:2"
                       }
                     ],
-                    "id": 944,
+                    "id": 957,
                     "name": "VariableDeclaration",
                     "src": "1353:13:2"
                   }
                 ],
-                "id": 945,
+                "id": 958,
                 "name": "ParameterList",
                 "src": "1352:15:2"
               },
@@ -1844,7 +1844,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "price",
-                      "scope": 988,
+                      "scope": 1001,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -1857,12 +1857,12 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 946,
+                        "id": 959,
                         "name": "ElementaryTypeName",
                         "src": "1389:4:2"
                       }
                     ],
-                    "id": 947,
+                    "id": 960,
                     "name": "VariableDeclaration",
                     "src": "1389:10:2"
                   },
@@ -1870,7 +1870,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "sellerUsername",
-                      "scope": 988,
+                      "scope": 1001,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "bytes32",
@@ -1883,12 +1883,12 @@
                           "name": "bytes32",
                           "type": "bytes32"
                         },
-                        "id": 948,
+                        "id": 961,
                         "name": "ElementaryTypeName",
                         "src": "1401:7:2"
                       }
                     ],
-                    "id": 949,
+                    "id": 962,
                     "name": "VariableDeclaration",
                     "src": "1401:22:2"
                   },
@@ -1896,7 +1896,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "moduleName",
-                      "scope": 988,
+                      "scope": 1001,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "bytes32",
@@ -1909,12 +1909,12 @@
                           "name": "bytes32",
                           "type": "bytes32"
                         },
-                        "id": 950,
+                        "id": 963,
                         "name": "ElementaryTypeName",
                         "src": "1425:7:2"
                       }
                     ],
-                    "id": 951,
+                    "id": 964,
                     "name": "VariableDeclaration",
                     "src": "1425:18:2"
                   },
@@ -1922,7 +1922,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "sellerAddress",
-                      "scope": 988,
+                      "scope": 1001,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -1935,12 +1935,12 @@
                           "name": "address",
                           "type": "address"
                         },
-                        "id": 952,
+                        "id": 965,
                         "name": "ElementaryTypeName",
                         "src": "1445:7:2"
                       }
                     ],
-                    "id": 953,
+                    "id": 966,
                     "name": "VariableDeclaration",
                     "src": "1445:21:2"
                   },
@@ -1948,7 +1948,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "licenseId",
-                      "scope": 988,
+                      "scope": 1001,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "bytes4",
@@ -1961,17 +1961,17 @@
                           "name": "bytes4",
                           "type": "bytes4"
                         },
-                        "id": 954,
+                        "id": 967,
                         "name": "ElementaryTypeName",
                         "src": "1468:6:2"
                       }
                     ],
-                    "id": 955,
+                    "id": 968,
                     "name": "VariableDeclaration",
                     "src": "1468:16:2"
                   }
                 ],
-                "id": 956,
+                "id": 969,
                 "name": "ParameterList",
                 "src": "1388:97:2"
               },
@@ -1980,7 +1980,7 @@
                   {
                     "attributes": {
                       "assignments": [
-                        957
+                        970
                       ]
                     },
                     "children": [
@@ -1988,7 +1988,7 @@
                         "attributes": {
                           "constant": false,
                           "name": "module",
-                          "scope": 988,
+                          "scope": 1001,
                           "stateVariable": false,
                           "storageLocation": "default",
                           "type": "struct Registry.ModuleForSale storage pointer",
@@ -1997,7 +1997,7 @@
                           "visibility": "internal"
                         },
                         "children": [],
-                        "id": 957,
+                        "id": 970,
                         "name": "VariableDeclaration",
                         "src": "1492:10:2"
                       },
@@ -2017,11 +2017,11 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 846,
+                              "referencedDeclaration": 859,
                               "type": "mapping(uint256 => struct Registry.ModuleForSale storage ref)",
                               "value": "modules"
                             },
-                            "id": 958,
+                            "id": 971,
                             "name": "Identifier",
                             "src": "1505:7:2"
                           },
@@ -2031,21 +2031,21 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 944,
+                              "referencedDeclaration": 957,
                               "type": "uint256",
                               "value": "moduleId"
                             },
-                            "id": 959,
+                            "id": 972,
                             "name": "Identifier",
                             "src": "1513:8:2"
                           }
                         ],
-                        "id": 960,
+                        "id": 973,
                         "name": "IndexAccess",
                         "src": "1505:17:2"
                       }
                     ],
-                    "id": 961,
+                    "id": 974,
                     "name": "VariableDeclarationStatement",
                     "src": "1492:30:2"
                   },
@@ -2068,11 +2068,11 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 947,
+                              "referencedDeclaration": 960,
                               "type": "uint256",
                               "value": "price"
                             },
-                            "id": 962,
+                            "id": 975,
                             "name": "Identifier",
                             "src": "1529:5:2"
                           },
@@ -2084,7 +2084,7 @@
                               "isPure": false,
                               "lValueRequested": false,
                               "member_name": "price",
-                              "referencedDeclaration": 829,
+                              "referencedDeclaration": 842,
                               "type": "uint256"
                             },
                             "children": [
@@ -2094,26 +2094,26 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 957,
+                                  "referencedDeclaration": 970,
                                   "type": "struct Registry.ModuleForSale storage pointer",
                                   "value": "module"
                                 },
-                                "id": 963,
+                                "id": 976,
                                 "name": "Identifier",
                                 "src": "1537:6:2"
                               }
                             ],
-                            "id": 964,
+                            "id": 977,
                             "name": "MemberAccess",
                             "src": "1537:12:2"
                           }
                         ],
-                        "id": 965,
+                        "id": 978,
                         "name": "Assignment",
                         "src": "1529:20:2"
                       }
                     ],
-                    "id": 966,
+                    "id": 979,
                     "name": "ExpressionStatement",
                     "src": "1529:20:2"
                   },
@@ -2136,11 +2136,11 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 949,
+                              "referencedDeclaration": 962,
                               "type": "bytes32",
                               "value": "sellerUsername"
                             },
-                            "id": 967,
+                            "id": 980,
                             "name": "Identifier",
                             "src": "1555:14:2"
                           },
@@ -2152,7 +2152,7 @@
                               "isPure": false,
                               "lValueRequested": false,
                               "member_name": "sellerUsername",
-                              "referencedDeclaration": 831,
+                              "referencedDeclaration": 844,
                               "type": "bytes32"
                             },
                             "children": [
@@ -2162,26 +2162,26 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 957,
+                                  "referencedDeclaration": 970,
                                   "type": "struct Registry.ModuleForSale storage pointer",
                                   "value": "module"
                                 },
-                                "id": 968,
+                                "id": 981,
                                 "name": "Identifier",
                                 "src": "1572:6:2"
                               }
                             ],
-                            "id": 969,
+                            "id": 982,
                             "name": "MemberAccess",
                             "src": "1572:21:2"
                           }
                         ],
-                        "id": 970,
+                        "id": 983,
                         "name": "Assignment",
                         "src": "1555:38:2"
                       }
                     ],
-                    "id": 971,
+                    "id": 984,
                     "name": "ExpressionStatement",
                     "src": "1555:38:2"
                   },
@@ -2204,11 +2204,11 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 951,
+                              "referencedDeclaration": 964,
                               "type": "bytes32",
                               "value": "moduleName"
                             },
-                            "id": 972,
+                            "id": 985,
                             "name": "Identifier",
                             "src": "1599:10:2"
                           },
@@ -2220,7 +2220,7 @@
                               "isPure": false,
                               "lValueRequested": false,
                               "member_name": "moduleName",
-                              "referencedDeclaration": 833,
+                              "referencedDeclaration": 846,
                               "type": "bytes32"
                             },
                             "children": [
@@ -2230,26 +2230,26 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 957,
+                                  "referencedDeclaration": 970,
                                   "type": "struct Registry.ModuleForSale storage pointer",
                                   "value": "module"
                                 },
-                                "id": 973,
+                                "id": 986,
                                 "name": "Identifier",
                                 "src": "1612:6:2"
                               }
                             ],
-                            "id": 974,
+                            "id": 987,
                             "name": "MemberAccess",
                             "src": "1612:17:2"
                           }
                         ],
-                        "id": 975,
+                        "id": 988,
                         "name": "Assignment",
                         "src": "1599:30:2"
                       }
                     ],
-                    "id": 976,
+                    "id": 989,
                     "name": "ExpressionStatement",
                     "src": "1599:30:2"
                   },
@@ -2272,11 +2272,11 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 953,
+                              "referencedDeclaration": 966,
                               "type": "address",
                               "value": "sellerAddress"
                             },
-                            "id": 977,
+                            "id": 990,
                             "name": "Identifier",
                             "src": "1635:13:2"
                           },
@@ -2288,7 +2288,7 @@
                               "isPure": false,
                               "lValueRequested": false,
                               "member_name": "sellerAddress",
-                              "referencedDeclaration": 835,
+                              "referencedDeclaration": 848,
                               "type": "address"
                             },
                             "children": [
@@ -2298,26 +2298,26 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 957,
+                                  "referencedDeclaration": 970,
                                   "type": "struct Registry.ModuleForSale storage pointer",
                                   "value": "module"
                                 },
-                                "id": 978,
+                                "id": 991,
                                 "name": "Identifier",
                                 "src": "1651:6:2"
                               }
                             ],
-                            "id": 979,
+                            "id": 992,
                             "name": "MemberAccess",
                             "src": "1651:20:2"
                           }
                         ],
-                        "id": 980,
+                        "id": 993,
                         "name": "Assignment",
                         "src": "1635:36:2"
                       }
                     ],
-                    "id": 981,
+                    "id": 994,
                     "name": "ExpressionStatement",
                     "src": "1635:36:2"
                   },
@@ -2340,11 +2340,11 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 955,
+                              "referencedDeclaration": 968,
                               "type": "bytes4",
                               "value": "licenseId"
                             },
-                            "id": 982,
+                            "id": 995,
                             "name": "Identifier",
                             "src": "1677:9:2"
                           },
@@ -2356,7 +2356,7 @@
                               "isPure": false,
                               "lValueRequested": false,
                               "member_name": "licenseId",
-                              "referencedDeclaration": 837,
+                              "referencedDeclaration": 850,
                               "type": "bytes4"
                             },
                             "children": [
@@ -2366,36 +2366,36 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 957,
+                                  "referencedDeclaration": 970,
                                   "type": "struct Registry.ModuleForSale storage pointer",
                                   "value": "module"
                                 },
-                                "id": 983,
+                                "id": 996,
                                 "name": "Identifier",
                                 "src": "1689:6:2"
                               }
                             ],
-                            "id": 984,
+                            "id": 997,
                             "name": "MemberAccess",
                             "src": "1689:16:2"
                           }
                         ],
-                        "id": 985,
+                        "id": 998,
                         "name": "Assignment",
                         "src": "1677:28:2"
                       }
                     ],
-                    "id": 986,
+                    "id": 999,
                     "name": "ExpressionStatement",
                     "src": "1677:28:2"
                   }
                 ],
-                "id": 987,
+                "id": 1000,
                 "name": "Block",
                 "src": "1486:224:2"
               }
             ],
-            "id": 988,
+            "id": 1001,
             "name": "FunctionDefinition",
             "src": "1330:380:2"
           },
@@ -2409,7 +2409,7 @@
               ],
               "name": "getModuleByName",
               "payable": false,
-              "scope": 1100,
+              "scope": 1113,
               "stateMutability": "view",
               "superFunction": null,
               "visibility": "public"
@@ -2421,7 +2421,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "usernameAndProjectName",
-                      "scope": 1045,
+                      "scope": 1058,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "string memory",
@@ -2434,17 +2434,17 @@
                           "name": "string",
                           "type": "string storage pointer"
                         },
-                        "id": 989,
+                        "id": 1002,
                         "name": "ElementaryTypeName",
                         "src": "1739:6:2"
                       }
                     ],
-                    "id": 990,
+                    "id": 1003,
                     "name": "VariableDeclaration",
                     "src": "1739:29:2"
                   }
                 ],
-                "id": 991,
+                "id": 1004,
                 "name": "ParameterList",
                 "src": "1738:31:2"
               },
@@ -2454,7 +2454,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "price",
-                      "scope": 1045,
+                      "scope": 1058,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -2467,12 +2467,12 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 992,
+                        "id": 1005,
                         "name": "ElementaryTypeName",
                         "src": "1791:4:2"
                       }
                     ],
-                    "id": 993,
+                    "id": 1006,
                     "name": "VariableDeclaration",
                     "src": "1791:10:2"
                   },
@@ -2480,7 +2480,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "sellerUsername",
-                      "scope": 1045,
+                      "scope": 1058,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "bytes32",
@@ -2493,12 +2493,12 @@
                           "name": "bytes32",
                           "type": "bytes32"
                         },
-                        "id": 994,
+                        "id": 1007,
                         "name": "ElementaryTypeName",
                         "src": "1803:7:2"
                       }
                     ],
-                    "id": 995,
+                    "id": 1008,
                     "name": "VariableDeclaration",
                     "src": "1803:22:2"
                   },
@@ -2506,7 +2506,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "moduleName",
-                      "scope": 1045,
+                      "scope": 1058,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "bytes32",
@@ -2519,12 +2519,12 @@
                           "name": "bytes32",
                           "type": "bytes32"
                         },
-                        "id": 996,
+                        "id": 1009,
                         "name": "ElementaryTypeName",
                         "src": "1827:7:2"
                       }
                     ],
-                    "id": 997,
+                    "id": 1010,
                     "name": "VariableDeclaration",
                     "src": "1827:18:2"
                   },
@@ -2532,7 +2532,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "sellerAddress",
-                      "scope": 1045,
+                      "scope": 1058,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -2545,12 +2545,12 @@
                           "name": "address",
                           "type": "address"
                         },
-                        "id": 998,
+                        "id": 1011,
                         "name": "ElementaryTypeName",
                         "src": "1847:7:2"
                       }
                     ],
-                    "id": 999,
+                    "id": 1012,
                     "name": "VariableDeclaration",
                     "src": "1847:21:2"
                   },
@@ -2558,7 +2558,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "licenseId",
-                      "scope": 1045,
+                      "scope": 1058,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "bytes4",
@@ -2571,17 +2571,17 @@
                           "name": "bytes4",
                           "type": "bytes4"
                         },
-                        "id": 1000,
+                        "id": 1013,
                         "name": "ElementaryTypeName",
                         "src": "1870:6:2"
                       }
                     ],
-                    "id": 1001,
+                    "id": 1014,
                     "name": "VariableDeclaration",
                     "src": "1870:16:2"
                   }
                 ],
-                "id": 1002,
+                "id": 1015,
                 "name": "ParameterList",
                 "src": "1790:97:2"
               },
@@ -2590,7 +2590,7 @@
                   {
                     "attributes": {
                       "assignments": [
-                        1003
+                        1016
                       ]
                     },
                     "children": [
@@ -2598,7 +2598,7 @@
                         "attributes": {
                           "constant": false,
                           "name": "moduleId",
-                          "scope": 1045,
+                          "scope": 1058,
                           "stateVariable": false,
                           "storageLocation": "default",
                           "type": "uint256",
@@ -2607,7 +2607,7 @@
                           "visibility": "internal"
                         },
                         "children": [],
-                        "id": 1003,
+                        "id": 1016,
                         "name": "VariableDeclaration",
                         "src": "1894:12:2"
                       },
@@ -2627,11 +2627,11 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 842,
+                              "referencedDeclaration": 855,
                               "type": "mapping(string memory => uint256)",
                               "value": "moduleIds"
                             },
-                            "id": 1004,
+                            "id": 1017,
                             "name": "Identifier",
                             "src": "1909:9:2"
                           },
@@ -2641,21 +2641,21 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 990,
+                              "referencedDeclaration": 1003,
                               "type": "string memory",
                               "value": "usernameAndProjectName"
                             },
-                            "id": 1005,
+                            "id": 1018,
                             "name": "Identifier",
                             "src": "1919:22:2"
                           }
                         ],
-                        "id": 1006,
+                        "id": 1019,
                         "name": "IndexAccess",
                         "src": "1909:33:2"
                       }
                     ],
-                    "id": 1007,
+                    "id": 1020,
                     "name": "VariableDeclarationStatement",
                     "src": "1894:48:2"
                   },
@@ -2685,11 +2685,11 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 1003,
+                              "referencedDeclaration": 1016,
                               "type": "uint256",
                               "value": "moduleId"
                             },
-                            "id": 1008,
+                            "id": 1021,
                             "name": "Identifier",
                             "src": "1952:8:2"
                           },
@@ -2706,12 +2706,12 @@
                               "type": "int_const 0",
                               "value": "0"
                             },
-                            "id": 1009,
+                            "id": 1022,
                             "name": "Literal",
                             "src": "1964:1:2"
                           }
                         ],
-                        "id": 1010,
+                        "id": 1023,
                         "name": "BinaryOperation",
                         "src": "1952:13:2"
                       },
@@ -2720,26 +2720,26 @@
                           {
                             "attributes": {
                               "expression": null,
-                              "functionReturnParameters": 1002
+                              "functionReturnParameters": 1015
                             },
-                            "id": 1011,
+                            "id": 1024,
                             "name": "Return",
                             "src": "1975:7:2"
                           }
                         ],
-                        "id": 1012,
+                        "id": 1025,
                         "name": "Block",
                         "src": "1967:21:2"
                       }
                     ],
-                    "id": 1013,
+                    "id": 1026,
                     "name": "IfStatement",
                     "src": "1948:40:2"
                   },
                   {
                     "attributes": {
                       "assignments": [
-                        1014
+                        1027
                       ]
                     },
                     "children": [
@@ -2747,7 +2747,7 @@
                         "attributes": {
                           "constant": false,
                           "name": "module",
-                          "scope": 1045,
+                          "scope": 1058,
                           "stateVariable": false,
                           "storageLocation": "default",
                           "type": "struct Registry.ModuleForSale storage pointer",
@@ -2756,7 +2756,7 @@
                           "visibility": "internal"
                         },
                         "children": [],
-                        "id": 1014,
+                        "id": 1027,
                         "name": "VariableDeclaration",
                         "src": "1993:10:2"
                       },
@@ -2776,11 +2776,11 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 846,
+                              "referencedDeclaration": 859,
                               "type": "mapping(uint256 => struct Registry.ModuleForSale storage ref)",
                               "value": "modules"
                             },
-                            "id": 1015,
+                            "id": 1028,
                             "name": "Identifier",
                             "src": "2006:7:2"
                           },
@@ -2790,21 +2790,21 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 1003,
+                              "referencedDeclaration": 1016,
                               "type": "uint256",
                               "value": "moduleId"
                             },
-                            "id": 1016,
+                            "id": 1029,
                             "name": "Identifier",
                             "src": "2014:8:2"
                           }
                         ],
-                        "id": 1017,
+                        "id": 1030,
                         "name": "IndexAccess",
                         "src": "2006:17:2"
                       }
                     ],
-                    "id": 1018,
+                    "id": 1031,
                     "name": "VariableDeclarationStatement",
                     "src": "1993:30:2"
                   },
@@ -2827,11 +2827,11 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 993,
+                              "referencedDeclaration": 1006,
                               "type": "uint256",
                               "value": "price"
                             },
-                            "id": 1019,
+                            "id": 1032,
                             "name": "Identifier",
                             "src": "2030:5:2"
                           },
@@ -2843,7 +2843,7 @@
                               "isPure": false,
                               "lValueRequested": false,
                               "member_name": "price",
-                              "referencedDeclaration": 829,
+                              "referencedDeclaration": 842,
                               "type": "uint256"
                             },
                             "children": [
@@ -2853,26 +2853,26 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 1014,
+                                  "referencedDeclaration": 1027,
                                   "type": "struct Registry.ModuleForSale storage pointer",
                                   "value": "module"
                                 },
-                                "id": 1020,
+                                "id": 1033,
                                 "name": "Identifier",
                                 "src": "2038:6:2"
                               }
                             ],
-                            "id": 1021,
+                            "id": 1034,
                             "name": "MemberAccess",
                             "src": "2038:12:2"
                           }
                         ],
-                        "id": 1022,
+                        "id": 1035,
                         "name": "Assignment",
                         "src": "2030:20:2"
                       }
                     ],
-                    "id": 1023,
+                    "id": 1036,
                     "name": "ExpressionStatement",
                     "src": "2030:20:2"
                   },
@@ -2895,11 +2895,11 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 995,
+                              "referencedDeclaration": 1008,
                               "type": "bytes32",
                               "value": "sellerUsername"
                             },
-                            "id": 1024,
+                            "id": 1037,
                             "name": "Identifier",
                             "src": "2056:14:2"
                           },
@@ -2911,7 +2911,7 @@
                               "isPure": false,
                               "lValueRequested": false,
                               "member_name": "sellerUsername",
-                              "referencedDeclaration": 831,
+                              "referencedDeclaration": 844,
                               "type": "bytes32"
                             },
                             "children": [
@@ -2921,26 +2921,26 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 1014,
+                                  "referencedDeclaration": 1027,
                                   "type": "struct Registry.ModuleForSale storage pointer",
                                   "value": "module"
                                 },
-                                "id": 1025,
+                                "id": 1038,
                                 "name": "Identifier",
                                 "src": "2073:6:2"
                               }
                             ],
-                            "id": 1026,
+                            "id": 1039,
                             "name": "MemberAccess",
                             "src": "2073:21:2"
                           }
                         ],
-                        "id": 1027,
+                        "id": 1040,
                         "name": "Assignment",
                         "src": "2056:38:2"
                       }
                     ],
-                    "id": 1028,
+                    "id": 1041,
                     "name": "ExpressionStatement",
                     "src": "2056:38:2"
                   },
@@ -2963,11 +2963,11 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 997,
+                              "referencedDeclaration": 1010,
                               "type": "bytes32",
                               "value": "moduleName"
                             },
-                            "id": 1029,
+                            "id": 1042,
                             "name": "Identifier",
                             "src": "2100:10:2"
                           },
@@ -2979,7 +2979,7 @@
                               "isPure": false,
                               "lValueRequested": false,
                               "member_name": "moduleName",
-                              "referencedDeclaration": 833,
+                              "referencedDeclaration": 846,
                               "type": "bytes32"
                             },
                             "children": [
@@ -2989,26 +2989,26 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 1014,
+                                  "referencedDeclaration": 1027,
                                   "type": "struct Registry.ModuleForSale storage pointer",
                                   "value": "module"
                                 },
-                                "id": 1030,
+                                "id": 1043,
                                 "name": "Identifier",
                                 "src": "2113:6:2"
                               }
                             ],
-                            "id": 1031,
+                            "id": 1044,
                             "name": "MemberAccess",
                             "src": "2113:17:2"
                           }
                         ],
-                        "id": 1032,
+                        "id": 1045,
                         "name": "Assignment",
                         "src": "2100:30:2"
                       }
                     ],
-                    "id": 1033,
+                    "id": 1046,
                     "name": "ExpressionStatement",
                     "src": "2100:30:2"
                   },
@@ -3031,11 +3031,11 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 999,
+                              "referencedDeclaration": 1012,
                               "type": "address",
                               "value": "sellerAddress"
                             },
-                            "id": 1034,
+                            "id": 1047,
                             "name": "Identifier",
                             "src": "2136:13:2"
                           },
@@ -3047,7 +3047,7 @@
                               "isPure": false,
                               "lValueRequested": false,
                               "member_name": "sellerAddress",
-                              "referencedDeclaration": 835,
+                              "referencedDeclaration": 848,
                               "type": "address"
                             },
                             "children": [
@@ -3057,26 +3057,26 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 1014,
+                                  "referencedDeclaration": 1027,
                                   "type": "struct Registry.ModuleForSale storage pointer",
                                   "value": "module"
                                 },
-                                "id": 1035,
+                                "id": 1048,
                                 "name": "Identifier",
                                 "src": "2152:6:2"
                               }
                             ],
-                            "id": 1036,
+                            "id": 1049,
                             "name": "MemberAccess",
                             "src": "2152:20:2"
                           }
                         ],
-                        "id": 1037,
+                        "id": 1050,
                         "name": "Assignment",
                         "src": "2136:36:2"
                       }
                     ],
-                    "id": 1038,
+                    "id": 1051,
                     "name": "ExpressionStatement",
                     "src": "2136:36:2"
                   },
@@ -3099,11 +3099,11 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 1001,
+                              "referencedDeclaration": 1014,
                               "type": "bytes4",
                               "value": "licenseId"
                             },
-                            "id": 1039,
+                            "id": 1052,
                             "name": "Identifier",
                             "src": "2178:9:2"
                           },
@@ -3115,7 +3115,7 @@
                               "isPure": false,
                               "lValueRequested": false,
                               "member_name": "licenseId",
-                              "referencedDeclaration": 837,
+                              "referencedDeclaration": 850,
                               "type": "bytes4"
                             },
                             "children": [
@@ -3125,36 +3125,36 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 1014,
+                                  "referencedDeclaration": 1027,
                                   "type": "struct Registry.ModuleForSale storage pointer",
                                   "value": "module"
                                 },
-                                "id": 1040,
+                                "id": 1053,
                                 "name": "Identifier",
                                 "src": "2190:6:2"
                               }
                             ],
-                            "id": 1041,
+                            "id": 1054,
                             "name": "MemberAccess",
                             "src": "2190:16:2"
                           }
                         ],
-                        "id": 1042,
+                        "id": 1055,
                         "name": "Assignment",
                         "src": "2178:28:2"
                       }
                     ],
-                    "id": 1043,
+                    "id": 1056,
                     "name": "ExpressionStatement",
                     "src": "2178:28:2"
                   }
                 ],
-                "id": 1044,
+                "id": 1057,
                 "name": "Block",
                 "src": "1888:323:2"
               }
             ],
-            "id": 1045,
+            "id": 1058,
             "name": "FunctionDefinition",
             "src": "1714:497:2"
           },
@@ -3168,7 +3168,7 @@
               ],
               "name": "editModule",
               "payable": false,
-              "scope": 1100,
+              "scope": 1113,
               "stateMutability": "nonpayable",
               "superFunction": null,
               "visibility": "public"
@@ -3180,7 +3180,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "moduleId",
-                      "scope": 1099,
+                      "scope": 1112,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -3193,12 +3193,12 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 1046,
+                        "id": 1059,
                         "name": "ElementaryTypeName",
                         "src": "2236:4:2"
                       }
                     ],
-                    "id": 1047,
+                    "id": 1060,
                     "name": "VariableDeclaration",
                     "src": "2236:13:2"
                   },
@@ -3206,7 +3206,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "price",
-                      "scope": 1099,
+                      "scope": 1112,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -3219,12 +3219,12 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 1048,
+                        "id": 1061,
                         "name": "ElementaryTypeName",
                         "src": "2251:4:2"
                       }
                     ],
-                    "id": 1049,
+                    "id": 1062,
                     "name": "VariableDeclaration",
                     "src": "2251:10:2"
                   },
@@ -3232,7 +3232,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "sellerAddress",
-                      "scope": 1099,
+                      "scope": 1112,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -3245,12 +3245,12 @@
                           "name": "address",
                           "type": "address"
                         },
-                        "id": 1050,
+                        "id": 1063,
                         "name": "ElementaryTypeName",
                         "src": "2263:7:2"
                       }
                     ],
-                    "id": 1051,
+                    "id": 1064,
                     "name": "VariableDeclaration",
                     "src": "2263:21:2"
                   },
@@ -3258,7 +3258,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "licenseId",
-                      "scope": 1099,
+                      "scope": 1112,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "bytes4",
@@ -3271,17 +3271,17 @@
                           "name": "bytes4",
                           "type": "bytes4"
                         },
-                        "id": 1052,
+                        "id": 1065,
                         "name": "ElementaryTypeName",
                         "src": "2286:6:2"
                       }
                     ],
-                    "id": 1053,
+                    "id": 1066,
                     "name": "VariableDeclaration",
                     "src": "2286:16:2"
                   }
                 ],
-                "id": 1054,
+                "id": 1067,
                 "name": "ParameterList",
                 "src": "2235:68:2"
               },
@@ -3292,7 +3292,7 @@
                   ]
                 },
                 "children": [],
-                "id": 1055,
+                "id": 1068,
                 "name": "ParameterList",
                 "src": "2311:0:2"
               },
@@ -3326,11 +3326,11 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 1159,
+                              "referencedDeclaration": 1172,
                               "type": "function (bool) pure",
                               "value": "require"
                             },
-                            "id": 1056,
+                            "id": 1069,
                             "name": "Identifier",
                             "src": "2317:7:2"
                           },
@@ -3355,11 +3355,11 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 1047,
+                                  "referencedDeclaration": 1060,
                                   "type": "uint256",
                                   "value": "moduleId"
                                 },
-                                "id": 1057,
+                                "id": 1070,
                                 "name": "Identifier",
                                 "src": "2325:8:2"
                               },
@@ -3376,29 +3376,29 @@
                                   "type": "int_const 0",
                                   "value": "0"
                                 },
-                                "id": 1058,
+                                "id": 1071,
                                 "name": "Literal",
                                 "src": "2336:1:2"
                               }
                             ],
-                            "id": 1059,
+                            "id": 1072,
                             "name": "BinaryOperation",
                             "src": "2325:12:2"
                           }
                         ],
-                        "id": 1060,
+                        "id": 1073,
                         "name": "FunctionCall",
                         "src": "2317:21:2"
                       }
                     ],
-                    "id": 1061,
+                    "id": 1074,
                     "name": "ExpressionStatement",
                     "src": "2317:21:2"
                   },
                   {
                     "attributes": {
                       "assignments": [
-                        1062
+                        1075
                       ]
                     },
                     "children": [
@@ -3406,7 +3406,7 @@
                         "attributes": {
                           "constant": false,
                           "name": "module",
-                          "scope": 1099,
+                          "scope": 1112,
                           "stateVariable": false,
                           "storageLocation": "default",
                           "type": "struct Registry.ModuleForSale storage pointer",
@@ -3415,7 +3415,7 @@
                           "visibility": "internal"
                         },
                         "children": [],
-                        "id": 1062,
+                        "id": 1075,
                         "name": "VariableDeclaration",
                         "src": "2345:10:2"
                       },
@@ -3435,11 +3435,11 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 846,
+                              "referencedDeclaration": 859,
                               "type": "mapping(uint256 => struct Registry.ModuleForSale storage ref)",
                               "value": "modules"
                             },
-                            "id": 1063,
+                            "id": 1076,
                             "name": "Identifier",
                             "src": "2358:7:2"
                           },
@@ -3449,21 +3449,21 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 1047,
+                              "referencedDeclaration": 1060,
                               "type": "uint256",
                               "value": "moduleId"
                             },
-                            "id": 1064,
+                            "id": 1077,
                             "name": "Identifier",
                             "src": "2366:8:2"
                           }
                         ],
-                        "id": 1065,
+                        "id": 1078,
                         "name": "IndexAccess",
                         "src": "2358:17:2"
                       }
                     ],
-                    "id": 1066,
+                    "id": 1079,
                     "name": "VariableDeclarationStatement",
                     "src": "2345:30:2"
                   },
@@ -3495,11 +3495,11 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 1159,
+                              "referencedDeclaration": 1172,
                               "type": "function (bool) pure",
                               "value": "require"
                             },
-                            "id": 1067,
+                            "id": 1080,
                             "name": "Identifier",
                             "src": "2567:7:2"
                           },
@@ -3551,16 +3551,16 @@
                                           "overloadedDeclarations": [
                                             null
                                           ],
-                                          "referencedDeclaration": 1156,
+                                          "referencedDeclaration": 1169,
                                           "type": "msg",
                                           "value": "msg"
                                         },
-                                        "id": 1068,
+                                        "id": 1081,
                                         "name": "Identifier",
                                         "src": "2575:3:2"
                                       }
                                     ],
-                                    "id": 1069,
+                                    "id": 1082,
                                     "name": "MemberAccess",
                                     "src": "2575:10:2"
                                   },
@@ -3572,7 +3572,7 @@
                                       "isPure": false,
                                       "lValueRequested": false,
                                       "member_name": "sellerAddress",
-                                      "referencedDeclaration": 835,
+                                      "referencedDeclaration": 848,
                                       "type": "address"
                                     },
                                     "children": [
@@ -3582,21 +3582,21 @@
                                           "overloadedDeclarations": [
                                             null
                                           ],
-                                          "referencedDeclaration": 1062,
+                                          "referencedDeclaration": 1075,
                                           "type": "struct Registry.ModuleForSale storage pointer",
                                           "value": "module"
                                         },
-                                        "id": 1070,
+                                        "id": 1083,
                                         "name": "Identifier",
                                         "src": "2589:6:2"
                                       }
                                     ],
-                                    "id": 1071,
+                                    "id": 1084,
                                     "name": "MemberAccess",
                                     "src": "2589:20:2"
                                   }
                                 ],
-                                "id": 1072,
+                                "id": 1085,
                                 "name": "BinaryOperation",
                                 "src": "2575:34:2"
                               },
@@ -3633,16 +3633,16 @@
                                           "overloadedDeclarations": [
                                             null
                                           ],
-                                          "referencedDeclaration": 1156,
+                                          "referencedDeclaration": 1169,
                                           "type": "msg",
                                           "value": "msg"
                                         },
-                                        "id": 1073,
+                                        "id": 1086,
                                         "name": "Identifier",
                                         "src": "2613:3:2"
                                       }
                                     ],
-                                    "id": 1074,
+                                    "id": 1087,
                                     "name": "MemberAccess",
                                     "src": "2613:10:2"
                                   },
@@ -3652,31 +3652,31 @@
                                       "overloadedDeclarations": [
                                         null
                                       ],
-                                      "referencedDeclaration": 755,
+                                      "referencedDeclaration": 768,
                                       "type": "address",
                                       "value": "owner"
                                     },
-                                    "id": 1075,
+                                    "id": 1088,
                                     "name": "Identifier",
                                     "src": "2627:5:2"
                                   }
                                 ],
-                                "id": 1076,
+                                "id": 1089,
                                 "name": "BinaryOperation",
                                 "src": "2613:19:2"
                               }
                             ],
-                            "id": 1077,
+                            "id": 1090,
                             "name": "BinaryOperation",
                             "src": "2575:57:2"
                           }
                         ],
-                        "id": 1078,
+                        "id": 1091,
                         "name": "FunctionCall",
                         "src": "2567:66:2"
                       }
                     ],
-                    "id": 1079,
+                    "id": 1092,
                     "name": "ExpressionStatement",
                     "src": "2567:66:2"
                   },
@@ -3701,7 +3701,7 @@
                               "isPure": false,
                               "lValueRequested": true,
                               "member_name": "price",
-                              "referencedDeclaration": 829,
+                              "referencedDeclaration": 842,
                               "type": "uint256"
                             },
                             "children": [
@@ -3711,16 +3711,16 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 1062,
+                                  "referencedDeclaration": 1075,
                                   "type": "struct Registry.ModuleForSale storage pointer",
                                   "value": "module"
                                 },
-                                "id": 1080,
+                                "id": 1093,
                                 "name": "Identifier",
                                 "src": "2640:6:2"
                               }
                             ],
-                            "id": 1082,
+                            "id": 1095,
                             "name": "MemberAccess",
                             "src": "2640:12:2"
                           },
@@ -3730,21 +3730,21 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 1049,
+                              "referencedDeclaration": 1062,
                               "type": "uint256",
                               "value": "price"
                             },
-                            "id": 1083,
+                            "id": 1096,
                             "name": "Identifier",
                             "src": "2655:5:2"
                           }
                         ],
-                        "id": 1084,
+                        "id": 1097,
                         "name": "Assignment",
                         "src": "2640:20:2"
                       }
                     ],
-                    "id": 1085,
+                    "id": 1098,
                     "name": "ExpressionStatement",
                     "src": "2640:20:2"
                   },
@@ -3769,7 +3769,7 @@
                               "isPure": false,
                               "lValueRequested": true,
                               "member_name": "sellerAddress",
-                              "referencedDeclaration": 835,
+                              "referencedDeclaration": 848,
                               "type": "address"
                             },
                             "children": [
@@ -3779,16 +3779,16 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 1062,
+                                  "referencedDeclaration": 1075,
                                   "type": "struct Registry.ModuleForSale storage pointer",
                                   "value": "module"
                                 },
-                                "id": 1086,
+                                "id": 1099,
                                 "name": "Identifier",
                                 "src": "2666:6:2"
                               }
                             ],
-                            "id": 1088,
+                            "id": 1101,
                             "name": "MemberAccess",
                             "src": "2666:20:2"
                           },
@@ -3798,21 +3798,21 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 1051,
+                              "referencedDeclaration": 1064,
                               "type": "address",
                               "value": "sellerAddress"
                             },
-                            "id": 1089,
+                            "id": 1102,
                             "name": "Identifier",
                             "src": "2689:13:2"
                           }
                         ],
-                        "id": 1090,
+                        "id": 1103,
                         "name": "Assignment",
                         "src": "2666:36:2"
                       }
                     ],
-                    "id": 1091,
+                    "id": 1104,
                     "name": "ExpressionStatement",
                     "src": "2666:36:2"
                   },
@@ -3837,7 +3837,7 @@
                               "isPure": false,
                               "lValueRequested": true,
                               "member_name": "licenseId",
-                              "referencedDeclaration": 837,
+                              "referencedDeclaration": 850,
                               "type": "bytes4"
                             },
                             "children": [
@@ -3847,16 +3847,16 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 1062,
+                                  "referencedDeclaration": 1075,
                                   "type": "struct Registry.ModuleForSale storage pointer",
                                   "value": "module"
                                 },
-                                "id": 1092,
+                                "id": 1105,
                                 "name": "Identifier",
                                 "src": "2708:6:2"
                               }
                             ],
-                            "id": 1094,
+                            "id": 1107,
                             "name": "MemberAccess",
                             "src": "2708:16:2"
                           },
@@ -3866,41 +3866,41 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 1053,
+                              "referencedDeclaration": 1066,
                               "type": "bytes4",
                               "value": "licenseId"
                             },
-                            "id": 1095,
+                            "id": 1108,
                             "name": "Identifier",
                             "src": "2727:9:2"
                           }
                         ],
-                        "id": 1096,
+                        "id": 1109,
                         "name": "Assignment",
                         "src": "2708:28:2"
                       }
                     ],
-                    "id": 1097,
+                    "id": 1110,
                     "name": "ExpressionStatement",
                     "src": "2708:28:2"
                   }
                 ],
-                "id": 1098,
+                "id": 1111,
                 "name": "Block",
                 "src": "2311:430:2"
               }
             ],
-            "id": 1099,
+            "id": 1112,
             "name": "FunctionDefinition",
             "src": "2216:525:2"
           }
         ],
-        "id": 1100,
+        "id": 1113,
         "name": "ContractDefinition",
         "src": "49:2694:2"
       }
     ],
-    "id": 1101,
+    "id": 1114,
     "name": "SourceUnit",
     "src": "0:2743:2"
   },
@@ -3912,7 +3912,7 @@
     "3": {
       "events": {},
       "links": {},
-      "address": "0x11b6489c4a01a5ce658db0b1210064a648101ff4"
+      "address": "0xf095f4d45c6ad77a3d9140d48512ff96bc9fb931"
     },
     "5778": {
       "events": {},
@@ -3921,5 +3921,5 @@
     }
   },
   "schemaVersion": "1.0.1",
-  "updatedAt": "2018-02-24T01:00:10.001Z"
+  "updatedAt": "2018-02-26T20:14:54.664Z"
 }
