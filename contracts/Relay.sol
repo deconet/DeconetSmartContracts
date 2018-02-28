@@ -3,7 +3,7 @@ pragma solidity ^0.4.19;
 import "./Owned.sol";
 
 contract Relay is Owned {
-  address public tokenContractAddress;
+  address public licenseSalesContractAddress;
   address public registryContractAddress;
   uint public version;
 
@@ -11,11 +11,11 @@ contract Relay is Owned {
   // Constructor, establishes ownership because contract is owned
   // ------------------------------------------------------------------------
   function Relay() public {
-    version = 1;
+    version = 2;
   }
 
-  function setTokenContractAddress(address newAddress) public onlyOwner {
-    tokenContractAddress = newAddress;
+  function setLicenseSalesContractAddress(address newAddress) public onlyOwner {
+    licenseSalesContractAddress = newAddress;
   }
 
   function setRegistryContractAddress(address newAddress) public onlyOwner {
