@@ -5,7 +5,7 @@ var LicenseSales = artifacts.require('./LicenseSales.sol')
 
 
 contract('Relay', function (accounts) {
-  it('should be possible to deploy and set token and registry contract addresses', async function () {
+  it('should be possible to deploy and set license sales and registry contract addresses', async function () {
     let ls = await LicenseSales.deployed()
     let registry = await Registry.deployed()
 
