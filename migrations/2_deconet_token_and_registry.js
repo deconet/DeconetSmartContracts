@@ -1,9 +1,10 @@
 var DeconetToken = artifacts.require('./DeconetToken.sol')
 var Registry = artifacts.require('./Registry.sol')
+var LicenseSales = artifacts.require('./LicenseSales.sol')
 var Relay = artifacts.require('./Relay.sol')
 
 module.exports = function (deployer) {
-  let relay, registry, deconetToken
+  let relay, registry, deconetToken, licenseSales
   console.log('Deploying relay contract')
   deployer.deploy(Relay)
   .then(() => {
@@ -12,17 +13,28 @@ module.exports = function (deployer) {
     return deployer.deploy(Registry)
   }).then(() => {
     registry = Registry.at(Registry.address)
+    console.log('Deploying license sales contract')
+    return deployer.deploy(LicenseSales)
+  }).then(() => {
+    licenseSales = LicenseSales.at(LicenseSales.address)
     console.log('Deploying token contract')
     return deployer.deploy(DeconetToken)
   }).then(() => {
     deconetToken = DeconetToken.at(DeconetToken.address)
-    console.log('Seting relay contract address to ' + relay.address)
-    return deconetToken.setRelayContractAddress(relay.address)
+    console.log('Setting token contract address on license sales to ' + deconetToken.address)
+    return licenseSales.setTokenContractAddress(deconetToken.address)
   }).then(() => {
-    console.log('Setting token contract address to ' + deconetToken.address)
-    return relay.setTokenContractAddress(deconetToken.address)
+    console.log('Seting relay contract address on license sales to ' + relay.address)
+    return licenseSales.setRelayContractAddress(relay.address)
   }).then(() => {
-    console.log('Setting registry contract address to ' + registry.address)
+    console.log('Setting license sales contract address on relay to ' + licenseSales.address)
+    return relay.setLicenseSalesContractAddress(licenseSales.address)
+  }).then(() => {
+    console.log('Setting registry contract address on relay to ' + registry.address)
     return relay.setRegistryContractAddress(registry.address)
+  }).then(() => {
+    console.log('Giving LicenseSale contract 10% of total tokens')
+    let tenPercent = '100000000000000000000000000'
+    return deconetToken.transfer(licenseSales.address, tenPercent)
   })
 }

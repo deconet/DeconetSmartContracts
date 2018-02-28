@@ -1,8 +1,6 @@
 pragma solidity ^0.4.19;
 
 import "./Owned.sol";
-import "./Relay.sol";
-import "./Registry.sol";
 
 // this is borrowed and modified from an example mintable supply token contract which is licensed under the MIT license.  code / attribution found here: https://github.com/bokkypoobah/Tokens/blob/master/contracts/BitFwdToken.sol
 // Thanks BokkyPooBah!
@@ -63,22 +61,14 @@ contract ApproveAndCallFallBack {
 contract DeconetToken is ERC20Interface, Owned {
     using SafeMath for uint;
 
-    // ERC20 stuff
+    // standard ERC20 stuff
     string public symbol;
     string public  name;
     uint8 public decimals;
     uint public _totalSupply;
     bool public mintable;
 
-    // the amount rewarded to a seller for selling a license
-    uint public tokenReward;
-
-    // the fee this contract takes from every sale.  expressed as percent.  so a value of 3 indicated a 3% txn fee
-    uint public saleFee;
-
-    // address of the relay contract which holds the address of the registry contract.
-    address public relayContractAddress;
-
+    // contract version
     uint public version;
 
     mapping(address => uint) balances;
@@ -87,24 +77,11 @@ contract DeconetToken is ERC20Interface, Owned {
 
     event MintingDisabled();
 
-    event LicenseSale(
-        bytes32 moduleName,
-        bytes32 sellerUsername,
-        address indexed sellerAddress,
-        address indexed buyerAddress,
-        uint price,
-        uint soldAt,
-        uint rewardedTokens,
-        uint networkFee,
-        bytes4 licenseId
-    );
-
-
     // ------------------------------------------------------------------------
     // Constructor
     // ------------------------------------------------------------------------
     function DeconetToken() public {
-        version = 2;
+        version = 3;
 
         // initial erc20 settings
         symbol = "DTEST";
@@ -112,8 +89,6 @@ contract DeconetToken is ERC20Interface, Owned {
         decimals = 18;
         mintable = true;
 
-        saleFee = 10;
-        tokenReward = 100 * 10**uint(decimals);
         _totalSupply = 1000000000 * 10**uint(decimals);
 
         balances[owner] = _totalSupply;
@@ -240,62 +215,5 @@ contract DeconetToken is ERC20Interface, Owned {
     // ------------------------------------------------------------------------
     function transferAnyERC20Token(address tokenAddress, uint tokens) public onlyOwner returns (bool success) {
         return ERC20Interface(tokenAddress).transfer(owner, tokens);
-    }
-
-    function withdrawEther() public onlyOwner {
-        owner.transfer(this.balance);
-    }
-
-    function setRelayContractAddress(address _relayContractAddress) public onlyOwner {
-        relayContractAddress = _relayContractAddress;
-    }
-
-    function setTokenReward(uint newReward) public onlyOwner {
-        tokenReward = newReward;
-    }
-
-    function makeSale(uint moduleId) public payable {
-        // look up the registry address from relay token
-        Relay relay = Relay(relayContractAddress);
-        address registryAddress = relay.registryContractAddress();
-
-        // get the module info from registry
-        Registry registry = Registry(registryAddress);
-
-        uint price;
-        bytes32 sellerUsername;
-        bytes32 moduleName;
-        address sellerAddress;
-        bytes4 licenseId;
-
-        (price, sellerUsername, moduleName, sellerAddress, licenseId) = registry.getModuleById(moduleId);
-
-        // // make sure the customer has sent enough eth
-        require(msg.value >= price);
-
-        // pay seller the ETH
-        // fixed point math at 2 decimal places
-        uint fee = msg.value.mul(100).div(saleFee).div(100);
-        uint payout = msg.value.sub(fee);
-        
-        // give seller some tokens for the sale as well
-        balances[owner] = balances[owner].sub(tokenReward);
-        balances[sellerAddress] = balances[sellerAddress].add(tokenReward);
-        
-        sellerAddress.transfer(payout);
-        Transfer(owner, sellerAddress, tokenReward);
-
-        // log the sale
-        LicenseSale(
-            moduleName,
-            sellerUsername,
-            sellerAddress,
-            msg.sender,
-            price,
-            block.timestamp,
-            tokenReward,
-            fee,
-            licenseId
-        );
     }
 }
