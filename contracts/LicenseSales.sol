@@ -60,13 +60,6 @@ contract LicenseSales is Owned {
   }
 
   // ------------------------------------------------------------------------
-  // Don't accept ethers (just in case)
-  // ------------------------------------------------------------------------
-  function () public payable {
-    revert();
-  }
-
-  // ------------------------------------------------------------------------
   // Owner can transfer out any accidentally sent ERC20 tokens (just in case)
   // ------------------------------------------------------------------------
   function transferAnyERC20Token(address tokenAddress, uint tokens) public onlyOwner returns (bool success) {
@@ -145,13 +138,6 @@ contract LicenseSales is Owned {
     // fixed point math at 2 decimal places
     uint fee = msg.value.mul(100).div(saleFee).div(100);
     uint payout = msg.value.sub(fee);
-    
-    // give seller some tokens for the sale as well
-    DeconetToken token = DeconetToken(tokenContractAddress);
-    token.transfer(sellerAddress, tokenReward);
-    
-    // pay seller the ETH
-    sellerAddress.transfer(payout);
 
     // log the sale
     LicenseSale(
@@ -165,5 +151,12 @@ contract LicenseSales is Owned {
       fee,
       licenseId
     );
+
+    // give seller some tokens for the sale as well
+    DeconetToken token = DeconetToken(tokenContractAddress);
+    token.transfer(sellerAddress, tokenReward);
+    
+    // pay seller the ETH
+    sellerAddress.transfer(payout);
   }
 }

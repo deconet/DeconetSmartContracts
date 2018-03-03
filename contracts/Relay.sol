@@ -5,13 +5,14 @@ import "./Owned.sol";
 contract Relay is Owned {
   address public licenseSalesContractAddress;
   address public registryContractAddress;
+  address public apiRegistryContractAddress;
   uint public version;
 
   // ------------------------------------------------------------------------
   // Constructor, establishes ownership because contract is owned
   // ------------------------------------------------------------------------
   function Relay() public {
-    version = 2;
+    version = 3;
   }
 
   function setLicenseSalesContractAddress(address newAddress) public onlyOwner {
@@ -20,5 +21,9 @@ contract Relay is Owned {
 
   function setRegistryContractAddress(address newAddress) public onlyOwner {
     registryContractAddress = newAddress;
+  }
+
+  function setApiRegistryContractAddress(address newAddress) public onlyOwner {
+    apiRegistryContractAddress = newAddress;
   }
 }
