@@ -1,6 +1,7 @@
-pragma solidity ^0.4.19;
+pragma solidity 0.4.19;
 
 import "./Owned.sol";
+
 
 contract Registry is Owned {
 
