@@ -2,19 +2,18 @@ pragma solidity 0.4.19;
 
 import "./Owned.sol";
 
-
 contract Registry is Owned {
 
   struct ModuleForSale {
-      uint price;
-      bytes32 sellerUsername;
-      bytes32 moduleName;
-      address sellerAddress;
-      bytes4 licenseId;
+    uint price;
+    bytes32 sellerUsername;
+    bytes32 moduleName;
+    address sellerAddress;
+    bytes4 licenseId;
   }
 
-  mapping(string => uint) moduleIds;
-  mapping(uint => ModuleForSale) modules;
+  mapping(string => uint) internal moduleIds;
+  mapping(uint => ModuleForSale) public modules;
 
   uint public numModules;
   uint public version;
@@ -70,7 +69,6 @@ contract Registry is Owned {
     sellerAddress = module.sellerAddress;
     licenseId = module.licenseId;
   }
-
 
   function editModule(uint moduleId, uint price, address sellerAddress, bytes4 licenseId) public {
     ModuleForSale storage module = modules[moduleId];

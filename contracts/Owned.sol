@@ -1,4 +1,4 @@
-pragma solidity ^0.4.19;
+pragma solidity 0.4.19;
 
 contract Owned {
   address public owner;
@@ -18,6 +18,7 @@ contract Owned {
   function transferOwnership(address _newOwner) public onlyOwner {
     newOwner = _newOwner;
   }
+  
   function acceptOwnership() public {
     require(msg.sender == newOwner);
     OwnershipTransferred(owner, newOwner);
