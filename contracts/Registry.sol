@@ -47,11 +47,12 @@ contract Registry is Owned {
   }
 
   function getModuleById(uint moduleId) public view returns (uint price, bytes32 sellerUsername, bytes32 moduleName, address sellerAddress, bytes4 licenseId) {
+    ModuleForSale storage module = modules[moduleId];
+    
+
     if (module.sellerAddress == address(0)) {
       return;
     }
-
-    ModuleForSale storage module = modules[moduleId];
 
     price = module.price;
     sellerUsername = module.sellerUsername;
