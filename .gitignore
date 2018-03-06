@@ -1,5 +1,8 @@
 # dependencies
 node_modules
 
+# unignore only openzepplin so the full source of our contracts are in source control
+!node_modules/zeppelin-solidity
+
 # production
 build
