@@ -65,6 +65,9 @@ contract('LicenseSales', function (accounts) {
     let token = await Token.deployed()
     let ls = await LicenseSales.deployed()
 
+    // unpause token to allow transfers
+    await token.unpause({from: accounts[0]})
+
     let usernameAndProjectName = `${sellerUsername}/${moduleName}`
 
     await registry.listModule(modulePrice, sellerUsername, moduleName, usernameAndProjectName, licenseId, { from: accounts[2] })
