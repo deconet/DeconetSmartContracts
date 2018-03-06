@@ -4,6 +4,7 @@ import "./Owned.sol";
 import "./Relay.sol";
 import "./Registry.sol";
 import "./DeconetToken.sol";
+import "zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 
 
 // ----------------------------------------------------------------------------
@@ -63,7 +64,7 @@ contract LicenseSales is Owned {
   // Owner can transfer out any accidentally sent ERC20 tokens (just in case)
   // ------------------------------------------------------------------------
   function transferAnyERC20Token(address tokenAddress, uint tokens) public onlyOwner returns (bool success) {
-    return ERC20Interface(tokenAddress).transfer(owner, tokens);
+    return ERC20(tokenAddress).transfer(owner, tokens);
   }
 
   // ------------------------------------------------------------------------
