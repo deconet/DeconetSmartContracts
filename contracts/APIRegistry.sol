@@ -28,6 +28,12 @@ contract APIRegistry is Owned {
   }
 
   function listApi(uint pricePerCall, bytes32 sellerUsername, bytes32 apiName, string hostname, string docsUrl) public {
+    // make sure input params are valid
+    require(pricePerCall != 0 && sellerUsername != "" && apiName != "" && bytes(hostname).length != 0);
+
+    // if docsUrl is mandatory, uncomment this line
+    require(bytes(docsUrl).length != 0); 
+    
     // make sure the name isn't already taken
     require(apiIds[hostname] == 0);
 

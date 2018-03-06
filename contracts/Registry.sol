@@ -48,6 +48,11 @@ contract Registry is Owned {
 
   function getModuleById(uint moduleId) public view returns (uint price, bytes32 sellerUsername, bytes32 moduleName, address sellerAddress, bytes4 licenseId) {
     ModuleForSale storage module = modules[moduleId];
+    
+
+    if (module.sellerAddress == address(0)) {
+      return;
+    }
 
     price = module.price;
     sellerUsername = module.sellerUsername;
@@ -71,7 +76,15 @@ contract Registry is Owned {
   }
 
   function editModule(uint moduleId, uint price, address sellerAddress, bytes4 licenseId) public {
+    // Make sure input params are valid
+    // require(price != 0); // potentially can remove
+    require(licenseId.length >= 0 && sellerAddress != address(0));
+
     ModuleForSale storage module = modules[moduleId];
+
+    if (module.sellerAddress == address(0)) {
+      return;
+    }
 
     // require that sender is the original module lister, or the contract owner
     // the contract owner clause lets us recover a module listing if a dev loses access to their privkey
