@@ -54,10 +54,21 @@ contract('DeconetToken', function (accounts) {
   it("should give accounts[1] authority to spend account[0]'s token", async function () {
     let token = await Token.deployed()
 
-    // try approving token transfer without unpausing token.  should get an exception
+    // try approval again
+    await token.approve(accounts[1], 200000)
+    let result = await token.allowance.call(accounts[0], accounts[1])
+    assert.equal(result.toNumber(), 200000, 'allowance is wrong')
+
+    // check if token is paused.  if not, pause it.
+    let paused = await token.paused.call()
+    if (!paused) {
+      await token.pause({from: accounts[0]})
+    }
+
+    // try token transfer without unpausing token.  should get an exception
     let exceptionGenerated = false
     try {
-      await token.approve(accounts[1], 200000)
+      await token.transferFrom(accounts[0], accounts[2], 200000, {from: accounts[1]})
     } catch (e) {
       exceptionGenerated = true
     }
@@ -66,10 +77,6 @@ contract('DeconetToken', function (accounts) {
     // unpause token contract
     await token.unpause({from: accounts[0]})
 
-    // try approval again
-    await token.approve(accounts[1], 200000)
-    let result = await token.allowance.call(accounts[0], accounts[1])
-    assert.equal(result.toNumber(), 200000, 'allowance is wrong')
     await token.transferFrom(accounts[0], accounts[2], 200000, {from: accounts[1]})
     result = await token.balanceOf.call(accounts[0])
     assert.equal(result.eq(correctOwnerSupply.minus(700000)), true, 'accounts[0] balance is wrong')
@@ -99,7 +106,13 @@ contract('DeconetToken', function (accounts) {
     await token.transfer(accounts[1], 100000)
 
     // get balance before we attempt the transfer
-    let tokenBalanceAcctOneBefore = token.balanceOf.call(accounts[1])
+    let tokenBalanceAcctOneBefore = await token.balanceOf.call(accounts[1])
+
+    // check if token is paused.  if not, pause it.
+    let paused = await token.paused.call()
+    if (!paused) {
+      await token.pause({from: accounts[0]})
+    }
 
     // try token transfer from acct 1 to acct 2 without unpausing token.
     // we should get an exception
@@ -112,21 +125,22 @@ contract('DeconetToken', function (accounts) {
     assert.equal(exceptionGenerated, true)
 
     // make sure no tokens were actually transferred
-    let tokenBalanceAcctOneAfter = token.balanceOf.call(accounts[1])
-    assert.equal(tokenBalanceAcctOneBefore, tokenBalanceAcctOneAfter)
+    let tokenBalanceAcctOneAfter = await token.balanceOf.call(accounts[1])
+    assert.equal(tokenBalanceAcctOneBefore.toString(), tokenBalanceAcctOneAfter.toString())
 
     // unpause token contract
     await token.unpause({from: accounts[0]})
 
-    let tokenBalanceAcctTwoBefore = token.balanceOf.call(accounts[2])
+    let tokenBalanceAcctTwoBefore = await token.balanceOf.call(accounts[2])
 
     // transfer again
     await token.transfer(accounts[2], 10000, {from: accounts[1]})
 
-    tokenBalanceAcctOneAfter = token.balanceOf.call(accounts[1])
-    assert.equal(tokenBalanceAcctOneBefore.sub(new BigNumber('10000')).eq(tokenBalanceAcctOneAfter), true)
+    tokenBalanceAcctOneAfter = await token.balanceOf.call(accounts[1])
 
-    let tokenBalanceAcctTwoAfter = token.balanceOf.call(accounts[2])
+    assert.equal(tokenBalanceAcctOneBefore.minus(new BigNumber('10000')).eq(tokenBalanceAcctOneAfter), true)
+
+    let tokenBalanceAcctTwoAfter = await token.balanceOf.call(accounts[2])
     assert.equal(tokenBalanceAcctTwoBefore.add(new BigNumber('10000')).eq(tokenBalanceAcctTwoAfter), true)
   })
 })

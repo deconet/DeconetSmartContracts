@@ -65,8 +65,12 @@ contract('LicenseSales', function (accounts) {
     let token = await Token.deployed()
     let ls = await LicenseSales.deployed()
 
-    // unpause token to allow transfers
-    await token.unpause({from: accounts[0]})
+    // check if token is paused.  if not, pause it.
+    let paused = await token.paused.call()
+    if (paused) {
+      // unpause token to allow transfers
+      await token.unpause({from: accounts[0]})
+    }
 
     let usernameAndProjectName = `${sellerUsername}/${moduleName}`
 
