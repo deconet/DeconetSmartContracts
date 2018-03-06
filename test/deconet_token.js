@@ -99,6 +99,71 @@ contract('DeconetToken', function (accounts) {
     assert.notEqual(version, 0)
   })
 
+  it('should have a pausable approve function', async function () {
+    let token = await Token.deployed()
+
+    // check if token is paused.  pause it if not.
+    let paused = await token.paused.call()
+    if (!paused) {
+      await token.pause({from: accounts[0]})
+    }
+
+    // try token transfer from acct 1 to acct 2 without unpausing token.
+    // we should get an exception
+    let exceptionGenerated = false
+    try {
+      await token.approve(accounts[2], 100, {from: accounts[1]})
+    } catch (e) {
+      exceptionGenerated = true
+    }
+    assert.equal(exceptionGenerated, true)
+  })
+
+  it('should be pausable', async function () {
+    let token = await Token.deployed()
+
+    // check if token is paused.  unpause it.
+    let paused = await token.paused.call()
+    if (paused) {
+      await token.unpause({from: accounts[0]})
+    }
+
+    // get balance before we attempt the transfer
+    let tokenBalanceAcctOneBefore = await token.balanceOf.call(accounts[1])
+    let tokenBalanceAcctTwoBefore = await token.balanceOf.call(accounts[2])
+
+    await token.transfer(accounts[2], 10000, {from: accounts[1]})
+
+    let tokenBalanceAcctOneAfter = await token.balanceOf.call(accounts[1])
+    let tokenBalanceAcctTwoAfter = await token.balanceOf.call(accounts[2])
+
+    assert.equal(tokenBalanceAcctOneBefore.minus(new BigNumber('10000')).eq(tokenBalanceAcctOneAfter), true)
+    assert.equal(tokenBalanceAcctTwoBefore.add(new BigNumber('10000')).eq(tokenBalanceAcctTwoAfter), true)
+
+    // pause the token
+    await token.pause({from: accounts[0]})
+
+    // get balance before we attempt the transfer
+    tokenBalanceAcctOneBefore = await token.balanceOf.call(accounts[1])
+    tokenBalanceAcctTwoBefore = await token.balanceOf.call(accounts[2])
+
+    // try token transfer from acct 1 to acct 2 without unpausing token.
+    // we should get an exception
+    let exceptionGenerated = false
+    try {
+      await token.transfer(accounts[2], 10000, {from: accounts[1]})
+    } catch (e) {
+      exceptionGenerated = true
+    }
+    assert.equal(exceptionGenerated, true)
+
+    tokenBalanceAcctOneAfter = await token.balanceOf.call(accounts[1])
+    tokenBalanceAcctTwoAfter = await token.balanceOf.call(accounts[2])
+
+    assert.equal(tokenBalanceAcctOneBefore.eq(tokenBalanceAcctOneAfter), true)
+    assert.equal(tokenBalanceAcctTwoBefore.eq(tokenBalanceAcctTwoAfter), true)
+  })
+
   it('should only be transferrable by the owner when the contract is paused', async function () {
     let token = await Token.deployed()
 
