@@ -1,8 +1,8 @@
 pragma solidity 0.4.19;
 
-import "./Owned.sol";
+import "zeppelin-solidity/contracts/ownership/Ownable.sol";
 
-contract APIRegistry is Owned {
+contract APIRegistry is Ownable {
 
   struct APIForSale {
     uint pricePerCall;

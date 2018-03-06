@@ -1,8 +1,8 @@
 pragma solidity 0.4.19;
 
-import "./Owned.sol";
+import "zeppelin-solidity/contracts/ownership/Ownable.sol";
 
-contract Registry is Owned {
+contract Registry is Ownable {
 
   struct ModuleForSale {
     uint price;
@@ -29,6 +29,9 @@ contract Registry is Owned {
   function listModule(uint price, bytes32 sellerUsername, bytes32 moduleName, string usernameAndProjectName, bytes4 licenseId) public {
     // make sure the name isn't already taken
     require(moduleIds[usernameAndProjectName] == 0);
+
+    // make sure input params are valid
+    require(price != 0 && sellerUsername != "" && moduleName != "" && bytes(usernameAndProjectName).length != 0 && licenseId != 0);
 
     numModules += 1;
     moduleIds[usernameAndProjectName] = numModules;
