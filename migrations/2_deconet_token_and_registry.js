@@ -41,8 +41,8 @@ module.exports = function (deployer) {
     console.log('Setting registry contract address on relay to ' + registry.address)
     return relay.setRegistryContractAddress(registry.address)
   }).then(() => {
-    console.log('Giving LicenseSale contract 10% of total tokens')
+    console.log('Giving LicenseSale contract ability to transfer 10% of owner tokens')
     let tenPercent = '100000000000000000000000000'
-    return deconetToken.transfer(licenseSales.address, tenPercent)
+    return deconetToken.approve(licenseSales.address, tenPercent)
   })
 }

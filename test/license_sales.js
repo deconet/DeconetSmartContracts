@@ -10,10 +10,9 @@ const Promisify = (inner) =>
   new Promise((resolve, reject) =>
     inner((err, res) => {
       if (err) {
-        reject(err);
-      } else {
-        resolve(res);
+        return reject(err);
       }
+      return resolve(res);
     })
   );
 
@@ -64,6 +63,13 @@ contract('LicenseSales', function (accounts) {
     let registry = await Registry.deployed()
     let token = await Token.deployed()
     let ls = await LicenseSales.deployed()
+
+    // check if token is paused.  if not, pause it.
+    let paused = await token.paused.call()
+    if (paused) {
+      // unpause token to allow transfers
+      await token.unpause({from: accounts[0]})
+    }
 
     let usernameAndProjectName = `${sellerUsername}/${moduleName}`
 
