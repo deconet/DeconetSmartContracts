@@ -4,6 +4,7 @@ var uuid = require('uuid')
 var Token = artifacts.require('./DeconetToken.sol')
 var Relay = artifacts.require('./Relay.sol')
 var Registry = artifacts.require('./Registry.sol')
+var APIRegistry = artifacts.require('./APIRegistry.sol')
 var APICalls = artifacts.require('./APICalls.sol')
 
 const Promisify = (inner) =>
@@ -55,79 +56,38 @@ contract('APICalls', function (accounts) {
     assert.equal(relayAddress, relay.address)
   })
 
-  // it('should be able to list and buy a module', async function () {
-  //   let sellerUsername = uuid.v4().substr(0, 32)
-  //   let moduleName = uuid.v4().substr(0, 32)
-  //   let modulePrice = 50000
-  //   let licenseId = '0x00000001'
-  //   let registry = await Registry.deployed()
-  //   let token = await Token.deployed()
-  //   let ls = await APICalls.deployed()
+  it('should be able to list and report usage for an api and pay the seller too', async function () {
+    let sellerUsername = uuid.v4().substr(0, 32)
+    let apiName = uuid.v4().substr(0, 32)
+    let hostname = uuid.v4() + '.com'
+    let docsUrl = hostname + '/docs'
+    let pricePerCall = 10000
+    let apiRegistry = await APIRegistry.deployed()
+    let apiCalls = await APICalls.deployed()
 
-  //   // check if token is paused.  if not, pause it.
-  //   let paused = await token.paused.call()
-  //   if (paused) {
-  //     // unpause token to allow transfers
-  //     await token.unpause({from: accounts[0]})
-  //   }
+    let numApisBefore = await apiRegistry.numApis.call()
 
-  //   let usernameAndProjectName = `${sellerUsername}/${moduleName}`
+    await apiRegistry.listApi(pricePerCall, sellerUsername, apiName, hostname, docsUrl, { from: accounts[1] })
 
-  //   await registry.listModule(modulePrice, sellerUsername, moduleName, usernameAndProjectName, licenseId, { from: accounts[2] })
+    let numApisAfter = await apiRegistry.numApis.call()
+    assert.equal(numApisAfter.toNumber(), numApisBefore.toNumber() + 1)
 
-  //   // check that the module is actually in the registry
-  //   let moduleId = await registry.getModuleId(usernameAndProjectName)
-  //   assert.notEqual(moduleId.toNumber(), 0)
+    let apiId = await apiRegistry.getApiId(hostname)
 
-  //   let tokenBalanceBefore = (await token.balanceOf.call(accounts[2])).toNumber()
-  //   let ethBalanceBefore = await web3.eth.getBalance(accounts[2])
-  //   let contractEthBalanceBefore = await web3.eth.getBalance(ls.address)
+    let totalOwedBefore = await apiCalls.totalOwedForApi(apiId)
 
-  //   await ls.makeSale(moduleId, {from: accounts[1], value: modulePrice})
+    // // imagine here that some dude used the api 1000 times
+    // // and they are at accounts[2]
+    let result = await apiCalls.reportUsage(apiId, 1000, accounts[2])
 
-  //   let tokenBalanceAfter = (await token.balanceOf.call(accounts[2])).toNumber()
-  //   let ethBalanceAfter = await web3.eth.getBalance(accounts[2])
-  //   let tokenReward = await ls.tokenReward.call()
-  //   assert.equal(tokenBalanceAfter, tokenBalanceBefore + tokenReward.toNumber(), 'accounts[2] was not transferred the right amount of Deconet Tokens after the sale')
+    // assert.equal(result.logs[0].event, 'APICallsMade')
 
-  //   let saleFee = await ls.saleFee.call()
-  //   let contractEthBalanceAfter = await web3.eth.getBalance(ls.address)
-  //   let networkFee = modulePrice * 100 / saleFee.toNumber() / 100
-  //   let sellerPayout = modulePrice - networkFee
-  //   let ethDiff = ethBalanceAfter.minus(ethBalanceBefore).toNumber()
-  //   assert.equal(ethDiff, sellerPayout, 'The seller account was not transferred the right amount of eth after the sale')
+    // let totalOwedAfter = await apiCalls.totalOwedForApi(apiId)
 
-  //   let contractEthDiff = contractEthBalanceAfter.minus(contractEthBalanceBefore).toNumber()
-  //   assert.equal(contractEthDiff, modulePrice - sellerPayout, 'The contract account does not have the right amount of eth in it after the sale')
+    // assert.equal(totalOwedBefore.add(new BigNumber('1000')).eq(totalOwedAfter), true)
 
-  //   let saleEvent = ls.LicenseSale({}, {fromBlock: 0, toBlock: 'latest'})
-  //   let sales = await Promisify(cb => saleEvent.get(cb))
 
-  //   assert.equal(sales.length, 1)
-    
-  //   let sale = sales[0].args
-
-  //   assert.equal(web3.toAscii(sale.moduleName), moduleName)
-  //   assert.equal(web3.toAscii(sale.sellerUsername), sellerUsername)
-  //   assert.equal(sale.sellerAddress, accounts[2])
-  //   assert.equal(sale.buyerAddress, accounts[1])
-  //   assert.equal(sale.price.toNumber(), modulePrice)
-  //   assert.equal(sale.soldAt.toNumber() > 0, true)
-  //   assert.equal(sale.rewardedTokens.toString(), tokenReward.toString())
-  //   assert.equal(sale.networkFee.toString(), networkFee.toString())
-  //   assert.equal(sale.licenseId, '0x00000001', 'wrong license')
-
-  //   // test withdraw
-  //   let ownerBalanceBefore = await web3.eth.getBalance(accounts[0])
-  //   let gasPrice = 1000000000
-  //   let withdrawTx = await ls.withdrawEther({from: accounts[0], gasPrice: gasPrice})
-  //   let weiConsumedByGas = BigNumber(gasPrice).times(BigNumber(withdrawTx.receipt.gasUsed))
-  //    // subtract gas costs from original balance before withdraw
-  //   ownerBalanceBefore = ownerBalanceBefore.minus(weiConsumedByGas)
-  //   let ownerBalanceAfter = await web3.eth.getBalance(accounts[0])
-  //   ethDiff = ownerBalanceAfter.minus(ownerBalanceBefore).toString()
-  //   assert.equal(ethDiff, networkFee)
-  // })
+  })
 
   it('should only let the contract owner withdraw', async function () {
     let apiCalls = await APICalls.deployed()

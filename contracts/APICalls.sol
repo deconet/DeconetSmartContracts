@@ -238,6 +238,19 @@ contract APICalls is Ownable {
     msg.sender.transfer(creditsToSend);
   }
 
+  function totalOwedForApi(uint apiId) public view returns (uint) {
+    APIBalance storage apiBalance = owed[apiId];
+
+    uint totalOwed = 0;
+    for (uint i = 0; i < apiBalance.nonzeroAddresses.length; i++) {
+      address buyerAddress = apiBalance.nonzeroAddresses[i];
+      uint buyerOwes = apiBalance.amounts[buyerAddress];
+      totalOwed = totalOwed.add(buyerOwes);
+    }
+
+    return totalOwed;
+  }
+
   function rewardTokens(address toReward) private {
     DeconetToken token = DeconetToken(tokenContractAddress);
     address tokenOwner = token.owner();
