@@ -1,8 +1,8 @@
 pragma solidity 0.4.19;
 
-import "./Owned.sol";
+import "zeppelin-solidity/contracts/ownership/Ownable.sol";
 
-contract Relay is Owned {
+contract Relay is Ownable {
   address public licenseSalesContractAddress;
   address public registryContractAddress;
   address public apiRegistryContractAddress;

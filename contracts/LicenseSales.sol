@@ -1,6 +1,6 @@
 pragma solidity 0.4.19;
 
-import "./Owned.sol";
+import "zeppelin-solidity/contracts/ownership/Ownable.sol";
 import "./Relay.sol";
 import "./Registry.sol";
 import "./DeconetToken.sol";
@@ -10,7 +10,7 @@ import "zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 // ----------------------------------------------------------------------------
 // Holds the logic behind paying the seller and rewarding them with tokens, and logs the sales
 // ----------------------------------------------------------------------------
-contract LicenseSales is Owned {
+contract LicenseSales is Ownable {
   using SafeMath for uint;
 
   // the amount rewarded to a seller for selling a license
@@ -79,6 +79,7 @@ contract LicenseSales is Owned {
   // Owner can set address of who can withdraw
   // ------------------------------------------------------------------------
   function setWithdrawlAddress(address _withdrawlAddress) public onlyOwner {
+    require(_withdrawlAddress != address(0));
     withdrawlAddress = _withdrawlAddress;
   }
 
@@ -86,6 +87,7 @@ contract LicenseSales is Owned {
   // Owner can set address of relay contract
   // ------------------------------------------------------------------------
   function setRelayContractAddress(address _relayContractAddress) public onlyOwner {
+    require(_relayContractAddress != address(0));
     relayContractAddress = _relayContractAddress;
   }
 
@@ -93,6 +95,7 @@ contract LicenseSales is Owned {
   // Owner can set address of token contract
   // ------------------------------------------------------------------------
   function setTokenContractAddress(address _tokenContractAddress) public onlyOwner {
+    require(_tokenContractAddress != address(0));
     tokenContractAddress = _tokenContractAddress;
   }
 
@@ -115,6 +118,8 @@ contract LicenseSales is Owned {
   // Anyone can make a sale if they provide a moduleId
   // ------------------------------------------------------------------------
   function makeSale(uint moduleId) public payable {
+    require(moduleId != 0);
+
     // look up the registry address from relay token
     Relay relay = Relay(relayContractAddress);
     address registryAddress = relay.registryContractAddress();

@@ -1,8 +1,8 @@
 pragma solidity 0.4.19;
 
-import "./Owned.sol";
+import "zeppelin-solidity/contracts/ownership/Ownable.sol";
 
-contract Registry is Owned {
+contract Registry is Ownable {
 
   struct ModuleForSale {
     uint price;
@@ -27,6 +27,9 @@ contract Registry is Owned {
   }
 
   function listModule(uint price, bytes32 sellerUsername, bytes32 moduleName, string usernameAndProjectName, bytes4 licenseId) public {
+    // make sure input params are valid
+    require(price != 0 && sellerUsername != "" && moduleName != "" && bytes(usernameAndProjectName).length != 0 && licenseId != 0);
+
     // make sure the name isn't already taken
     require(moduleIds[usernameAndProjectName] == 0);
 
@@ -77,14 +80,12 @@ contract Registry is Owned {
 
   function editModule(uint moduleId, uint price, address sellerAddress, bytes4 licenseId) public {
     // Make sure input params are valid
-    // require(price != 0); // potentially can remove
-    require(licenseId.length >= 0 && sellerAddress != address(0));
+    require(moduleId != 0 && price != 0 && sellerAddress != address(0) && licenseId != 0);
 
     ModuleForSale storage module = modules[moduleId];
 
-    if (module.sellerAddress == address(0)) {
-      return;
-    }
+    // prevent editing an empty module (effectively listing a module)
+    require(module.price != 0 && module.sellerUsername != "" && module.moduleName != "" && module.licenseId != 0 && module.sellerAddress != address(0));
 
     // require that sender is the original module lister, or the contract owner
     // the contract owner clause lets us recover a module listing if a dev loses access to their privkey
