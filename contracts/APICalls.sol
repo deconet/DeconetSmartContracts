@@ -1,6 +1,6 @@
 pragma solidity 0.4.19;
 
-import "./Owned.sol";
+import "zeppelin-solidity/contracts/ownership/Ownable.sol";
 import "./Relay.sol";
 import "./APIRegistry.sol";
 import "./DeconetToken.sol";
@@ -9,7 +9,7 @@ import "./DeconetToken.sol";
 // ----------------------------------------------------------------------------
 // Records api calls and payment for them
 // ----------------------------------------------------------------------------
-contract APICalls is Owned {
+contract APICalls is Ownable {
   using SafeMath for uint;
 
   // the amount rewarded to a seller for selling api calls
@@ -33,15 +33,29 @@ contract APICalls is Owned {
   // the address that is authorized to report usage on behalf of deconet
   address private usageReportingAddress;
 
-  // maps apiId to a map of address->uint which stores how much each address owes
-  mapping(uint => mapping(address => uint)) internal owed;
+  // maps apiId to a APIBalance which stores how much each address owes
+  mapping(uint => APIBalance) internal owed;
 
-  // solidity doesn't store the keys for a map.  
-  // so this is a map that maps apiId to an array of addresses with nonzero balance for that apiId
-  mapping(uint => address[]) internal nonzeroAddresses;
+  // maps buyer addresses to whether or not accounts are overdrafted and more
+  mapping(address => BuyerInfo) internal buyers;
 
-  // maps buyer addresses to credit balances
-  mapping(address => uint) internal credits;
+  struct APIBalance {
+    // maps address -> amount owed in wei
+    mapping(address => uint) amounts;
+    // basically a list of keys for the above map
+    address[] nonzeroAddresses;
+  }
+
+  struct BuyerInfo {
+    // whether or not the account is overdrafted or not
+    bool overdrafted;
+    // total number of overdrafts, ever
+    uint lifetimeOverdraftCount;
+    // credits on file with this contract (wei)
+    uint credits;
+    // total amount of credits used / spent, ever (wei)
+    uint lifetimeCreditsUsed;
+  }
 
   event APICallsMade(
     uint apiId,
@@ -56,7 +70,6 @@ contract APICalls is Owned {
   event APICallsPaid(
     uint apiId,
     address indexed sellerAddress,
-    address indexed buyerAddress,
     uint totalPrice,
     uint rewardedTokens,
     uint networkFee
@@ -77,13 +90,6 @@ contract APICalls is Owned {
 
     // default withdrawlAddress is owner
     withdrawlAddress = msg.sender;
-  }
-
-  // ------------------------------------------------------------------------
-  // Owner can transfer out any accidentally sent ERC20 tokens (just in case)
-  // ------------------------------------------------------------------------
-  function transferAnyERC20Token(address tokenAddress, uint tokens) public onlyOwner returns (bool success) {
-    return ERC20Interface(tokenAddress).transfer(owner, tokens);
   }
 
   // ------------------------------------------------------------------------
@@ -158,12 +164,14 @@ contract APICalls is Owned {
 
     require(totalPrice > 0);
 
-    if (owed[apiId][buyerAddress] == 0) {
+    APIBalance storage apiBalance = owed[apiId];
+
+    if (apiBalance.amounts[buyerAddress] == 0) {
       // add buyerAddress to list of addresses with nonzero balance for this api
-      nonzeroAddresses[apiId].push(buyerAddress);
+      apiBalance.nonzeroAddresses.push(buyerAddress);
     }
 
-    owed[apiId][buyerAddress] = owed[apiId][buyerAddress].add(totalPrice);
+    apiBalance.amounts[buyerAddress] = apiBalance.amounts[buyerAddress].add(totalPrice);
 
     APICallsMade(
       apiId,
@@ -177,25 +185,6 @@ contract APICalls is Owned {
   }
 
   function paySeller(uint apiId) public {
-    uint totalPayable = 0;
-    for (uint i = 0; i < nonzeroAddresses[apiId].length; i++) {
-      address buyerAddress = nonzeroAddresses[apiId][i];
-      uint buyerOwes = owed[apiId][buyerAddress];
-      uint creditsAfter = credits[buyerAddress] - buyerOwes;
-      if (creditsAfter < 0) {
-        // if the buyer doesn't have enough credits to pay the seller the full balance they owe,
-        // just send however much they do have
-        totalPayable = totalPayable.add(credits[buyerAddress]);
-        // store that the buyer now only owes the difference
-        owed[apiId][buyerAddress] = buyerOwes.sub(credits[buyerAddress]);
-      } else {
-        // add the total owed to the total payable
-        totalPayable = totalPayable.add(buyerOwes);
-        // remove the total owed
-        owed[apiId][buyerAddress] = 0;
-      }
-      credits[buyerAddress] = creditsAfter; // this might be negative - that's okay.  it means the buyer owes the seller.
-    }
     // look up the registry address from relay contract
     Relay relay = Relay(relayContractAddress);
     address apiRegistryAddress = relay.apiRegistryContractAddress();
@@ -210,7 +199,11 @@ contract APICalls is Owned {
 
     (pricePerCall, sellerUsername, apiName, sellerAddress) = apiRegistry.getApiByIdWithoutDynamics(apiId);
 
-    require(sellerAddress != address(0));
+    // make sure it's a legit real api
+    require(pricePerCall != 0 && sellerUsername != "" && apiName != "" && sellerAddress != address(0));
+
+    // calculate totalPayable for the api
+    uint totalPayable = calculateTotalPayable(apiId);
 
     // calculate fee and payout
     // fixed point math at 2 decimal places
@@ -220,26 +213,93 @@ contract APICalls is Owned {
     APICallsPaid(
       apiId,
       sellerAddress,
-      buyerAddress,
       totalPayable,
       tokenReward,
       fee
     );
 
-    // give seller some tokens for the sale as well
-    DeconetToken token = DeconetToken(tokenContractAddress);
-    token.transfer(sellerAddress, tokenReward);
+    // give seller some tokens for the sale
+    rewardTokens(sellerAddress);
 
+    // transfer seller the eth
     sellerAddress.transfer(payout);
   }
 
-  function addCredits() public payable {
-    credits[msg.sender] = credits[msg.sender].add(msg.value);
+  function addCredits(address _to) public payable {
+    BuyerInfo storage buyer = buyers[_to];
+    buyer.credits = buyer.credits.add(msg.value);
   }
 
   function withdrawCredits() public {
-    require(credits[msg.sender] > 0);
-    credits[msg.sender] = 0;
-    msg.sender.transfer(credits[msg.sender]);
+    BuyerInfo storage buyer = buyers[msg.sender];
+    require(buyer.credits > 0);
+    uint creditsToSend = buyer.credits;
+    buyer.credits = 0;
+    msg.sender.transfer(creditsToSend);
+  }
+
+  function rewardTokens(address toReward) private {
+    DeconetToken token = DeconetToken(tokenContractAddress);
+    address tokenOwner = token.owner();
+
+    // check balance of tokenOwner
+    uint tokenOwnerBalance = token.balanceOf(tokenOwner);
+    uint tokenOwnerAllowance = token.allowance(tokenOwner, address(this));
+    if (tokenOwnerBalance >= tokenReward && tokenOwnerAllowance >= tokenReward) {
+      token.transferFrom(tokenOwner, toReward, tokenReward);
+    }
+  }
+
+  function calculateTotalPayable(uint apiId) private returns (uint) {
+    APIBalance storage apiBalance = owed[apiId];
+
+    uint totalPayable = 0;
+    address[] storage newNonzeroAddresses;
+    for (uint i = 0; i < apiBalance.nonzeroAddresses.length; i++) {
+      address buyerAddress = apiBalance.nonzeroAddresses[i];
+      BuyerInfo storage buyer = buyers[buyerAddress];
+      uint buyerOwes = apiBalance.amounts[buyerAddress];
+      int creditsAfter = int(buyer.credits) - int(buyerOwes);
+      if (creditsAfter < 0) {
+        // if the buyer doesn't have enough credits to pay the seller the full balance they owe,
+        // just send however much they do have
+        totalPayable = totalPayable.add(buyer.credits);
+
+        // store that the buyer now only owes the difference
+        apiBalance.amounts[buyerAddress] = buyerOwes.sub(buyer.credits);
+
+        // their address still owes money for this api, so keep it in the nonzeroAddresses array
+        newNonzeroAddresses.push(buyerAddress);
+
+        // store credits in total credits spent
+        buyer.lifetimeCreditsUsed = buyer.lifetimeCreditsUsed.add(buyer.credits);
+
+        // zero out the buyers credits
+        buyer.credits = 0;
+
+        // mark address as overdrafted so that seller can cut off service
+        buyer.overdrafted = true;
+        buyer.lifetimeOverdraftCount += 1;
+      } else {
+        // add the total owed to the total payable
+        totalPayable = totalPayable.add(buyerOwes);
+
+        // remove the total owed
+        apiBalance.amounts[buyerAddress] = 0;
+
+        // remove the spent credits from the credits map
+        buyer.credits = uint(creditsAfter);
+
+        // mark address as in good standing
+        buyer.overdrafted = false;
+
+        // store credits in total credits spent
+        buyer.lifetimeCreditsUsed = buyer.lifetimeCreditsUsed.add(buyerOwes);
+      }
+    }
+
+    // set list of addresses with nonzero owed amount for api
+    apiBalance.nonzeroAddresses = newNonzeroAddresses;
+    return totalPayable;
   }
 }
