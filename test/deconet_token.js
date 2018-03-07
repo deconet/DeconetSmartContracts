@@ -19,8 +19,7 @@ const Promisify = (inner) =>
 
 contract('DeconetToken', function (accounts) {
   var correctTotalSupply = BigNumber('1e+27')
-  var licenseSalesSupply = correctTotalSupply.div(10)
-  var correctOwnerSupply = correctTotalSupply.minus(licenseSalesSupply)
+  var licenseSalesSupplyAllowance = correctTotalSupply.div(10)
 
   it('should have the right total supply', async function () {
     let token = await Token.deployed()
@@ -31,22 +30,22 @@ contract('DeconetToken', function (accounts) {
   it('should return the balance of token owner', async function () {
     let token = await Token.deployed()
     let result = await token.balanceOf.call(accounts[0])
-    assert.equal(result.eq(correctOwnerSupply), true, 'balance is wrong')
+    assert.equal(result.eq(correctTotalSupply), true, 'balance is wrong')
   })
 
 
-  it('should return the correct balance of license sales contract', async function () {
+  it('should return the correct allowance of license sales contract', async function () {
     let token = await Token.deployed()
     let ls = await LicenseSales.deployed()
-    let result = await token.balanceOf.call(ls.address)
-    assert.equal(result.eq(licenseSalesSupply), true, 'balance is wrong')
+    let result = await token.allowance.call(accounts[0], ls.address)
+    assert.equal(result.eq(licenseSalesSupplyAllowance), true, 'balance is wrong')
   })
 
   it('should transfer right token', async function () {
     let token = await Token.deployed()
     await token.transfer(accounts[1], 500000)
     let result = await token.balanceOf.call(accounts[0])
-    assert.equal(result.eq(correctOwnerSupply.minus(500000)), true, 'accounts[0] balance is wrong')
+    assert.equal(result.eq(correctTotalSupply.minus(500000)), true, 'accounts[0] balance is wrong')
     result = await token.balanceOf.call(accounts[1])
     assert.equal(result.toNumber(), 500000, 'accounts[1] balance is wrong')
   })
@@ -79,7 +78,7 @@ contract('DeconetToken', function (accounts) {
 
     await token.transferFrom(accounts[0], accounts[2], 200000, {from: accounts[1]})
     result = await token.balanceOf.call(accounts[0])
-    assert.equal(result.eq(correctOwnerSupply.minus(700000)), true, 'accounts[0] balance is wrong')
+    assert.equal(result.eq(correctTotalSupply.minus(700000)), true, 'accounts[0] balance is wrong')
     result = await token.balanceOf.call(accounts[1])
     assert.equal(result.toNumber(), 500000, 'accounts[1] balance is wrong')
     result = await token.balanceOf.call(accounts[2])
