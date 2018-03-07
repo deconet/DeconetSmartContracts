@@ -159,11 +159,22 @@ contract LicenseSales is Ownable {
       licenseId
     );
 
-    // give seller some tokens for the sale as well
-    DeconetToken token = DeconetToken(tokenContractAddress);
-    token.transfer(sellerAddress, tokenReward);
+    // give seller some tokens for the sale
+    rewardTokens(sellerAddress);
     
     // pay seller the ETH
     sellerAddress.transfer(payout);
+  }
+
+  function rewardTokens(address toReward) private {
+    DeconetToken token = DeconetToken(tokenContractAddress);
+    address tokenOwner = token.owner();
+
+    // check balance of tokenOwner
+    uint tokenOwnerBalance = token.balanceOf(tokenOwner);
+    uint tokenOwnerAllowance = token.allowance(tokenOwner, address(this));
+    if (tokenOwnerBalance >= tokenReward && tokenOwnerAllowance >= tokenReward) {
+      token.transferFrom(tokenOwner, toReward, tokenReward);
+    }
   }
 }
