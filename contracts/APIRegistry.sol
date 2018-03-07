@@ -78,7 +78,12 @@ contract APIRegistry is Ownable {
   }
 
   function editApi(uint apiId, uint pricePerCall, address sellerAddress, string docsUrl) public {
+    require(apiId != 0 && pricePerCall != 0 && sellerAddress != address(0));
+
     APIForSale storage api = apis[apiId];
+
+    // prevent editing an empty api (effectively listing an api)
+    require(api.pricePerCall != 0 && api.sellerUsername != "" && api.apiName != "" && bytes(api.hostname).length != 0 && api.sellerAddress != address(0));
 
     // require that sender is the original api lister, or the contract owner
     // the contract owner clause lets us recover a api listing if a dev loses access to their privkey
