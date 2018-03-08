@@ -57,7 +57,7 @@ contract APICalls is Ownable {
     uint lifetimeCreditsUsed;
   }
 
-  event APICallsMade(
+  event LogAPICallsMade(
     uint apiId,
     address indexed sellerAddress,
     address indexed buyerAddress,
@@ -67,12 +67,22 @@ contract APICalls is Ownable {
     address reportingAddress
   );
 
-  event APICallsPaid(
+  event LogAPICallsPaid(
     uint apiId,
     address indexed sellerAddress,
     uint totalPrice,
     uint rewardedTokens,
     uint networkFee
+  );
+
+  event LogDepositCredits(
+    address indexed buyerAddress,
+    uint amount
+  );
+
+  event LogWithdrawCredits(
+    address indexed buyerAddress,
+    uint amount
   );
 
   // ------------------------------------------------------------------------
@@ -90,6 +100,7 @@ contract APICalls is Ownable {
 
     // default withdrawlAddress is owner
     withdrawlAddress = msg.sender;
+    usageReportingAddress = msg.sender;
   }
 
   // ------------------------------------------------------------------------
@@ -105,6 +116,13 @@ contract APICalls is Ownable {
   // ------------------------------------------------------------------------
   function setWithdrawlAddress(address _withdrawlAddress) public onlyOwner {
     withdrawlAddress = _withdrawlAddress;
+  }
+
+  // ------------------------------------------------------------------------
+  // Owner can set address of who can report usage
+  // ------------------------------------------------------------------------
+  function setUsageReportingAddress(address _usageReportingAddress) public onlyOwner {
+    usageReportingAddress = _usageReportingAddress;
   }
 
   // ------------------------------------------------------------------------
@@ -153,11 +171,11 @@ contract APICalls is Ownable {
 
     (pricePerCall, sellerUsername, apiName, sellerAddress) = apiRegistry.getApiByIdWithoutDynamics(apiId);
 
-    // make sure the caller is either the api owner or the deconet reporting address
+    // // make sure the caller is either the api owner or the deconet reporting address
     require(sellerAddress != address(0));
     require(msg.sender == sellerAddress || msg.sender == usageReportingAddress);
 
-    // make sure the module is actually valid
+    // // make sure the module is actually valid
     require(sellerUsername != "" && apiName != "");
 
     uint totalPrice = pricePerCall.mul(numCalls);
@@ -173,7 +191,7 @@ contract APICalls is Ownable {
 
     apiBalance.amounts[buyerAddress] = apiBalance.amounts[buyerAddress].add(totalPrice);
 
-    APICallsMade(
+    LogAPICallsMade(
       apiId,
       sellerAddress,
       buyerAddress,
@@ -204,13 +222,14 @@ contract APICalls is Ownable {
 
     // calculate totalPayable for the api
     uint totalPayable = calculateTotalPayable(apiId);
+    // uint totalPayable = 20000;
 
     // calculate fee and payout
     // fixed point math at 2 decimal places
     uint fee = totalPayable.mul(100).div(saleFee).div(100);
     uint payout = totalPayable.sub(fee);
 
-    APICallsPaid(
+    LogAPICallsPaid(
       apiId,
       sellerAddress,
       totalPayable,
@@ -218,24 +237,38 @@ contract APICalls is Ownable {
       fee
     );
 
-    // give seller some tokens for the sale
+    // // give seller some tokens for the sale
     rewardTokens(sellerAddress);
 
-    // transfer seller the eth
+    // // transfer seller the eth
     sellerAddress.transfer(payout);
+  }    
+
+  function buyerInfoOf(address addr) public view returns (bool overdrafted, uint lifetimeOverdraftCount, uint credits, uint lifetimeCreditsUsed) {
+    BuyerInfo storage buyer = buyers[addr];
+    overdrafted = buyer.overdrafted;
+    lifetimeOverdraftCount = buyer.lifetimeOverdraftCount;
+    credits = buyer.credits;
+    lifetimeCreditsUsed = buyer.lifetimeCreditsUsed;
   }
 
-  function addCredits(address _to) public payable {
-    BuyerInfo storage buyer = buyers[_to];
+  function creditsBalanceOf(address addr) public view returns (uint) {
+    BuyerInfo storage buyer = buyers[addr];
+    return buyer.credits;
+  }
+
+  function addCredits(address to) public payable {
+    BuyerInfo storage buyer = buyers[to];
     buyer.credits = buyer.credits.add(msg.value);
+    LogDepositCredits(to, msg.value);
   }
 
-  function withdrawCredits() public {
+  function withdrawCredits(uint amount) public {
     BuyerInfo storage buyer = buyers[msg.sender];
-    require(buyer.credits > 0);
-    uint creditsToSend = buyer.credits;
-    buyer.credits = 0;
-    msg.sender.transfer(creditsToSend);
+    require(buyer.credits >= amount);
+    buyer.credits = buyer.credits.sub(amount);
+    msg.sender.transfer(amount);
+    LogWithdrawCredits(msg.sender, amount);
   }
 
   function totalOwedForApi(uint apiId) public view returns (uint) {
@@ -267,9 +300,10 @@ contract APICalls is Ownable {
     APIBalance storage apiBalance = owed[apiId];
 
     uint totalPayable = 0;
-    address[] storage newNonzeroAddresses;
-    for (uint i = 0; i < apiBalance.nonzeroAddresses.length; i++) {
-      address buyerAddress = apiBalance.nonzeroAddresses[i];
+    address[] memory oldNonzeroAddresses = apiBalance.nonzeroAddresses;
+    apiBalance.nonzeroAddresses = new address[](0);
+    for (uint i = 0; i < oldNonzeroAddresses.length; i++) {
+      address buyerAddress = oldNonzeroAddresses[i];
       BuyerInfo storage buyer = buyers[buyerAddress];
       uint buyerOwes = apiBalance.amounts[buyerAddress];
       int creditsAfter = int(buyer.credits) - int(buyerOwes);
@@ -282,7 +316,7 @@ contract APICalls is Ownable {
         apiBalance.amounts[buyerAddress] = buyerOwes.sub(buyer.credits);
 
         // their address still owes money for this api, so keep it in the nonzeroAddresses array
-        newNonzeroAddresses.push(buyerAddress);
+        apiBalance.nonzeroAddresses.push(buyerAddress);
 
         // store credits in total credits spent
         buyer.lifetimeCreditsUsed = buyer.lifetimeCreditsUsed.add(buyer.credits);
@@ -312,7 +346,7 @@ contract APICalls is Ownable {
     }
 
     // set list of addresses with nonzero owed amount for api
-    apiBalance.nonzeroAddresses = newNonzeroAddresses;
+    // apiBalance.nonzeroAddresses = newNonzeroAddresses;
     return totalPayable;
   }
 }
