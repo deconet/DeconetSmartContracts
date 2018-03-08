@@ -5,6 +5,7 @@ var Token = artifacts.require('./DeconetToken.sol')
 var Relay = artifacts.require('./Relay.sol')
 var Registry = artifacts.require('./Registry.sol')
 var LicenseSales = artifacts.require('./LicenseSales.sol')
+var APICalls = artifacts.require('./APICalls.sol')
 
 const Promisify = (inner) =>
   new Promise((resolve, reject) =>
@@ -19,7 +20,8 @@ const Promisify = (inner) =>
 
 contract('DeconetToken', function (accounts) {
   var correctTotalSupply = BigNumber('1e+27')
-  var licenseSalesSupplyAllowance = correctTotalSupply.div(10)
+  var licenseSalesSupplyAllowance = correctTotalSupply.div(20) // 5 percent
+  var apiCallsSupplyAllowance = correctTotalSupply.div(20) // 5 percent
 
   it('should have the right total supply', async function () {
     let token = await Token.deployed()
@@ -39,6 +41,13 @@ contract('DeconetToken', function (accounts) {
     let ls = await LicenseSales.deployed()
     let result = await token.allowance.call(accounts[0], ls.address)
     assert.equal(result.eq(licenseSalesSupplyAllowance), true, 'balance is wrong')
+  })
+
+  it('should return the correct allowance of api calls contract', async function () {
+    let token = await Token.deployed()
+    let apiCalls = await APICalls.deployed()
+    let result = await token.allowance.call(accounts[0], apiCalls.address)
+    assert.equal(result.eq(apiCallsSupplyAllowance), true, 'balance is wrong')
   })
 
   it('should transfer right token', async function () {

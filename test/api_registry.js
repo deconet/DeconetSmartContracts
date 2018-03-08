@@ -145,6 +145,45 @@ contract('APIRegistry', function (accounts) {
     assert.equal(api[5], newDocsUrl)
   })
 
+it('should let a user list and get an api without dynamics', async function () {
+    let sellerUsername = uuid.v4().substr(0, 32)
+    let apiName = uuid.v4().substr(0, 32)
+    let hostname = uuid.v4() + '.com'
+    let docsUrl = hostname + '/docs'
+    let pricePerCall = 10000
+    let apiRegistry = await APIRegistry.deployed()
+
+    let numApisBefore = await apiRegistry.numApis.call()
+
+    await apiRegistry.listApi(pricePerCall, sellerUsername, apiName, hostname, docsUrl, { from: accounts[1] })
+
+    let numApisAfter = await apiRegistry.numApis.call()
+    assert.equal(numApisAfter.toNumber(), numApisBefore.toNumber() + 1)
+
+    // check that the api is actually in the registry
+    let apiId = await apiRegistry.getApiId(hostname)
+    assert.notEqual(apiId.toNumber(), 0)
+
+    let api = await apiRegistry.getApiByIdWithoutDynamics(apiId, { from: accounts[4] })
+    assert.equal(api.length, 4)
+    assert.equal(api[0].toNumber(), pricePerCall)
+    assert.equal(web3.toAscii(api[1]), sellerUsername)
+    assert.equal(web3.toAscii(api[2]), apiName)
+    assert.equal(api[3], accounts[1])
+
+     // test editing the api as contract owner
+    let newPrice = 50000
+    let newDocsUrl = hostname + '/newDocs'
+    await apiRegistry.editApi(apiId, newPrice, accounts[2], newDocsUrl, { from: accounts[0] })
+
+    api = await apiRegistry.getApiByIdWithoutDynamics(apiId, { from: accounts[4] })
+    assert.equal(api.length, 4)
+    assert.equal(api[0].toNumber(), newPrice)
+    assert.equal(web3.toAscii(api[1]), sellerUsername)
+    assert.equal(web3.toAscii(api[2]), apiName)
+    assert.equal(api[3], accounts[2])
+  })
+
   it('should return 0 if you try to get an api by an id that does not exist', async function () {
     let apiRegistry = await APIRegistry.deployed()
     let apiId = await apiRegistry.getApiId('fakenonexistanthostname.com')

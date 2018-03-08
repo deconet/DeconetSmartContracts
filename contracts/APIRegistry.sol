@@ -51,6 +51,15 @@ contract APIRegistry is Ownable {
     return apiIds[hostname];
   }
 
+  function getApiByIdWithoutDynamics(uint apiId) public view returns (uint pricePerCall, bytes32 sellerUsername, bytes32 apiName, address sellerAddress) {
+    APIForSale storage api = apis[apiId];
+
+    pricePerCall = api.pricePerCall;
+    sellerUsername = api.sellerUsername;
+    apiName = api.apiName;
+    sellerAddress = api.sellerAddress;
+  }
+
   function getApiById(uint apiId) public view returns (uint pricePerCall, bytes32 sellerUsername, bytes32 apiName, address sellerAddress, string hostname, string docsUrl) {
     APIForSale storage api = apis[apiId];
 
