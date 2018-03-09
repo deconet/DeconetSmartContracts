@@ -271,6 +271,16 @@ contract APICalls is Ownable {
     LogWithdrawCredits(msg.sender, amount);
   }
 
+  function nonzeroAddressesElementForApi(uint apiId, uint index) public view returns (address) {
+    APIBalance storage apiBalance = owed[apiId];
+    return apiBalance.nonzeroAddresses[index];
+  }
+
+  function nonzeroAddressesLengthForApi(uint apiId) public view returns (uint) {
+    APIBalance storage apiBalance = owed[apiId];
+    return apiBalance.nonzeroAddresses.length;
+  }
+
   function totalOwedForApi(uint apiId) public view returns (uint) {
     APIBalance storage apiBalance = owed[apiId];
 

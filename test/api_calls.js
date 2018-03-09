@@ -204,6 +204,7 @@ contract('APICalls', function (accounts) {
     let sellerBalanceBefore = await web3.eth.getBalance(accounts[1])
 
     // check if token is paused.  if so, unpause it.
+    // this is because paySeller will fail if token is paused.
     let paused = await token.paused.call()
     if (paused) {
       // unpause token to allow transfers
@@ -240,6 +241,13 @@ contract('APICalls', function (accounts) {
     assert.equal(buyerInfo[1], 0) // lifetime overdraft count
     assert.equal(buyerInfo[2], creditAmount.minus(totalPayable).toString()) // credits
     assert.equal(buyerInfo[3], totalPayable.toString()) // lifetime credits used
+
+    // check that nonzeroBalances holds accounts[3] only.
+    let nonzeroAddressesLength = await apiCalls.nonzeroAddressesLengthForApi(apiId)
+    assert.equal(nonzeroAddressesLength.toString(), 1)
+
+    let nonzeroAddressesElement = await apiCalls.nonzeroAddressesElementForApi(apiId, 0)
+    assert.equal(nonzeroAddressesElement, accounts[3])
 
     // pull the remaining credits out
     ethBalanceBefore = await web3.eth.getBalance(accounts[2])
