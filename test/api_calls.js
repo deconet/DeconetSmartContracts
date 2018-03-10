@@ -213,7 +213,7 @@ contract('APICalls', function (accounts) {
 
     result = await apiCalls.paySeller(apiId, {from: accounts[1], gasPrice: gasPrice.toNumber()})
 
-    assert.equal(result.logs[0].event, 'LogAPICallsPaid')
+    assert.equal(result.logs[0].event, 'LogSpendCredits')
 
     gasUsed = result.receipt.gasUsed
     weiConsumedByGas = gasPrice.times(BigNumber(gasUsed))

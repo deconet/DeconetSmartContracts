@@ -28,7 +28,10 @@ contract APICalls is Ownable {
   uint public version;
 
   // the address that is authorized to withdraw eth
-  address private withdrawlAddress;
+  address private withdrawAddress;
+
+  // the amount that can be safely withdrawn from the contract
+  uint private safeWithdrawAmount;
 
   // the address that is authorized to report usage on behalf of deconet
   address private usageReportingAddress;
@@ -75,6 +78,13 @@ contract APICalls is Ownable {
     uint networkFee
   );
 
+  event LogSpendCredits(
+    address indexed buyerAddress,
+    uint apiId,
+    uint amount,
+    bool causedAnOverdraft
+  );
+
   event LogDepositCredits(
     address indexed buyerAddress,
     uint amount
@@ -98,24 +108,27 @@ contract APICalls is Ownable {
     // default saleFee of 10%
     saleFee = 10;
 
-    // default withdrawlAddress is owner
-    withdrawlAddress = msg.sender;
+    // default withdrawAddress is owner
+    withdrawAddress = msg.sender;
     usageReportingAddress = msg.sender;
   }
 
   // ------------------------------------------------------------------------
   // Owner can transfer out any ETH
   // ------------------------------------------------------------------------
-  function withdrawEther() public {
-    require(msg.sender == withdrawlAddress);
-    withdrawlAddress.transfer(this.balance);
+  function withdrawEther(uint amount) public {
+    require(msg.sender == withdrawAddress);
+    require(amount <= this.balance);
+    require(amount <= safeWithdrawAmount);
+    safeWithdrawAmount = safeWithdrawAmount.sub(amount);
+    withdrawAddress.transfer(amount);
   }
 
   // ------------------------------------------------------------------------
   // Owner can set address of who can withdraw
   // ------------------------------------------------------------------------
-  function setWithdrawlAddress(address _withdrawlAddress) public onlyOwner {
-    withdrawlAddress = _withdrawlAddress;
+  function setWithdrawAddress(address _withdrawAddress) public onlyOwner {
+    withdrawAddress = _withdrawAddress;
   }
 
   // ------------------------------------------------------------------------
@@ -229,6 +242,9 @@ contract APICalls is Ownable {
     uint fee = totalPayable.mul(100).div(saleFee).div(100);
     uint payout = totalPayable.sub(fee);
 
+    // log that we stored the fee so we know we can take it out later
+    safeWithdrawAmount += fee;
+
     LogAPICallsPaid(
       apiId,
       sellerAddress,
@@ -331,6 +347,11 @@ contract APICalls is Ownable {
         // store credits in total credits spent
         buyer.lifetimeCreditsUsed = buyer.lifetimeCreditsUsed.add(buyer.credits);
 
+        if (buyer.credits != 0) {
+          // log the event
+          LogSpendCredits(buyerAddress, apiId, buyer.credits, true);
+        }
+
         // zero out the buyers credits
         buyer.credits = 0;
 
@@ -352,6 +373,9 @@ contract APICalls is Ownable {
 
         // store credits in total credits spent
         buyer.lifetimeCreditsUsed = buyer.lifetimeCreditsUsed.add(buyerOwes);
+
+        // log the event
+        LogSpendCredits(buyerAddress, apiId, buyerOwes, false);
       }
     }
 
