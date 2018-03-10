@@ -9,7 +9,7 @@ let relayJson = require('../build/contracts/Relay.json')
 let apiCallsJson = require('../build/contracts/APICalls.json')
 let tokenJson = require('../build/contracts/DeconetToken.json')
 
-let apiId = 1
+let apiId = 3
 
 // send from here. key for acct index 0 in ganache
 let ownerAddress = '0x627306090abaB3A6e1400e9345bC60c78a8BEf57'
@@ -17,11 +17,11 @@ let privKey = 'c87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3'
 web3.eth.accounts.privateKeyToAccount(privKey)
 
 // token so that we can make sure it's unpaused
-let tokenContractAddress = '0xace937991395b2051613368206066eb2e752a333'
+let tokenContractAddress = '0x6e4d800d3ce2a259a31653a9d89d36ecd274e3a4'
 let tokenContract = new web3.eth.Contract(tokenJson.abi, tokenContractAddress)
 
 // relay contract address
-let relayContractAddress = '0x394bfb86641bf8ca8a757a318499a580cc1f26c6'
+let relayContractAddress = '0x964839283df5966a929dad39c5ce5cdcaaf332e0'
 let relayContract = new web3.eth.Contract(relayJson.abi, relayContractAddress)
 
 tokenContract.methods.paused()
