@@ -29,7 +29,7 @@ contract LicenseSales is Ownable {
   uint public version;
 
   // the address that is authorized to withdraw eth
-  address private withdrawlAddress;
+  address private withdrawAddress;
 
   event LicenseSale(
       bytes32 moduleName,
@@ -56,8 +56,8 @@ contract LicenseSales is Ownable {
     // default saleFee of 10%
     saleFee = 10;
 
-    // default withdrawlAddress is owner
-    withdrawlAddress = msg.sender;
+    // default withdrawAddress is owner
+    withdrawAddress = msg.sender;
   }
 
   // ------------------------------------------------------------------------
@@ -71,16 +71,16 @@ contract LicenseSales is Ownable {
   // Owner can transfer out any ETH
   // ------------------------------------------------------------------------
   function withdrawEther() public {
-    require(msg.sender == withdrawlAddress);
-    withdrawlAddress.transfer(this.balance);
+    require(msg.sender == withdrawAddress);
+    withdrawAddress.transfer(this.balance);
   }
 
   // ------------------------------------------------------------------------
   // Owner can set address of who can withdraw
   // ------------------------------------------------------------------------
-  function setWithdrawlAddress(address _withdrawlAddress) public onlyOwner {
-    require(_withdrawlAddress != address(0));
-    withdrawlAddress = _withdrawlAddress;
+  function setWithdrawAddress(address _withdrawAddress) public onlyOwner {
+    require(_withdrawAddress != address(0));
+    withdrawAddress = _withdrawAddress;
   }
 
   // ------------------------------------------------------------------------
