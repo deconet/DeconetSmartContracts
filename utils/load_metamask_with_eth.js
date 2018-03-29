@@ -12,7 +12,7 @@ let toAddress = '0xA2266e01703E4CA0Ffc4b374635acDbDABda7793'
 
 // send from here. key for acct index 8 in ganache
 let fromAddress = '0x6330A553Fc93768F612722BB8c2eC78aC90B3bbc'
-let privKey = '0f62d96d6675f32685bbdb8ac13cda7c23436f63efbb9d07700d8669ff12b7c4'
+let privKey = '0x0f62d96d6675f32685bbdb8ac13cda7c23436f63efbb9d07700d8669ff12b7c4'
 web3.eth.accounts.privateKeyToAccount(privKey)
 
 // also import contract priv key index 0 in ganache

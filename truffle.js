@@ -10,7 +10,11 @@ module.exports = {
     },
     ropsten: {
       provider: function () {
-        return new HDWalletProvider(mnemonic, 'https://ropsten.infura.io/JTdaA5dJvlwfCfdgT5Cm')
+        // return new HDWalletProvider(mnemonic, 'https://ropsten.infura.io/JTdaA5dJvlwfCfdgT5Cm')
+        // local GETH which supports debug
+        // return new HDWalletProvider(mnemonic, 'http://127.0.0.1:8549')
+        // remote GETH
+        return new HDWalletProvider(mnemonic, process.env.DECONET_ROPSTEN_NODE_URL)
       },
       network_id: 3,
       gas: 4700000
