@@ -4,6 +4,7 @@ import "zeppelin-solidity/contracts/ownership/Ownable.sol";
 import "./Relay.sol";
 import "./APIRegistry.sol";
 import "./DeconetToken.sol";
+import "zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 
 
 // ----------------------------------------------------------------------------
@@ -114,6 +115,13 @@ contract APICalls is Ownable {
   }
 
   // ------------------------------------------------------------------------
+  // Owner can transfer out any accidentally sent ERC20 tokens (just in case)
+  // ------------------------------------------------------------------------
+  function transferAnyERC20Token(address tokenAddress, uint tokens) public onlyOwner returns (bool success) {
+    return ERC20(tokenAddress).transfer(owner, tokens);
+  }
+
+  // ------------------------------------------------------------------------
   // Owner can transfer out any ETH
   // ------------------------------------------------------------------------
   function withdrawEther(uint amount) public {
@@ -128,6 +136,7 @@ contract APICalls is Ownable {
   // Owner can set address of who can withdraw
   // ------------------------------------------------------------------------
   function setWithdrawAddress(address _withdrawAddress) public onlyOwner {
+    require(_withdrawAddress != address(0));
     withdrawAddress = _withdrawAddress;
   }
 
@@ -135,6 +144,7 @@ contract APICalls is Ownable {
   // Owner can set address of who can report usage
   // ------------------------------------------------------------------------
   function setUsageReportingAddress(address _usageReportingAddress) public onlyOwner {
+    require(_usageReportingAddress != address(0));
     usageReportingAddress = _usageReportingAddress;
   }
 
@@ -142,6 +152,7 @@ contract APICalls is Ownable {
   // Owner can set address of relay contract
   // ------------------------------------------------------------------------
   function setRelayContractAddress(address _relayContractAddress) public onlyOwner {
+    require(_relayContractAddress != address(0));
     relayContractAddress = _relayContractAddress;
   }
 
@@ -149,6 +160,7 @@ contract APICalls is Ownable {
   // Owner can set address of token contract
   // ------------------------------------------------------------------------
   function setTokenContractAddress(address _tokenContractAddress) public onlyOwner {
+    require(_tokenContractAddress != address(0));
     tokenContractAddress = _tokenContractAddress;
   }
 

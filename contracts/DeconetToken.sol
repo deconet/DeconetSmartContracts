@@ -34,6 +34,13 @@ contract DeconetToken is StandardToken, Ownable, Pausable {
   }
 
   // ------------------------------------------------------------------------
+  // Owner can transfer out any accidentally sent ERC20 tokens (just in case)
+  // ------------------------------------------------------------------------
+  function transferAnyERC20Token(address tokenAddress, uint tokens) public onlyOwner returns (bool success) {
+    return ERC20(tokenAddress).transfer(owner, tokens);
+  }
+
+  // ------------------------------------------------------------------------
   // Modifier to make a function callable only when called by the contract owner
   // or if the contract is not paused.
   // ------------------------------------------------------------------------

@@ -1,6 +1,7 @@
 pragma solidity 0.4.19;
 
 import "zeppelin-solidity/contracts/ownership/Ownable.sol";
+import "zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 
 contract Registry is Ownable {
 
@@ -24,6 +25,13 @@ contract Registry is Ownable {
   function Registry() public {
     numModules = 0;
     version = 1;
+  }
+
+  // ------------------------------------------------------------------------
+  // Owner can transfer out any accidentally sent ERC20 tokens (just in case)
+  // ------------------------------------------------------------------------
+  function transferAnyERC20Token(address tokenAddress, uint tokens) public onlyOwner returns (bool success) {
+    return ERC20(tokenAddress).transfer(owner, tokens);
   }
 
   function listModule(uint price, bytes32 sellerUsername, bytes32 moduleName, string usernameAndProjectName, bytes4 licenseId) public {
