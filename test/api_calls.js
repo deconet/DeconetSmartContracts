@@ -211,6 +211,10 @@ contract('APICalls', function (accounts) {
       await token.unpause({from: accounts[0]})
     }
 
+    // make sure that accounts [2] and [3] both have high enough approvedAmounts for this API so that paySeller will pay the entire balance
+    await apiCalls.approveAmount(apiId, accounts[2], 1000000000, {from: accounts[2]})
+    await apiCalls.approveAmount(apiId, accounts[3], 1000000000, {from: accounts[3]})
+
     result = await apiCalls.paySeller(apiId, {from: accounts[1], gasPrice: gasPrice.toNumber()})
 
     assert.equal(result.logs[0].event, 'LogSpendCredits')
@@ -228,19 +232,21 @@ contract('APICalls', function (accounts) {
 
     // check that accounts[3] is overdrafted
     let buyerInfo = await apiCalls.buyerInfoOf(accounts[3])
-    assert.equal(buyerInfo.length, 4)
+    assert.equal(buyerInfo.length, 5)
     assert.equal(buyerInfo[0], true) // overdrafted
     assert.equal(buyerInfo[1], 1) // lifetime overdraft count
     assert.equal(buyerInfo[2], 0) // credits
     assert.equal(buyerInfo[3], 0) // lifetime credits used
+    assert.equal(buyerInfo[4], 0) // lifetimeExceededApprovalAmountCount
 
     // check that accounts[2] is not overdrafted
     buyerInfo = await apiCalls.buyerInfoOf(accounts[2])
-    assert.equal(buyerInfo.length, 4)
+    assert.equal(buyerInfo.length, 5)
     assert.equal(buyerInfo[0], false) // overdrafted
     assert.equal(buyerInfo[1], 0) // lifetime overdraft count
     assert.equal(buyerInfo[2], creditAmount.minus(totalPayable).toString()) // credits
     assert.equal(buyerInfo[3], totalPayable.toString()) // lifetime credits used
+    assert.equal(buyerInfo[4], 0) // lifetimeExceededApprovalAmountCount
 
     // check that nonzeroBalances holds accounts[3] only.
     let nonzeroAddressesLength = await apiCalls.nonzeroAddressesLengthForApi(apiId)

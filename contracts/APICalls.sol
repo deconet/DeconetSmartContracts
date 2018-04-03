@@ -48,6 +48,8 @@ contract APICalls is Ownable {
     mapping(address => uint) amounts;
     // basically a list of keys for the above map
     address[] nonzeroAddresses;
+    // maps address -> tiemstamp of when buyer last paid
+    mapping(address => uint) buyerLastPaidAt;
   }
 
   struct BuyerInfo {
@@ -59,6 +61,12 @@ contract APICalls is Ownable {
     uint credits;
     // total amount of credits used / spent, ever (wei)
     uint lifetimeCreditsUsed;
+    // maps apiId to approved spending balance for each API per second.
+    mapping(uint => uint) approvedAmounts;
+    // maps apiId to whether or not the user has exceeded their approved amount
+    mapping(uint => bool) exceededApprovedAmount;
+    // total number of times exceededApprovedAmount has happened
+    uint lifetimeExceededApprovalAmountCount;
   }
 
   event LogAPICallsMade(
@@ -227,6 +235,49 @@ contract APICalls is Ownable {
     );
   }
 
+  function paySellerForBuyer(uint apiId, address buyerAddress) public {
+    // look up the registry address from relay contract
+    Relay relay = Relay(relayContractAddress);
+    address apiRegistryAddress = relay.apiRegistryContractAddress();
+
+    // get the module info from registry
+    APIRegistry apiRegistry = APIRegistry(apiRegistryAddress);
+
+    uint pricePerCall;
+    bytes32 sellerUsername;
+    bytes32 apiName;
+    address sellerAddress;
+
+    (pricePerCall, sellerUsername, apiName, sellerAddress) = apiRegistry.getApiByIdWithoutDynamics(apiId);
+
+    // make sure it's a legit real api
+    require(pricePerCall != 0 && sellerUsername != "" && apiName != "" && sellerAddress != address(0));
+
+    uint buyerPaid = processSalesForSingleBuyer(apiId, buyerAddress);
+
+    // calculate fee and payout
+    // fixed point math at 2 decimal places
+    uint fee = buyerPaid.mul(100).div(saleFee).div(100);
+    uint payout = buyerPaid.sub(fee);
+
+    // log that we stored the fee so we know we can take it out later
+    safeWithdrawAmount += fee;
+
+    LogAPICallsPaid(
+      apiId,
+      sellerAddress,
+      buyerPaid,
+      tokenReward,
+      fee
+    );
+
+    // give seller some tokens for the sale
+    rewardTokens(sellerAddress, tokenReward);
+
+    // transfer seller the eth
+    sellerAddress.transfer(payout);
+  }
+
   function paySeller(uint apiId) public {
     // look up the registry address from relay contract
     Relay relay = Relay(relayContractAddress);
@@ -246,8 +297,9 @@ contract APICalls is Ownable {
     require(pricePerCall != 0 && sellerUsername != "" && apiName != "" && sellerAddress != address(0));
 
     // calculate totalPayable for the api
-    uint totalPayable = calculateTotalPayable(apiId);
-    // uint totalPayable = 20000;
+    uint totalPayable = 0;
+    uint totalBuyers = 0;
+    (totalPayable, totalBuyers) = processSalesForAllBuyers(apiId);
 
     // calculate fee and payout
     // fixed point math at 2 decimal places
@@ -257,27 +309,31 @@ contract APICalls is Ownable {
     // log that we stored the fee so we know we can take it out later
     safeWithdrawAmount += fee;
 
+    // we reward token reward on a "per buyer" basis.  so multiply the reward to give by the number of actual buyers
+    uint totalTokenReward = tokenReward.mul(totalBuyers);
+
     LogAPICallsPaid(
       apiId,
       sellerAddress,
       totalPayable,
-      tokenReward,
+      totalTokenReward,
       fee
     );
 
-    // // give seller some tokens for the sale
-    rewardTokens(sellerAddress);
+    // give seller some tokens for the sale
+    rewardTokens(sellerAddress, totalTokenReward);
 
-    // // transfer seller the eth
+    // transfer seller the eth
     sellerAddress.transfer(payout);
   }    
 
-  function buyerInfoOf(address addr) public view returns (bool overdrafted, uint lifetimeOverdraftCount, uint credits, uint lifetimeCreditsUsed) {
+  function buyerInfoOf(address addr) public view returns (bool overdrafted, uint lifetimeOverdraftCount, uint credits, uint lifetimeCreditsUsed, uint lifetimeExceededApprovalAmountCount) {
     BuyerInfo storage buyer = buyers[addr];
     overdrafted = buyer.overdrafted;
     lifetimeOverdraftCount = buyer.lifetimeOverdraftCount;
     credits = buyer.credits;
     lifetimeCreditsUsed = buyer.lifetimeCreditsUsed;
+    lifetimeExceededApprovalAmountCount = buyer.lifetimeExceededApprovalAmountCount;
   }
 
   function creditsBalanceOf(address addr) public view returns (uint) {
@@ -322,77 +378,175 @@ contract APICalls is Ownable {
     return totalOwed;
   }
 
-  function rewardTokens(address toReward) private {
+  function approvedAmount(uint apiId, address buyerAddress) public view returns (uint) {
+    return buyers[buyerAddress].approvedAmounts[apiId];
+  }
+
+  function approveAmount(uint apiId, address buyerAddress, uint newAmount) public {
+    require(buyerAddress != address(0) && apiId != 0);
+
+    // only the buyer or the usage reporing system can change the buyers approval amount
+    require(msg.sender == buyerAddress || msg.sender == usageReportingAddress);
+
+    BuyerInfo storage buyer = buyers[buyerAddress];
+    buyer.approvedAmounts[apiId] = newAmount;
+  }
+
+  function buyerExceededApprovedAmount(uint apiId, address buyerAddress) public view returns (bool) {
+    return buyers[buyerAddress].exceededApprovedAmount[apiId];
+  }
+
+  function rewardTokens(address toReward, uint amount) private {
     DeconetToken token = DeconetToken(tokenContractAddress);
     address tokenOwner = token.owner();
 
     // check balance of tokenOwner
     uint tokenOwnerBalance = token.balanceOf(tokenOwner);
     uint tokenOwnerAllowance = token.allowance(tokenOwner, address(this));
-    if (tokenOwnerBalance >= tokenReward && tokenOwnerAllowance >= tokenReward) {
-      token.transferFrom(tokenOwner, toReward, tokenReward);
+    if (tokenOwnerBalance >= amount && tokenOwnerAllowance >= amount) {
+      token.transferFrom(tokenOwner, toReward, amount);
     }
   }
 
-  function calculateTotalPayable(uint apiId) private returns (uint) {
+  function processSalesForSingleBuyer(uint apiId, address buyerAddress) private returns (uint) {
     APIBalance storage apiBalance = owed[apiId];
 
-    uint totalPayable = 0;
+    uint buyerOwes = apiBalance.amounts[buyerAddress];
+    uint buyerLastPaidAt = apiBalance.buyerLastPaidAt[buyerAddress];
+    uint elapsedSecondsSinceLastPayout = now - buyerLastPaidAt;
+    uint buyerNowOwes = buyerOwes;
+    uint buyerPaid = 0;
+    bool overdrafted = false;
+
+    (buyerPaid, overdrafted) = chargeBuyer(apiId, buyerAddress, elapsedSecondsSinceLastPayout, buyerOwes);
+
+    buyerNowOwes = buyerOwes.sub(buyerPaid);
+    apiBalance.amounts[buyerAddress] = buyerNowOwes;
+
+    // if the buyer now owes zero, then remove them from nonzeroAddresses
+    if (buyerNowOwes != 0) {
+      removeAddressFromNonzeroBalancesArray(apiId, buyerAddress);
+    }
+    // if the buyer paid nothing, we are done here.
+    if (buyerPaid == 0) {
+      return 0;
+    }
+
+    // log the event
+    LogSpendCredits(buyerAddress, apiId, buyerPaid, overdrafted);
+
+    // log that they paid
+    apiBalance.buyerLastPaidAt[buyerAddress] = now;
+    
+    return buyerPaid;
+  }
+
+  function processSalesForAllBuyers(uint apiId) private returns (uint totalPayable, uint totalBuyers) {
+    APIBalance storage apiBalance = owed[apiId];
+
+    uint currentTime = now;
     address[] memory oldNonzeroAddresses = apiBalance.nonzeroAddresses;
     apiBalance.nonzeroAddresses = new address[](0);
+
     for (uint i = 0; i < oldNonzeroAddresses.length; i++) {
       address buyerAddress = oldNonzeroAddresses[i];
-      BuyerInfo storage buyer = buyers[buyerAddress];
       uint buyerOwes = apiBalance.amounts[buyerAddress];
-      int creditsAfter = int(buyer.credits) - int(buyerOwes);
-      if (creditsAfter < 0) {
-        // if the buyer doesn't have enough credits to pay the seller the full balance they owe,
-        // just send however much they do have
-        totalPayable = totalPayable.add(buyer.credits);
+      uint buyerLastPaidAt = apiBalance.buyerLastPaidAt[buyerAddress];
+      uint elapsedSecondsSinceLastPayout = currentTime - buyerLastPaidAt;
+      uint buyerNowOwes = buyerOwes;
+      uint buyerPaid = 0;
+      bool overdrafted = false;
 
-        // store that the buyer now only owes the difference
-        apiBalance.amounts[buyerAddress] = buyerOwes.sub(buyer.credits);
+      (buyerPaid, overdrafted) = chargeBuyer(apiId, buyerAddress, elapsedSecondsSinceLastPayout, buyerOwes);
 
-        // their address still owes money for this api, so keep it in the nonzeroAddresses array
+      totalPayable = totalPayable.add(buyerPaid);
+      buyerNowOwes = buyerOwes.sub(buyerPaid);
+      apiBalance.amounts[buyerAddress] = buyerNowOwes;
+
+      // if the buyer still owes something, make sure we keep them in the nonzeroAddresses array
+      if (buyerNowOwes != 0) {
         apiBalance.nonzeroAddresses.push(buyerAddress);
-
-        // store credits in total credits spent
-        buyer.lifetimeCreditsUsed = buyer.lifetimeCreditsUsed.add(buyer.credits);
-
-        if (buyer.credits != 0) {
-          // log the event
-          LogSpendCredits(buyerAddress, apiId, buyer.credits, true);
-        }
-
-        // zero out the buyers credits
-        buyer.credits = 0;
-
-        // mark address as overdrafted so that seller can cut off service
-        buyer.overdrafted = true;
-        buyer.lifetimeOverdraftCount += 1;
-      } else {
-        // add the total owed to the total payable
-        totalPayable = totalPayable.add(buyerOwes);
-
-        // remove the total owed
-        apiBalance.amounts[buyerAddress] = 0;
-
-        // remove the spent credits from the credits map
-        buyer.credits = uint(creditsAfter);
-
-        // mark address as in good standing
-        buyer.overdrafted = false;
-
-        // store credits in total credits spent
-        buyer.lifetimeCreditsUsed = buyer.lifetimeCreditsUsed.add(buyerOwes);
-
+      }
+      // if the buyer paid more than 0, log the spend.
+      if (buyerPaid != 0) {
         // log the event
-        LogSpendCredits(buyerAddress, apiId, buyerOwes, false);
+        LogSpendCredits(buyerAddress, apiId, buyerPaid, overdrafted);
+
+        // log that they paid
+        apiBalance.buyerLastPaidAt[buyerAddress] = now;
+
+        // add to total buyer count
+        totalBuyers += 1;
+      }
+    }
+  }
+
+  function chargeBuyer(uint apiId, address buyerAddress, uint elapsedSecondsSinceLastPayout, uint buyerOwes) private returns (uint paid, bool overdrafted) {
+    BuyerInfo storage buyer = buyers[buyerAddress];
+    uint approvedAmountPerSecond = buyer.approvedAmounts[apiId];
+    uint approvedAmountSinceLastPayout = approvedAmountPerSecond.mul(elapsedSecondsSinceLastPayout);
+    
+    // do we have the credits to pay owed?
+    if (buyer.credits >= buyerOwes) {
+      // yay, buyer can pay their debits
+      overdrafted = false;
+      buyer.overdrafted = false;
+
+      // has buyer approved enough to pay what they owe?
+      if (approvedAmountSinceLastPayout >= buyerOwes) {
+        // approved is greater than owed.  
+        // mark as not exceeded approved amount
+        buyer.exceededApprovedAmount[apiId] = false;
+
+        // we can pay the entire debt
+        paid = buyerOwes;
+
+      } else {
+        // they have no approved enough
+        // mark as exceeded
+        buyer.exceededApprovedAmount[apiId] = true;
+        buyer.lifetimeExceededApprovalAmountCount += 1;
+
+        // we can only pay the approved portion of the debt
+        paid = approvedAmountSinceLastPayout;
+      }
+    } else {
+      // buyer spent more than they have.  mark as overdrafted
+      overdrafted = true;
+      buyer.overdrafted = true;
+      buyer.lifetimeOverdraftCount += 1;
+
+      // does buyer have more credits than the amount they've approved?
+      if (buyer.credits >= approvedAmountSinceLastPayout) {
+        // they have enough credits to pay approvedAmountSinceLastPayout, so pay that
+        paid = approvedAmountSinceLastPayout;
+
+      } else {
+        // the don't have enough credits to pay approvedAmountSinceLastPayout
+        // so just pay whatever credits they have
+        paid = buyer.credits;
       }
     }
 
-    // set list of addresses with nonzero owed amount for api
-    // apiBalance.nonzeroAddresses = newNonzeroAddresses;
-    return totalPayable;
+    buyer.credits = buyer.credits.sub(paid);
+    buyer.lifetimeCreditsUsed = buyer.lifetimeCreditsUsed.add(paid);
+  }
+
+  function removeAddressFromNonzeroBalancesArray(uint apiId, address toRemove) private {
+    APIBalance storage apiBalance = owed[apiId];
+
+    bool foundElement = false;
+
+    for (uint i = 0; i < apiBalance.nonzeroAddresses.length-1; i++) {
+      if (apiBalance.nonzeroAddresses[i] == toRemove) {
+        foundElement = true;
+      }
+      if (foundElement == true) {
+        apiBalance.nonzeroAddresses[i] = apiBalance.nonzeroAddresses[i+1];
+      }
+    }
+    if (foundElement == true) {
+      apiBalance.nonzeroAddresses.length--;
+    }
   }
 }
