@@ -13,11 +13,14 @@ import "zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 contract APICalls is Ownable {
   using SafeMath for uint;
 
-  // the amount rewarded to a seller for selling api calls
+  // the amount rewarded to a seller for selling api calls per buyer
   uint public tokenReward;
 
   // the fee this contract takes from every sale.  expressed as percent.  so a value of 3 indicates a 3% txn fee
   uint public saleFee;
+
+  // if the buyer has never paid, we need to pick a date for when they probably started using the API.  This is in seconds and will be subtracted from "now"
+  uint public defaultBuyerLastPaidAt;
 
   // address of the relay contract which holds the address of the registry contract.
   address public relayContractAddress;
@@ -117,6 +120,9 @@ contract APICalls is Ownable {
     // default saleFee of 10%
     saleFee = 10;
 
+    // 604,800 seconds = 1 week.  this is the default for when a user started using an api (1 week ago)
+    defaultBuyerLastPaidAt = 604800;
+
     // default withdrawAddress is owner
     withdrawAddress = msg.sender;
     usageReportingAddress = msg.sender;
@@ -184,6 +190,13 @@ contract APICalls is Ownable {
   // ------------------------------------------------------------------------
   function setSaleFee(uint _saleFee) public onlyOwner {
     saleFee = _saleFee;
+  }
+
+  // ------------------------------------------------------------------------
+  // Owner can set the default buyer last paid at
+  // ------------------------------------------------------------------------
+  function setDefaultBuyerLastPaidAt(uint _defaultBuyerLastPaidAt) public onlyOwner {
+    defaultBuyerLastPaidAt = _defaultBuyerLastPaidAt;
   }
 
   // ------------------------------------------------------------------------
@@ -255,6 +268,10 @@ contract APICalls is Ownable {
 
     uint buyerPaid = processSalesForSingleBuyer(apiId, buyerAddress);
 
+    if (buyerPaid == 0) {
+      return; // buyer paid nothing, we are done.
+    }
+
     // calculate fee and payout
     // fixed point math at 2 decimal places
     uint fee = buyerPaid.mul(100).div(saleFee).div(100);
@@ -301,6 +318,10 @@ contract APICalls is Ownable {
     uint totalBuyers = 0;
     (totalPayable, totalBuyers) = processSalesForAllBuyers(apiId);
 
+    if (totalPayable == 0) {
+      return; // if there's nothing to pay, we are done here.
+    }
+
     // calculate fee and payout
     // fixed point math at 2 decimal places
     uint fee = totalPayable.mul(100).div(saleFee).div(100);
@@ -325,7 +346,12 @@ contract APICalls is Ownable {
 
     // transfer seller the eth
     sellerAddress.transfer(payout);
-  }    
+  } 
+
+  function buyerLastPaidAt(uint apiId, address buyerAddress) public view returns (uint) {
+    APIBalance storage apiBalance = owed[apiId];
+    return apiBalance.buyerLastPaidAt[buyerAddress];
+  }   
 
   function buyerInfoOf(address addr) public view returns (bool overdrafted, uint lifetimeOverdraftCount, uint credits, uint lifetimeCreditsUsed, uint lifetimeExceededApprovalAmountCount) {
     BuyerInfo storage buyer = buyers[addr];
@@ -365,6 +391,12 @@ contract APICalls is Ownable {
     return apiBalance.nonzeroAddresses.length;
   }
 
+  function amountOwedForApiForBuyer(uint apiId, address buyerAddress) public view returns (uint) {
+    APIBalance storage apiBalance = owed[apiId];
+
+    return apiBalance.amounts[buyerAddress];
+  }
+
   function totalOwedForApi(uint apiId) public view returns (uint) {
     APIBalance storage apiBalance = owed[apiId];
 
@@ -392,6 +424,27 @@ contract APICalls is Ownable {
     buyer.approvedAmounts[apiId] = newAmount;
   }
 
+  // function to let the buyer set their approved amount of wei per second for an api
+  // this function also lets the buyer set the time they last paid for an API if they've never paid that API before.  
+  // this is important because the total amount approved for a given transaction is based on a wei per second spending limit
+  // but the smart contract doesn't know when the buyer started using the API
+  // so with this function, a buyer can et the time they first used the API and the approved amount calculations will be accurate when the seller requests payment.
+  function approveAmountAndSetFirstUseTime(uint apiId, address buyerAddress, uint newAmount, uint firstUseTime) public {
+    require(buyerAddress != address(0) && apiId != 0);
+
+    // only the buyer or the usage reporing system can change the buyers approval amount
+    require(msg.sender == buyerAddress || msg.sender == usageReportingAddress);
+
+    APIBalance storage apiBalance = owed[apiId];
+    require(apiBalance.buyerLastPaidAt[buyerAddress] == 0);
+
+    apiBalance.buyerLastPaidAt[buyerAddress] = firstUseTime;
+    
+    BuyerInfo storage buyer = buyers[buyerAddress];
+    buyer.approvedAmounts[apiId] = newAmount;
+
+  }
+
   function buyerExceededApprovedAmount(uint apiId, address buyerAddress) public view returns (bool) {
     return buyers[buyerAddress].exceededApprovedAmount[apiId];
   }
@@ -412,8 +465,12 @@ contract APICalls is Ownable {
     APIBalance storage apiBalance = owed[apiId];
 
     uint buyerOwes = apiBalance.amounts[buyerAddress];
-    uint buyerLastPaidAt = apiBalance.buyerLastPaidAt[buyerAddress];
-    uint elapsedSecondsSinceLastPayout = now - buyerLastPaidAt;
+    uint buyerLastPaidAtTime = apiBalance.buyerLastPaidAt[buyerAddress];
+    if (buyerLastPaidAtTime == 0) {
+      // if buyer has never paid, assume they paid a week ago.  or whatever now - defaultBuyerLastPaidAt is.
+      buyerLastPaidAtTime = now - defaultBuyerLastPaidAt; // default is 604,800 = 7 days of seconds
+    }
+    uint elapsedSecondsSinceLastPayout = now - buyerLastPaidAtTime;
     uint buyerNowOwes = buyerOwes;
     uint buyerPaid = 0;
     bool overdrafted = false;
@@ -451,8 +508,12 @@ contract APICalls is Ownable {
     for (uint i = 0; i < oldNonzeroAddresses.length; i++) {
       address buyerAddress = oldNonzeroAddresses[i];
       uint buyerOwes = apiBalance.amounts[buyerAddress];
-      uint buyerLastPaidAt = apiBalance.buyerLastPaidAt[buyerAddress];
-      uint elapsedSecondsSinceLastPayout = currentTime - buyerLastPaidAt;
+      uint buyerLastPaidAtTime = apiBalance.buyerLastPaidAt[buyerAddress];
+      if (buyerLastPaidAtTime == 0) {
+        // if buyer has never paid, assume they paid a week ago.  or whatever now - defaultBuyerLastPaidAt is.
+        buyerLastPaidAtTime = now - defaultBuyerLastPaidAt; // default is 604,800 = 7 days of seconds
+      }
+      uint elapsedSecondsSinceLastPayout = currentTime - buyerLastPaidAtTime;
       uint buyerNowOwes = buyerOwes;
       uint buyerPaid = 0;
       bool overdrafted = false;
