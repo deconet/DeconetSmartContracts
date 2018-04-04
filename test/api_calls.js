@@ -1027,7 +1027,7 @@ it('should let buyers set their first use time', async function () {
     assert.equal(buyerInfo[4].toString(), lifetimeExceededApprovalAmountCountAcctSix.plus(new BigNumber('1')).toString()) // lifetimeExceededApprovalAmountCount
   })
 
-  it('should let sellers get paid for a single buyer at a time', async function () {
+  it('should let sellers get paid for a single buyer at a time and work for many cycles', async function () {
     let apiCalls = await APICalls.deployed()
     let token = await Token.deployed()
 
@@ -1035,6 +1035,8 @@ it('should let buyers set their first use time', async function () {
     const gasPrice = new BigNumber('1000000000')
     let tokenReward = new BigNumber('100').times(new BigNumber('10').pow(18))
     let globalNow = new BigNumber(Math.round(new Date().getTime() / 1000))
+    let accountsToTest = 5;
+    let cyclesToTest = 5;
 
     let ethBalanceBefore = await web3.eth.getBalance(accounts[2])
     let creditsBalanceBefore = await apiCalls.creditsBalanceOf(accounts[2])
@@ -1083,22 +1085,24 @@ it('should let buyers set their first use time', async function () {
       return new BigNumber(Math.floor(Math.random() * (max - min + 1)) + min)
     }
 
-    // run through 10 accounts, from accounts[30] to accounts[39]    
-    for(let i = 0; i < 10; i++){
+    let accountEntries = {}
+
+    // run through accountsToTest accounts, from accounts[30] to accounts[30 + accountsToTest]  
+    // set them up with balances, credits, etc
+    for (let i = 0; i < accountsToTest; i++) {
       let accountNumber = i + 30
       let account = accounts[accountNumber]
-      // console.log('////////////// ////////////////////////////')
-      // console.log('processing account number ' + accountNumber + ' which has address ' + account)
       let accountEntry = {
         accountNumber: accountNumber,
         account: account,
-        credits: getRandomInt(0, 10000),
+        credits: getRandomInt(0, 30000),
         approved: getRandomInt(0, 10000),
-        apiCalls: getRandomInt(0, 1000), // pricePerCall is 20 so max owed is apiCalls * pricePerCall = 20,000
+        apiCalls: getRandomInt(1, 1000), // pricePerCall is 20 so max owed is apiCalls * pricePerCall = 20,000
         firstUseTime: globalNow.minus(getRandomInt(200, 10000))
       }
       accountEntry.owed = accountEntry.apiCalls.times(pricePerCall)
-      // console.log(accountEntry)
+
+      // add credits for acct
       let creditsBalance = await apiCalls.creditsBalanceOf(account)
       if (creditsBalance.toString() !== '0') {
         // remove credits if they exist
@@ -1113,76 +1117,107 @@ it('should let buyers set their first use time', async function () {
       gasUsed = result.receipt.gasUsed
       weiConsumedByGas = gasPrice.times(BigNumber(gasUsed))
 
-
       let balanceAfter = await web3.eth.getBalance(account)
       assert.equal(balanceBefore.minus(accountEntry.credits).minus(weiConsumedByGas).toString(), balanceAfter.toString())
 
-      let approvalAmountBefore = await apiCalls.approvedAmount(apiId, account)
-      // set approval amount
+      // set approval limit
       await apiCalls.approveAmountAndSetFirstUseTime(apiId, account, accountEntry.approved.toString(), accountEntry.firstUseTime.toString(), {from: account})
-      let approvalAmountAfter = await apiCalls.approvedAmount(apiId, account)
-      assert.equal(approvalAmountAfter.toString(), accountEntry.approved.toString())
-      assert.notEqual(approvalAmountBefore.toString(), approvalAmountAfter.toString())
 
+      accountEntries[account] = accountEntry
+    }
 
-      let amountOwedBefore = await apiCalls.amountOwedForApiForBuyer(apiId, account)
-      // report accountEntry.apiCalls of usage
-      result = await apiCalls.reportUsage(apiId, accountEntry.apiCalls.toNumber(), account, {from: accounts[9]})
-      assert.equal(result.logs[0].event, 'LogAPICallsMade')
-      let amountOwedAfter = await apiCalls.amountOwedForApiForBuyer(apiId, account)
-      assert.equal(amountOwedAfter.toString(), accountEntry.apiCalls.times(pricePerCall).toString())
-      assert.notEqual(amountOwedBefore.toString(), amountOwedAfter.toString())
+    // do 5 cycles of charging user and paying seller
+    for (var j = 0; j < cyclesToTest; j++){
+      console.log('on full cycle ' + j)
+      for (let i = 0; i < accountsToTest; i++){
+        let accountNumber = i + 30
+        let account = accounts[accountNumber]
+        let accountEntry = accountEntries[account]
 
+        let amountOwedBefore = await apiCalls.amountOwedForApiForBuyer(apiId, account)
+        // report accountEntry.apiCalls of usage
+        result = await apiCalls.reportUsage(apiId, accountEntry.apiCalls.toNumber(), account, {from: accounts[9]})
+        assert.equal(result.logs[0].event, 'LogAPICallsMade')
+        let amountOwedAfter = await apiCalls.amountOwedForApiForBuyer(apiId, account)
+        assert.equal(amountOwedAfter.minus(amountOwedBefore).toString(), accountEntry.apiCalls.times(pricePerCall).toString())
+        assert.notEqual(amountOwedBefore.toString(), amountOwedAfter.toString())
 
-      // pay the seller
-      let buyerCreditsBefore = await apiCalls.creditsBalanceOf(account)
-      let sellerBalanceBefore = await web3.eth.getBalance(accounts[1])
-      let sellerTokenBalanceBefore = await token.balanceOf(accounts[1])
-      result = await apiCalls.paySellerForBuyer(apiId, account)
-      let sellerBalanceAfter = await web3.eth.getBalance(accounts[1])
-      let sellerTokenBalanceAfter = await token.balanceOf(accounts[1])
-      let buyerCreditsAfter = await apiCalls.creditsBalanceOf(account)
+        let buyerInfo = await apiCalls.buyerInfoOf(account)
+        let lifetimeOverdraftCountBefore = buyerInfo[1]
+        let lifetimeCreditsUsedBefore = buyerInfo[3]
+        let lifetimeExceededApprovalAmountCountBefore = buyerInfo[4]
 
-      assert.equal(result.logs[0].event, 'LogSpendCredits')
+        // pay the seller
+        let buyerCreditsBefore = await apiCalls.creditsBalanceOf(account)
+        let sellerBalanceBefore = await web3.eth.getBalance(accounts[1])
+        let sellerTokenBalanceBefore = await token.balanceOf(accounts[1])
+        result = await apiCalls.paySellerForBuyer(apiId, account)
+        let sellerBalanceAfter = await web3.eth.getBalance(accounts[1])
+        let sellerTokenBalanceAfter = await token.balanceOf(accounts[1])
+        let buyerCreditsAfter = await apiCalls.creditsBalanceOf(account)
 
-      let blockNum = result.receipt.blockNumber
-      let blockNumInfo = await web3.eth.getBlock(blockNum)
-      let now = new BigNumber(blockNumInfo.timestamp)
+        let blockNum = result.receipt.blockNumber
+        let blockNumInfo = await web3.eth.getBlock(blockNum)
+        let now = new BigNumber(blockNumInfo.timestamp)
 
-      let maxSpent = now.minus(accountEntry.firstUseTime).times(accountEntry.approved)
+        let maxSpent = now.minus(accountEntry.firstUseTime).times(accountEntry.approved)
 
-      let buyerExceededApprovedAmount = await apiCalls.buyerExceededApprovedAmount(apiId, account)
+        let buyerExceededApprovedAmount = await apiCalls.buyerExceededApprovedAmount(apiId, account)
 
-      let buyerInfo = await apiCalls.buyerInfoOf(account)
+        buyerInfo = await apiCalls.buyerInfoOf(account)
 
-      // confirm that the buyer spent less than their approved limit in maxSpent
-      assert(maxSpent.minus(buyerInfo[3]).isGreaterThanOrEqualTo(new BigNumber('0')), true)
+        // confirm that the buyer spent less than their approved limit in maxSpent
+        assert(maxSpent.minus(new BigNumber(buyerInfo[3].toString())).isGreaterThanOrEqualTo(new BigNumber('0')), true)
 
-      // test for all cases
-      if (accountEntry.credits.isGreaterThanOrEqualTo(accountEntry.owed)) {
-        assert.equal(buyerInfo[0], false) // account is not overdrafted
-        assert.equal(buyerInfo[1].toString(), '0') // lifetime overdraft count.  acct is unused so this should be 0
-        if (maxSpent.isGreaterThanOrEqualTo(accountEntry.owed)) {
-          assert.equal(buyerExceededApprovedAmount, false)
-          assert.equal(buyerInfo[4].toString(), '0')
-          // verify that buyer paid what they owe in entirety
-          assert.equal(accountEntry.owed.toString(), buyerCreditsBefore.minus(buyerCreditsAfter).toString())
+        // test for all 4 final cases
+        if (accountEntry.credits.isGreaterThanOrEqualTo(accountEntry.owed)) {
+          assert.equal(buyerInfo[0], false) // account is not overdrafted
+          assert.equal(buyerInfo[1].toString(), lifetimeOverdraftCountBefore.toString()) // lifetime overdraft count.  should not have increased
+          if (maxSpent.isGreaterThanOrEqualTo(accountEntry.owed)) {
+            assert.equal(buyerExceededApprovedAmount, false)
+            assert.equal(buyerInfo[4].toString(), lifetimeExceededApprovalAmountCountBefore.toString()) // lifetimeExceededAmounts should be unchanged
+            // verify that buyer paid what they owe in entirety
+            assert.equal(accountEntry.owed.toString(), buyerCreditsBefore.minus(buyerCreditsAfter).toString())
+            // verify that seller was rewarded tokens
+            assert.equal(sellerTokenBalanceAfter.minus(sellerTokenBalanceBefore).toString(), tokenReward.toString())
+            assert.equal(result.logs[0].event, 'LogSpendCredits')
+            assert.equal(result.logs[1].event, 'LogAPICallsPaid')
+          } else {
+            assert.equal(buyerExceededApprovedAmount, true)
+            assert.equal(buyerInfo[4].toString(), lifetimeExceededApprovalAmountCountBefore.plus(new BigNumber('1')).toString()) // lifetimeExceededAmounts should have increased by 1
+            // verify that buyer paid max amount spendable
+            assert.equal(maxSpent.toString(), buyerCreditsBefore.minus(buyerCreditsAfter).toString())
+            // verifu seller was rewarded if some eth was paid
+            if (!maxSpent.eq(new BigNumber('0'))) {
+              assert.equal(sellerTokenBalanceAfter.minus(sellerTokenBalanceBefore).toString(), tokenReward.toString())
+            }
+          }
         } else {
-          assert.equal(buyerExceededApprovedAmount, true)
-          assert.equal(buyerInfo[4].toString(), '1')
-          // verify that buyer paid what they owe in entirety
-          assert.equal(maxSpent.toString(), buyerCreditsBefore.minus(buyerCreditsAfter).toString())
+          // overdraft
+          assert.equal(buyerInfo[0], true) // overdrafted should be true
+          assert.equal(buyerInfo[1].toString(), lifetimeOverdraftCountBefore.plus(new BigNumber('1')).toString()) // lifetime overdraft count.  This should have 1 added to it
+
+          if (accountEntry.credits.isGreaterThanOrEqualTo(maxSpent)) {
+            assert.equal(maxSpent.toString(), buyerCreditsBefore.minus(buyerCreditsAfter).toString())
+            // verifu seller was rewarded if some eth was paid
+            if (!maxSpent.eq(new BigNumber('0'))) {
+              assert.equal(sellerTokenBalanceAfter.minus(sellerTokenBalanceBefore).toString(), tokenReward.toString())
+            }
+          } else {
+            assert.equal(accountEntry.credits.toString(), buyerCreditsBefore.minus(buyerCreditsAfter).toString())
+            // verifu seller was rewarded if some eth was paid
+            if (!accountEntry.credits.eq(new BigNumber('0'))) {
+              assert.equal(sellerTokenBalanceAfter.minus(sellerTokenBalanceBefore).toString(), tokenReward.toString())
+            }
+          }
         }
-      } else {
-        // overdraft
-        assert.equal(buyerInfo[0], true) // overdrafted should be true
-        assert.equal(buyerInfo[1].toString(), '1') // lifetime overdraft count.  acct is unused so this should be 1
-        assert.equal(buyerExceededApprovedAmount, false)
-        if (accountEntry.credits.isGreaterThanOrEqualTo(maxSpent)) {
-          assert.equal(maxSpent.toString(), buyerCreditsBefore.minus(buyerCreditsAfter).toString())
-        } else {
-          assert.equal(accountEntry.credits.toString(), buyerCreditsBefore.minus(buyerCreditsAfter).toString())
-        }
+
+        // account has been processed and tested.  set new apiCallCount and update credits
+        accountEntry.credits = new BigNumber(buyerCreditsAfter.toString())
+        console.log('set credits to ' + accountEntry.credits.toString())
+        accountEntry.apiCalls = getRandomInt(1, 1000) // pricePerCall is 20 so max owed is apiCalls * pricePerCall = 20,000
+        accountEntry.owed = accountEntry.apiCalls.times(pricePerCall)
+        accountEntry.firstUseTime = now
       }
     }
   })
