@@ -155,7 +155,25 @@
 110
 111
 112
-113</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -190,6 +208,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -213,10 +234,16 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">12×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">75×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">75×</span>
@@ -226,6 +253,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4×</span>
@@ -234,6 +264,9 @@
 <span class="cline-any cline-yes">4×</span>
 <span class="cline-any cline-yes">4×</span>
 <span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -249,6 +282,9 @@
 <span class="cline-any cline-yes">2×</span>
 <span class="cline-any cline-yes">2×</span>
 <span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -304,6 +340,9 @@ contract APIRegistry is Ownable {
     return ERC20(tokenAddress).transfer(owner, tokens);
   }
 &nbsp;
+  // ------------------------------------------------------------------------
+  // Lets a user list an API to sell
+  // ------------------------------------------------------------------------
   function listApi(uint pricePerCall, bytes32 sellerUsername, bytes32 apiName, string hostname, string docsUrl) public {
     // make sure input params are valid
     require(pricePerCall != 0 &amp;&amp; sellerUsername != "" &amp;&amp; apiName != "" &amp;&amp; bytes(hostname).length != 0);
@@ -324,10 +363,16 @@ contract APIRegistry is Ownable {
     api.docsUrl = docsUrl;
   }
 &nbsp;
+  // ------------------------------------------------------------------------
+  // Get the ID number of an API given it's hostname
+  // ------------------------------------------------------------------------
   function getApiId(string hostname) public view returns (uint) {
     return apiIds[hostname];
   }
 &nbsp;
+  // ------------------------------------------------------------------------
+  // Get info stored for the API but without the dynamic members, because solidity can't return dynamics to other smart contracts yet
+  // ------------------------------------------------------------------------
   function getApiByIdWithoutDynamics(uint apiId) public view returns (uint pricePerCall, bytes32 sellerUsername, bytes32 apiName, address sellerAddress) {
     APIForSale storage api = apis[apiId];
 &nbsp;
@@ -337,6 +382,9 @@ contract APIRegistry is Ownable {
     sellerAddress = api.sellerAddress;
   }
 &nbsp;
+  // ------------------------------------------------------------------------
+  // Get info stored for an API by id
+  // ------------------------------------------------------------------------
   function getApiById(uint apiId) public view returns (uint pricePerCall, bytes32 sellerUsername, bytes32 apiName, address sellerAddress, string hostname, string docsUrl) {
     APIForSale storage api = apis[apiId];
 &nbsp;
@@ -348,6 +396,9 @@ contract APIRegistry is Ownable {
     docsUrl = api.docsUrl;
   }
 &nbsp;
+  // ------------------------------------------------------------------------
+  // Get info stored for an API by hostname
+  // ------------------------------------------------------------------------
   function getApiByName(string _hostname) public view returns (uint pricePerCall, bytes32 sellerUsername, bytes32 apiName, address sellerAddress, string hostname, string docsUrl) {
     uint apiId = apiIds[_hostname];
     if (apiId == 0) {
@@ -363,6 +414,9 @@ contract APIRegistry is Ownable {
     docsUrl = api.docsUrl;
   }
 &nbsp;
+  // ------------------------------------------------------------------------
+  // Edit an API listing
+  // ------------------------------------------------------------------------
   function editApi(uint apiId, uint pricePerCall, address sellerAddress, string docsUrl) public {
     require(apiId != 0 &amp;&amp; pricePerCall != 0 &amp;&amp; sellerAddress != address(0));
 &nbsp;
@@ -385,7 +439,7 @@ contract APIRegistry is Ownable {
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Wed Apr 04 2018 16:27:48 GMT-0700 (PDT)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Wed Apr 04 2018 16:50:03 GMT-0700 (PDT)
 </div>
 </div>
 <script src="../prettify.js"></script>

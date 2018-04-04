@@ -148,7 +148,22 @@
 103
 104
 105
-106</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -182,6 +197,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -204,7 +222,13 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -220,6 +244,9 @@
 <span class="cline-any cline-yes">6×</span>
 <span class="cline-any cline-yes">6×</span>
 <span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -234,6 +261,9 @@
 <span class="cline-any cline-yes">2×</span>
 <span class="cline-any cline-yes">2×</span>
 <span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -289,6 +319,9 @@ contract Registry is Ownable {
     return ERC20(tokenAddress).transfer(owner, tokens);
   }
 &nbsp;
+  // ------------------------------------------------------------------------
+  // Lets a user list a software module for sale in this registry
+  // ------------------------------------------------------------------------
   function listModule(uint price, bytes32 sellerUsername, bytes32 moduleName, string usernameAndProjectName, bytes4 licenseId) public {
     // make sure input params are valid
     require(price != 0 &amp;&amp; sellerUsername != "" &amp;&amp; moduleName != "" &amp;&amp; bytes(usernameAndProjectName).length != 0 &amp;&amp; licenseId != 0);
@@ -308,10 +341,16 @@ contract Registry is Ownable {
     module.licenseId = licenseId;
   }
 &nbsp;
+  // ------------------------------------------------------------------------
+  // Get the ID number of a module given the username and project name of that module
+  // ------------------------------------------------------------------------
   function getModuleId(string usernameAndProjectName) public view returns (uint) {
     return moduleIds[usernameAndProjectName];
   }
 &nbsp;
+  // ------------------------------------------------------------------------
+  // Get info stored for a module by id
+  // ------------------------------------------------------------------------
   function getModuleById(uint moduleId) public view returns (uint price, bytes32 sellerUsername, bytes32 moduleName, address sellerAddress, bytes4 licenseId) {
     ModuleForSale storage module = modules[moduleId];
     
@@ -327,6 +366,9 @@ contract Registry is Ownable {
     licenseId = module.licenseId;
   }
 &nbsp;
+  // ------------------------------------------------------------------------
+  // get info stored for a module by name
+  // ------------------------------------------------------------------------
   function getModuleByName(string usernameAndProjectName) public view returns (uint price, bytes32 sellerUsername, bytes32 moduleName, address sellerAddress, bytes4 licenseId) {
     uint moduleId = moduleIds[usernameAndProjectName];
     if (moduleId == 0) {
@@ -341,6 +383,9 @@ contract Registry is Ownable {
     licenseId = module.licenseId;
   }
 &nbsp;
+  // ------------------------------------------------------------------------
+  // Edit a module listing
+  // ------------------------------------------------------------------------
   function editModule(uint moduleId, uint price, address sellerAddress, bytes4 licenseId) public {
     // Make sure input params are valid
     require(moduleId != 0 &amp;&amp; price != 0 &amp;&amp; sellerAddress != address(0) &amp;&amp; licenseId != 0);
@@ -364,7 +409,7 @@ contract Registry is Ownable {
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Wed Apr 04 2018 16:27:48 GMT-0700 (PDT)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Wed Apr 04 2018 16:50:03 GMT-0700 (PDT)
 </div>
 </div>
 <script src="../prettify.js"></script>
