@@ -35,6 +35,9 @@ contract APIRegistry is Ownable {
     return ERC20(tokenAddress).transfer(owner, tokens);
   }
 
+  // ------------------------------------------------------------------------
+  // Lets a user list an API to sell
+  // ------------------------------------------------------------------------
   function listApi(uint pricePerCall, bytes32 sellerUsername, bytes32 apiName, string hostname, string docsUrl) public {
     // make sure input params are valid
     require(pricePerCall != 0 && sellerUsername != "" && apiName != "" && bytes(hostname).length != 0);
@@ -55,10 +58,16 @@ contract APIRegistry is Ownable {
     api.docsUrl = docsUrl;
   }
 
+  // ------------------------------------------------------------------------
+  // Get the ID number of an API given it's hostname
+  // ------------------------------------------------------------------------
   function getApiId(string hostname) public view returns (uint) {
     return apiIds[hostname];
   }
 
+  // ------------------------------------------------------------------------
+  // Get info stored for the API but without the dynamic members, because solidity can't return dynamics to other smart contracts yet
+  // ------------------------------------------------------------------------
   function getApiByIdWithoutDynamics(uint apiId) public view returns (uint pricePerCall, bytes32 sellerUsername, bytes32 apiName, address sellerAddress) {
     APIForSale storage api = apis[apiId];
 
@@ -68,6 +77,9 @@ contract APIRegistry is Ownable {
     sellerAddress = api.sellerAddress;
   }
 
+  // ------------------------------------------------------------------------
+  // Get info stored for an API by id
+  // ------------------------------------------------------------------------
   function getApiById(uint apiId) public view returns (uint pricePerCall, bytes32 sellerUsername, bytes32 apiName, address sellerAddress, string hostname, string docsUrl) {
     APIForSale storage api = apis[apiId];
 
@@ -79,6 +91,9 @@ contract APIRegistry is Ownable {
     docsUrl = api.docsUrl;
   }
 
+  // ------------------------------------------------------------------------
+  // Get info stored for an API by hostname
+  // ------------------------------------------------------------------------
   function getApiByName(string _hostname) public view returns (uint pricePerCall, bytes32 sellerUsername, bytes32 apiName, address sellerAddress, string hostname, string docsUrl) {
     uint apiId = apiIds[_hostname];
     if (apiId == 0) {
@@ -94,6 +109,9 @@ contract APIRegistry is Ownable {
     docsUrl = api.docsUrl;
   }
 
+  // ------------------------------------------------------------------------
+  // Edit an API listing
+  // ------------------------------------------------------------------------
   function editApi(uint apiId, uint pricePerCall, address sellerAddress, string docsUrl) public {
     require(apiId != 0 && pricePerCall != 0 && sellerAddress != address(0));
 

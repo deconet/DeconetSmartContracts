@@ -165,6 +165,9 @@ contract LicenseSales is Ownable {
     sellerAddress.transfer(payout);
   }
 
+  // ------------------------------------------------------------------------
+  // Reward user with tokens IF the contract has them in it's allowance
+  // ------------------------------------------------------------------------
   function rewardTokens(address toReward) private {
     DeconetToken token = DeconetToken(tokenContractAddress);
     address tokenOwner = token.owner();

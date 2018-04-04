@@ -258,4 +258,25 @@ it('should let a user list and get an api without dynamics', async function () {
     let numApisAfter = await apiRegistry.numApis.call()
     assert.equal(numApisAfter.toString(), numApisBefore.toString())
   })
+  it('should not let a user edit an API with zeroed inputs', async function () {
+    let apiRegistry = await APIRegistry.deployed()
+    let exceptionGenerated = false
+    try {
+      await apiRegistry.editApi('0', '0', '0x0000000000000000000000000000000000000000', '', { from: accounts[0] })
+    } catch (e) {
+      exceptionGenerated = true
+    }
+    assert.equal(exceptionGenerated, true)
+  })
+
+  it('should not let a user edit an API that does not exist', async function () {
+    let apiRegistry = await APIRegistry.deployed()
+    let exceptionGenerated = false
+    try {
+      await apiRegistry.editApi('9999999', 20, accounts[2], '', { from: accounts[0] })
+    } catch (e) {
+      exceptionGenerated = true
+    }
+    assert.equal(exceptionGenerated, true)
+  })
 })

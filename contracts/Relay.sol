@@ -24,21 +24,33 @@ contract Relay is Ownable {
     return ERC20(tokenAddress).transfer(owner, tokens);
   }
 
+  // ------------------------------------------------------------------------
+  // Sets the license sales contract address
+  // ------------------------------------------------------------------------
   function setLicenseSalesContractAddress(address newAddress) public onlyOwner {
     require(newAddress != address(0));
     licenseSalesContractAddress = newAddress;
   }
 
+  // ------------------------------------------------------------------------
+  // Sets the registry contract address
+  // ------------------------------------------------------------------------
   function setRegistryContractAddress(address newAddress) public onlyOwner {
     require(newAddress != address(0));
     registryContractAddress = newAddress;
   }
 
+  // ------------------------------------------------------------------------
+  // Sets the api registry contract address
+  // ------------------------------------------------------------------------
   function setApiRegistryContractAddress(address newAddress) public onlyOwner {
     require(newAddress != address(0));
     apiRegistryContractAddress = newAddress;
   }
 
+  // ------------------------------------------------------------------------
+  // Sets the api calls contract address
+  // ------------------------------------------------------------------------
   function setApiCallsContractAddress(address newAddress) public onlyOwner {
     require(newAddress != address(0));
     apiCallsContractAddress = newAddress;

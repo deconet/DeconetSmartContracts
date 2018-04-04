@@ -99,6 +99,24 @@ contract('APICalls', function (accounts) {
     // set usage reporting address for the api
     await apiCalls.setUsageReportingAddress(accounts[9])
 
+    // try reporting from an address that is not usage address or owner
+    let exceptionGenerated = false
+    try {
+      let result = await apiCalls.reportUsage(apiId, 1000, accounts[2], {from: accounts[5]})
+    } catch (e) {
+      exceptionGenerated = true
+    }
+    assert.equal(exceptionGenerated, true)
+
+    // try reporting 0 calls.  should fail.
+    exceptionGenerated = false
+    try {
+      let result = await apiCalls.reportUsage(apiId, 0, accounts[2], {from: accounts[9]})
+    } catch (e) {
+      exceptionGenerated = true
+    }
+    assert.equal(exceptionGenerated, true)
+
     // // imagine here that some dude used the api 1000 times
     // // and they are at accounts[2]
     let result = await apiCalls.reportUsage(apiId, 1000, accounts[2], {from: accounts[9]})
@@ -130,7 +148,16 @@ contract('APICalls', function (accounts) {
     assert.equal(creditsBalanceBefore.add(creditAmount).eq(creditsBalanceAfter), true)
     assert.equal(ethBalanceBefore.minus(creditAmount).minus(weiConsumedByGas).eq(ethBalanceAfter), true)
 
-    ethBalanceBefore = ethBalanceAfter
+    // try to withdraw more credits than we have
+    let exceptionGenerated = false
+    try {
+      await apiCalls.withdrawCredits(creditsBalanceAfter.plus(new BigNumber('100')).toString(), {from: accounts[2], gasPrice: gasPrice.toNumber()})
+    } catch (e) {
+      exceptionGenerated = true
+    }
+    assert.equal(exceptionGenerated, true)
+
+    ethBalanceBefore = await web3.eth.getBalance(accounts[2])
     creditsBalanceBefore = creditsBalanceAfter
 
     let withdrawCreditsTxn = await apiCalls.withdrawCredits(creditsBalanceAfter, {from: accounts[2], gasPrice: gasPrice.toNumber()})
@@ -297,6 +324,16 @@ contract('APICalls', function (accounts) {
 
     let nonzeroAddressesElement = await apiCalls.nonzeroAddressesElementForApi(apiId, 0)
     assert.equal(nonzeroAddressesElement, accounts[3])
+
+    // test setting approval amount for an acct that already has a lastPaidAt.  it should fail.
+    let exceptionGenerated = false
+    try {
+      await apiCalls.approveAmountAndSetFirstUseTime(apiId, accounts[2], 1000000000, 12345, {from: accounts[2]})
+    } catch (e) {
+      exceptionGenerated = true
+    }
+    assert.equal(exceptionGenerated, true)
+    
 
     // test pulling out the txn fees
     let contractBalanceBefore = await web3.eth.getBalance(apiCalls.address)
@@ -1520,7 +1557,31 @@ it('should let buyers use a default first use time of 1 week ago if not set, and
     let apiCalls = await APICalls.deployed()
     let exceptionOccured = false
     try {
-      await apiCalls.withdrawEther({from: accounts[4]})
+      await apiCalls.withdrawEther(1, {from: accounts[4]})
+    } catch (e) {
+      exceptionOccured = true
+    }
+    assert.equal(exceptionOccured, true)
+  })
+
+  it('should only let the contract owner withdraw less than the contract holds', async function () {
+    let apiCalls = await APICalls.deployed()
+    let contractBalance = await web3.eth.getBalance(apiCalls.address)
+    let exceptionOccured = false
+    try {
+      await apiCalls.withdrawEther(contractBalance.plus(new BigNumber('100')).toString(), {from: accounts[1]})
+    } catch (e) {
+      exceptionOccured = true
+    }
+    assert.equal(exceptionOccured, true)
+  })
+
+  it('should only let the contract owner withdraw less than the safe withdraw amount', async function () {
+    let apiCalls = await APICalls.deployed()
+    let safeWithdrawAmount = await apiCalls.safeWithdrawAmount.call()
+    let exceptionOccured = false
+    try {
+      await apiCalls.withdrawEther(safeWithdrawAmount.plus(new BigNumber('100')).toString(), {from: accounts[1]})
     } catch (e) {
       exceptionOccured = true
     }
@@ -1581,5 +1642,114 @@ it('should let buyers use a default first use time of 1 week ago if not set, and
 
     assert.equal(saleFeeBefore.toString(), saleFeeAfter.toString())
   })
-
+  it('should not let user set 0 address for withdraw address', async function () {
+    let apiCalls = await APICalls.deployed()
+    let exceptionOccured = false
+    try {
+      await apiCalls.setWithdrawAddress('0x0000000000000000000000000000000000000000')
+    } catch (e) {
+      exceptionOccured = true
+    }
+    assert.equal(exceptionOccured, true)
+  })
+  it('should not let user set 0 address for usage reporting address', async function () {
+    let apiCalls = await APICalls.deployed()
+    let exceptionOccured = false
+    try {
+      await apiCalls.setUsageReportingAddress('0x0000000000000000000000000000000000000000')
+    } catch (e) {
+      exceptionOccured = true
+    }
+    assert.equal(exceptionOccured, true)
+  })
+  it('should not let user set 0 address for relay contract address', async function () {
+    let apiCalls = await APICalls.deployed()
+    let exceptionOccured = false
+    try {
+      await apiCalls.setRelayContractAddress('0x0000000000000000000000000000000000000000')
+    } catch (e) {
+      exceptionOccured = true
+    }
+    assert.equal(exceptionOccured, true)
+  })
+  it('should not let user set 0 address for token address', async function () {
+    let apiCalls = await APICalls.deployed()
+    let exceptionOccured = false
+    try {
+      await apiCalls.setTokenContractAddress('0x0000000000000000000000000000000000000000')
+    } catch (e) {
+      exceptionOccured = true
+    }
+    assert.equal(exceptionOccured, true)
+  })
+  it('should not let user report usage if the seller address is wrong', async function () {
+    let apiCalls = await APICalls.deployed()
+    let exceptionOccured = false
+    try {
+      await apiCalls.reportUsage('99999', 1000, accounts[2], {from: accounts[9]})
+    } catch (e) {
+      exceptionOccured = true
+    }
+    assert.equal(exceptionOccured, true)
+  })
+  it('should not let user pay seller for buyer if listing does not exist', async function () {
+    let apiCalls = await APICalls.deployed()
+    let exceptionOccured = false
+    try {
+      await apiCalls.paySellerForBuyer('9999999', accounts[3])
+    } catch (e) {
+      exceptionOccured = true
+    }
+    assert.equal(exceptionOccured, true)
+  })
+  it('should not let user pay seller if listing does not exist', async function () {
+    let apiCalls = await APICalls.deployed()
+    let exceptionOccured = false
+    try {
+      await apiCalls.paySeller('9999999')
+    } catch (e) {
+      exceptionOccured = true
+    }
+    assert.equal(exceptionOccured, true)
+  })
+  it('should not let user approve amount for an invalid buyer or api', async function () {
+    let apiCalls = await APICalls.deployed()
+    let exceptionOccured = false
+    try {
+      await apiCalls.approveAmount('0', '0x0000000000000000000000000000000000000000', 0, {from: accounts[9]})
+    } catch (e) {
+      exceptionOccured = true
+    }
+    assert.equal(exceptionOccured, true)
+  })
+  it('should only let the user approve an amount if they are the user or reporting address', async function () {
+    let apiCalls = await APICalls.deployed()
+    let exceptionOccured = false
+    try {
+      await apiCalls.approveAmount(1, accounts[1], 0, {from: accounts[2]})
+    } catch (e) {
+      exceptionOccured = true
+    }
+    assert.equal(exceptionOccured, true)
+  })
+  it('should not let user approve amount w/first use time for an invalid buyer or api', async function () {
+    let apiCalls = await APICalls.deployed()
+    let exceptionOccured = false
+    try {
+      await apiCalls.approveAmountAndSetFirstUseTime('0', '0x0000000000000000000000000000000000000000', 0, 12345,  {from: accounts[9]})
+    } catch (e) {
+      exceptionOccured = true
+    }
+    assert.equal(exceptionOccured, true)
+  })
+  it('should only let the user approve an amount w/first use time if they are the user or reporting address', async function () {
+    let apiCalls = await APICalls.deployed()
+    let exceptionOccured = false
+    try {
+      await apiCalls.approveAmountAndSetFirstUseTime(1, accounts[1], 0, 12345, {from: accounts[2]})
+    } catch (e) {
+      exceptionOccured = true
+    }
+    assert.equal(exceptionOccured, true)
+  })
 })

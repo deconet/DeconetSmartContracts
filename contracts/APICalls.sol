@@ -46,6 +46,7 @@ contract APICalls is Ownable {
   // maps buyer addresses to whether or not accounts are overdrafted and more
   mapping(address => BuyerInfo) internal buyers;
 
+  // Stores amounts owed and when buyers last paid on a per-api and per-user basis
   struct APIBalance {
     // maps address -> amount owed in wei
     mapping(address => uint) amounts;
@@ -55,6 +56,7 @@ contract APICalls is Ownable {
     mapping(address => uint) buyerLastPaidAt;
   }
 
+  // Stores basic info about a buyer including their lifetime stats and reputation info
   struct BuyerInfo {
     // whether or not the account is overdrafted or not
     bool overdrafted;
@@ -72,6 +74,7 @@ contract APICalls is Ownable {
     uint lifetimeExceededApprovalAmountCount;
   }
 
+  // Logged when API call usage is reported
   event LogAPICallsMade(
     uint apiId,
     address indexed sellerAddress,
@@ -82,6 +85,7 @@ contract APICalls is Ownable {
     address reportingAddress
   );
 
+  // Logged when seller is paid for API calls
   event LogAPICallsPaid(
     uint apiId,
     address indexed sellerAddress,
@@ -90,6 +94,7 @@ contract APICalls is Ownable {
     uint networkFee
   );
 
+  // Logged when the credits from a specific buyer are spent on a specific api
   event LogSpendCredits(
     address indexed buyerAddress,
     uint apiId,
@@ -97,11 +102,13 @@ contract APICalls is Ownable {
     bool causedAnOverdraft
   );
 
+  // Logged when a buyer deposits credits
   event LogDepositCredits(
     address indexed buyerAddress,
     uint amount
   );
 
+  // Logged whena  buyer withdraws credits
   event LogWithdrawCredits(
     address indexed buyerAddress,
     uint amount
@@ -248,6 +255,9 @@ contract APICalls is Ownable {
     );
   }
 
+  // ------------------------------------------------------------------------
+  // Function to pay the seller for a single API buyer.  Settles reported usage according to credits and approved amounts.
+  // ------------------------------------------------------------------------
   function paySellerForBuyer(uint apiId, address buyerAddress) public {
     // look up the registry address from relay contract
     Relay relay = Relay(relayContractAddress);
@@ -295,6 +305,9 @@ contract APICalls is Ownable {
     sellerAddress.transfer(payout);
   }
 
+  // ------------------------------------------------------------------------
+  // Function to pay the seller for all buyers with nonzero balance.  Settles reported usage according to credits and approved amounts.
+  // ------------------------------------------------------------------------
   function paySeller(uint apiId) public {
     // look up the registry address from relay contract
     Relay relay = Relay(relayContractAddress);
@@ -348,11 +361,17 @@ contract APICalls is Ownable {
     sellerAddress.transfer(payout);
   } 
 
+  // ------------------------------------------------------------------------
+  // Let anyone see when the buyer last paid for a given API
+  // ------------------------------------------------------------------------
   function buyerLastPaidAt(uint apiId, address buyerAddress) public view returns (uint) {
     APIBalance storage apiBalance = owed[apiId];
     return apiBalance.buyerLastPaidAt[buyerAddress];
   }   
 
+  // ------------------------------------------------------------------------
+  // Get buyer info struct for a specific buyer address
+  // ------------------------------------------------------------------------
   function buyerInfoOf(address addr) public view returns (bool overdrafted, uint lifetimeOverdraftCount, uint credits, uint lifetimeCreditsUsed, uint lifetimeExceededApprovalAmountCount) {
     BuyerInfo storage buyer = buyers[addr];
     overdrafted = buyer.overdrafted;
@@ -362,17 +381,26 @@ contract APICalls is Ownable {
     lifetimeExceededApprovalAmountCount = buyer.lifetimeExceededApprovalAmountCount;
   }
 
+  // ------------------------------------------------------------------------
+  // Gets the credits balance of a buyer
+  // ------------------------------------------------------------------------
   function creditsBalanceOf(address addr) public view returns (uint) {
     BuyerInfo storage buyer = buyers[addr];
     return buyer.credits;
   }
 
+  // ------------------------------------------------------------------------
+  // Lets a buyer add credits
+  // ------------------------------------------------------------------------
   function addCredits(address to) public payable {
     BuyerInfo storage buyer = buyers[to];
     buyer.credits = buyer.credits.add(msg.value);
     LogDepositCredits(to, msg.value);
   }
 
+  // ------------------------------------------------------------------------
+  // Lets a buyer withdraw credits
+  // ------------------------------------------------------------------------
   function withdrawCredits(uint amount) public {
     BuyerInfo storage buyer = buyers[msg.sender];
     require(buyer.credits >= amount);
@@ -381,22 +409,33 @@ contract APICalls is Ownable {
     LogWithdrawCredits(msg.sender, amount);
   }
 
+  // ------------------------------------------------------------------------
+  // Get the length of array of buyers who have a nonzero balance for a given API
+  // ------------------------------------------------------------------------
   function nonzeroAddressesElementForApi(uint apiId, uint index) public view returns (address) {
     APIBalance storage apiBalance = owed[apiId];
     return apiBalance.nonzeroAddresses[index];
   }
 
+  // ------------------------------------------------------------------------
+  // Get an element from the array of buyers who have a nonzero balance for a given API
+  // ------------------------------------------------------------------------
   function nonzeroAddressesLengthForApi(uint apiId) public view returns (uint) {
     APIBalance storage apiBalance = owed[apiId];
     return apiBalance.nonzeroAddresses.length;
   }
 
+  // ------------------------------------------------------------------------
+  // Get the amount owed for a specific api for a specific buyer
+  // ------------------------------------------------------------------------
   function amountOwedForApiForBuyer(uint apiId, address buyerAddress) public view returns (uint) {
     APIBalance storage apiBalance = owed[apiId];
-
     return apiBalance.amounts[buyerAddress];
   }
 
+  // ------------------------------------------------------------------------
+  // Get the total owed for an entire api for all nonzero buyers
+  // ------------------------------------------------------------------------
   function totalOwedForApi(uint apiId) public view returns (uint) {
     APIBalance storage apiBalance = owed[apiId];
 
@@ -410,10 +449,16 @@ contract APICalls is Ownable {
     return totalOwed;
   }
 
+  // ------------------------------------------------------------------------
+  // Gets the amount of wei per second a buyer has approved for a specific api
+  // ------------------------------------------------------------------------
   function approvedAmount(uint apiId, address buyerAddress) public view returns (uint) {
     return buyers[buyerAddress].approvedAmounts[apiId];
   }
 
+  // ------------------------------------------------------------------------
+  // Let the buyer set an approved amount of wei per second for a specific api
+  // ------------------------------------------------------------------------
   function approveAmount(uint apiId, address buyerAddress, uint newAmount) public {
     require(buyerAddress != address(0) && apiId != 0);
 
@@ -424,11 +469,13 @@ contract APICalls is Ownable {
     buyer.approvedAmounts[apiId] = newAmount;
   }
 
+  // ------------------------------------------------------------------------
   // function to let the buyer set their approved amount of wei per second for an api
   // this function also lets the buyer set the time they last paid for an API if they've never paid that API before.  
   // this is important because the total amount approved for a given transaction is based on a wei per second spending limit
   // but the smart contract doesn't know when the buyer started using the API
   // so with this function, a buyer can et the time they first used the API and the approved amount calculations will be accurate when the seller requests payment.
+  // ------------------------------------------------------------------------
   function approveAmountAndSetFirstUseTime(uint apiId, address buyerAddress, uint newAmount, uint firstUseTime) public {
     require(buyerAddress != address(0) && apiId != 0);
 
@@ -445,10 +492,16 @@ contract APICalls is Ownable {
 
   }
 
+  // ------------------------------------------------------------------------
+  // Gets whether or not a buyer exceeded their approved amount in the last seller payout
+  // ------------------------------------------------------------------------
   function buyerExceededApprovedAmount(uint apiId, address buyerAddress) public view returns (bool) {
     return buyers[buyerAddress].exceededApprovedAmount[apiId];
   }
 
+  // ------------------------------------------------------------------------
+  // Reward user with tokens IF the contract has them in it's allowance
+  // ------------------------------------------------------------------------
   function rewardTokens(address toReward, uint amount) private {
     DeconetToken token = DeconetToken(tokenContractAddress);
     address tokenOwner = token.owner();
@@ -461,6 +514,9 @@ contract APICalls is Ownable {
     }
   }
 
+  // ------------------------------------------------------------------------
+  // Process and settle balances for a single buyer for a specific api
+  // ------------------------------------------------------------------------
   function processSalesForSingleBuyer(uint apiId, address buyerAddress) private returns (uint) {
     APIBalance storage apiBalance = owed[apiId];
 
@@ -498,6 +554,9 @@ contract APICalls is Ownable {
     return buyerPaid;
   }
 
+  // ------------------------------------------------------------------------
+  // Process and settle balances for all buyers with a nonzero balance for a specific api
+  // ------------------------------------------------------------------------
   function processSalesForAllBuyers(uint apiId) private returns (uint totalPayable, uint totalBuyers) {
     APIBalance storage apiBalance = owed[apiId];
 
@@ -542,6 +601,14 @@ contract APICalls is Ownable {
     }
   }
 
+  // ------------------------------------------------------------------------
+  // given a specific buyer, api, and the amount they owe, we need to figure out how much to pay
+  // the final amount paid is based on the chart below:
+  // if credits >= approved >= owed then pay owed
+  // if credits >= owed > approved then pay approved and mark as exceeded approved amount
+  // if owed > credits >= approved then pay approved and mark as overdrafted
+  // if owed > approved > credits then pay credits and mark as overdrafted
+  // ------------------------------------------------------------------------
   function chargeBuyer(uint apiId, address buyerAddress, uint elapsedSecondsSinceLastPayout, uint buyerOwes) private returns (uint paid, bool overdrafted) {
     BuyerInfo storage buyer = buyers[buyerAddress];
     uint approvedAmountPerSecond = buyer.approvedAmounts[apiId];
