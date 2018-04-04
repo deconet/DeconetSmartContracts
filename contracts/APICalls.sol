@@ -31,11 +31,11 @@ contract APICalls is Ownable {
   // this contract version
   uint public version;
 
+  // the amount that can be safely withdrawn from the contract
+  uint public safeWithdrawAmount;
+
   // the address that is authorized to withdraw eth
   address private withdrawAddress;
-
-  // the amount that can be safely withdrawn from the contract
-  uint private safeWithdrawAmount;
 
   // the address that is authorized to report usage on behalf of deconet
   address private usageReportingAddress;

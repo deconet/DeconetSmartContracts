@@ -298,6 +298,25 @@ contract('APICalls', function (accounts) {
     let nonzeroAddressesElement = await apiCalls.nonzeroAddressesElementForApi(apiId, 0)
     assert.equal(nonzeroAddressesElement, accounts[3])
 
+    // test pulling out the txn fees
+    let contractBalanceBefore = await web3.eth.getBalance(apiCalls.address)
+    let safeWithdrawAmount = await apiCalls.safeWithdrawAmount.call()
+
+    await apiCalls.setWithdrawAddress(accounts[1])
+    let withdrawAddressBalanceBefore = await web3.eth.getBalance(accounts[1])
+    // safe widthdraw amount should be equal to network fee because we had 1 txn with 1 fee
+    assert.equal(safeWithdrawAmount.toString(), networkFee.toString())
+
+    result = await apiCalls.withdrawEther(safeWithdrawAmount.toString(), {from: accounts[1], gasPrice: gasPrice.toNumber()})
+    gasUsed = result.receipt.gasUsed
+    weiConsumedByGas = gasPrice.times(BigNumber(gasUsed))
+
+    let contractBalanceAfter = await web3.eth.getBalance(apiCalls.address)
+    assert.equal(contractBalanceBefore.minus(networkFee).toString(), contractBalanceAfter.toString())
+
+    let withdrawAddressBalanceAfter = await web3.eth.getBalance(accounts[1])
+    assert.equal(withdrawAddressBalanceBefore.minus(weiConsumedByGas).plus(networkFee).toString(), withdrawAddressBalanceAfter.toString())
+
     // pull the remaining credits out
     ethBalanceBefore = await web3.eth.getBalance(accounts[2])
     creditsBalanceBefore = await apiCalls.creditsBalanceOf(accounts[2])
@@ -955,13 +974,13 @@ it('should let buyers set their first use time', async function () {
 
     result = await apiCalls.paySeller(apiId, {from: accounts[1], gasPrice: gasPrice.toNumber()})
 
-    console.log('***********************')
-    console.log(result)
+    // console.log('***********************')
+    // console.log(result)
     let blockNum = result.receipt.blockNumber
     let blockNumInfo = await web3.eth.getBlock(blockNum)
-    console.log('***********************')
-    console.log('***********************')
-    console.log(blockNumInfo)
+    // console.log('***********************')
+    // console.log('***********************')
+    // console.log(blockNumInfo)
     // set now to the timestamp of the block so it's the same as the actual block "now" time
     now = new BigNumber(blockNumInfo.timestamp)
 
