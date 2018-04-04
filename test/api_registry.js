@@ -2,6 +2,7 @@ var uuid = require('uuid')
 var BigNumber = require('bignumber.js')
 
 var APIRegistry = artifacts.require('./APIRegistry.sol')
+var Token = artifacts.require('./DeconetToken.sol')
 
 contract('APIRegistry', function (accounts) {
   it('should have a version', async function () {
@@ -130,7 +131,16 @@ contract('APIRegistry', function (accounts) {
     assert.equal(api[4], hostname)
     assert.equal(api[5], docsUrl)
 
-     // test editing the api as contract owner
+    // make sure it's not possible to list an API whose hostname is already taken
+    let exceptionGenerated = false
+    try {
+      await apiRegistry.listApi(pricePerCall, sellerUsername, apiName, hostname, docsUrl, { from: accounts[1] })
+    } catch (e) {
+      exceptionGenerated = true
+    }
+    assert.equal(exceptionGenerated, true)
+
+    // test editing the api as contract owner
     let newPrice = 50000
     let newDocsUrl = hostname + '/newDocs'
     await apiRegistry.editApi(apiId, newPrice, accounts[2], newDocsUrl, { from: accounts[0] })
@@ -199,5 +209,53 @@ it('should let a user list and get an api without dynamics', async function () {
     assert.equal(apiInfo[3], '0x0000000000000000000000000000000000000000')
     assert.equal(apiInfo[4], '')
     assert.equal(apiInfo[5], '')
+  })
+
+  it('can transfer out accidently sent erc20 tokens', async function () {
+    let apiRegistry = await APIRegistry.deployed()
+    let token = await Token.deployed()
+
+    let paused = await token.paused.call()
+    if (paused) {
+      // unpause token to allow transfers
+      await token.unpause({from: accounts[0]})
+    }
+
+    let tokenAmount = new BigNumber('10000')
+
+    // transfer tokens in
+    await token.transfer(apiRegistry.address, tokenAmount.toString(), {from: accounts[0]})
+
+    let contractBalanceBefore = await token.balanceOf(apiRegistry.address)
+    let ownerBalanceBefore = await token.balanceOf(accounts[0])
+
+    await apiRegistry.transferAnyERC20Token(token.address, tokenAmount.toString(), {from: accounts[0]})
+
+    let contractBalanceAfter = await token.balanceOf(apiRegistry.address)
+    let ownerBalanceAfter = await token.balanceOf(accounts[0])
+
+    assert.equal(contractBalanceBefore.minus(tokenAmount).toString(), contractBalanceAfter.toString())
+    assert.equal(ownerBalanceBefore.plus(tokenAmount).toString(), ownerBalanceAfter.toString())
+  })
+  it('should not let a user list an API with bad inputs', async function () {
+    let sellerUsername = ''
+    let apiName = ''
+    let hostname = ''
+    let docsUrl = ''
+    let pricePerCall = '0'
+    let apiRegistry = await APIRegistry.deployed()
+
+    let numApisBefore = await apiRegistry.numApis.call()
+
+    let exceptionGenerated = false
+    try {
+      await apiRegistry.listApi(pricePerCall, sellerUsername, apiName, hostname, docsUrl, { from: accounts[1] })
+    } catch (e) {
+      exceptionGenerated = true
+    }
+    assert.equal(exceptionGenerated, true)
+
+    let numApisAfter = await apiRegistry.numApis.call()
+    assert.equal(numApisAfter.toString(), numApisBefore.toString())
   })
 })

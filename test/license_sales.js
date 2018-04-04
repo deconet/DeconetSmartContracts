@@ -79,6 +79,15 @@ contract('LicenseSales', function (accounts) {
     let moduleId = await registry.getModuleId(usernameAndProjectName)
     assert.notEqual(moduleId.toNumber(), 0)
 
+    // try sending but with less eth that the price of the module
+    let exceptionGenerated = false
+    try {
+      await ls.makeSale(moduleId, {from: accounts[1], value: modulePrice - 100})
+    } catch (e) {
+      exceptionGenerated = true
+    }
+    assert.equal(exceptionGenerated, true)
+
     let tokenBalanceBefore = (await token.balanceOf.call(accounts[2])).toNumber()
     let ethBalanceBefore = await web3.eth.getBalance(accounts[2])
     let contractEthBalanceBefore = await web3.eth.getBalance(ls.address)
@@ -118,15 +127,20 @@ contract('LicenseSales', function (accounts) {
     assert.equal(sale.licenseId, '0x00000001', 'wrong license')
 
     // test withdraw
-    let ownerBalanceBefore = await web3.eth.getBalance(accounts[0])
-    let gasPrice = 1000000000
-    let withdrawTx = await ls.withdrawEther({from: accounts[0], gasPrice: gasPrice})
-    let weiConsumedByGas = BigNumber(gasPrice).times(BigNumber(withdrawTx.receipt.gasUsed))
-     // subtract gas costs from original balance before withdraw
-    ownerBalanceBefore = ownerBalanceBefore.minus(weiConsumedByGas)
-    let ownerBalanceAfter = await web3.eth.getBalance(accounts[0])
-    ethDiff = ownerBalanceAfter.minus(ownerBalanceBefore).toString()
-    assert.equal(ethDiff, networkFee)
+    let gasPrice = new BigNumber('1')
+    let contractBalanceBefore = await web3.eth.getBalance(ls.address)
+    await ls.setWithdrawAddress(accounts[1])
+    let withdrawAddressBalanceBefore = await web3.eth.getBalance(accounts[1])
+
+    result = await ls.withdrawEther({from: accounts[1], gasPrice: gasPrice.toNumber()})
+    gasUsed = result.receipt.gasUsed
+    weiConsumedByGas = gasPrice.times(BigNumber(gasUsed))
+
+    let contractBalanceAfter = await web3.eth.getBalance(ls.address)
+    assert.equal(contractBalanceAfter.toString(), '0')
+
+    let withdrawAddressBalanceAfter = await web3.eth.getBalance(accounts[1])
+    assert.equal(withdrawAddressBalanceBefore.minus(weiConsumedByGas).plus(contractBalanceBefore).toString(), withdrawAddressBalanceAfter.toString())
   })
 
   it('should only let the contract owner withdraw', async function () {
@@ -144,5 +158,104 @@ contract('LicenseSales', function (accounts) {
     let ls = await LicenseSales.deployed()
     let version = await ls.version.call({ from: accounts[4] })
     assert.notEqual(version, 0)
+  })
+
+  it('can transfer out accidently sent erc20 tokens', async function () {
+    let licenseSales = await LicenseSales.deployed()
+    let token = await Token.deployed()
+
+    let paused = await token.paused.call()
+    if (paused) {
+      // unpause token to allow transfers
+      await token.unpause({from: accounts[0]})
+    }
+
+    let tokenAmount = new BigNumber('10000')
+
+    // transfer tokens in
+    await token.transfer(licenseSales.address, tokenAmount.toString(), {from: accounts[0]})
+
+    let contractBalanceBefore = await token.balanceOf(licenseSales.address)
+    let ownerBalanceBefore = await token.balanceOf(accounts[0])
+
+    await licenseSales.transferAnyERC20Token(token.address, tokenAmount.toString(), {from: accounts[0]})
+
+    let contractBalanceAfter = await token.balanceOf(licenseSales.address)
+    let ownerBalanceAfter = await token.balanceOf(accounts[0])
+
+    assert.equal(contractBalanceBefore.minus(tokenAmount).toString(), contractBalanceAfter.toString())
+    assert.equal(ownerBalanceBefore.plus(tokenAmount).toString(), ownerBalanceAfter.toString())
+  })
+
+  it('should be possible to set the sale fee', async function () {
+    let licenseSales = await LicenseSales.deployed()
+    let newSaleFee = 5
+
+    let saleFeeBefore = await licenseSales.saleFee.call()
+
+    await licenseSales.setSaleFee(newSaleFee)
+
+    let saleFeeAfter = await licenseSales.saleFee.call()
+
+    assert.equal(saleFeeAfter.toString(), newSaleFee.toString())
+
+    newSaleFee = saleFeeBefore
+
+    // set it back
+    await licenseSales.setSaleFee(saleFeeBefore)
+
+    saleFeeAfter = await licenseSales.saleFee.call()
+
+    assert.equal(saleFeeBefore.toString(), saleFeeAfter.toString())
+  })
+  it('should not let user set 0 address for withdraw address', async function () {
+    let licenseSales = await LicenseSales.deployed()
+    let exceptionOccured = false
+    try {
+      await licenseSales.setWithdrawAddress('0x0000000000000000000000000000000000000000')
+    } catch (e) {
+      exceptionOccured = true
+    }
+    assert.equal(exceptionOccured, true)
+  })
+  it('should not let user set 0 address for relay address', async function () {
+    let licenseSales = await LicenseSales.deployed()
+    let exceptionOccured = false
+    try {
+      await licenseSales.setRelayContractAddress('0x0000000000000000000000000000000000000000')
+    } catch (e) {
+      exceptionOccured = true
+    }
+    assert.equal(exceptionOccured, true)
+  })
+  it('should not let user set 0 address for token address', async function () {
+    let licenseSales = await LicenseSales.deployed()
+    let exceptionOccured = false
+    try {
+      await licenseSales.setTokenContractAddress('0x0000000000000000000000000000000000000000')
+    } catch (e) {
+      exceptionOccured = true
+    }
+    assert.equal(exceptionOccured, true)
+  })
+  it('should not let user make a sale for a module with id 0', async function () {
+    let licenseSales = await LicenseSales.deployed()
+    let exceptionOccured = false
+    try {
+      await licenseSales.makeSale('0')
+    } catch (e) {
+      exceptionOccured = true
+    }
+    assert.equal(exceptionOccured, true)
+  })
+    it('should not let user make a sale for a nonexistant module', async function () {
+    let licenseSales = await LicenseSales.deployed()
+    let exceptionOccured = false
+    try {
+      await licenseSales.makeSale('99999999', {from: accounts[1], value: 100})
+    } catch (e) {
+      exceptionOccured = true
+    }
+    assert.equal(exceptionOccured, true)
   })
 })

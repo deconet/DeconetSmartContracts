@@ -110,7 +110,6 @@ contract LicenseSales is Ownable {
   // Owner can set the sale fee
   // ------------------------------------------------------------------------
   function setSaleFee(uint _saleFee) public onlyOwner {
-    require(_saleFee > 0);
     saleFee = _saleFee;
   }
 

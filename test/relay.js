@@ -2,6 +2,7 @@ var Relay = artifacts.require('./Relay.sol')
 var Token = artifacts.require('./DeconetToken.sol')
 var Registry = artifacts.require('./Registry.sol')
 var LicenseSales = artifacts.require('./LicenseSales.sol')
+var BigNumber = require('bignumber.js')
 
 
 contract('Relay', function (accounts) {
@@ -42,5 +43,72 @@ contract('Relay', function (accounts) {
     let token = await Token.deployed()
     let version = await token.version.call({ from: accounts[4] })
     assert.notEqual(version, 0)
+  })
+
+  it('can transfer out accidently sent erc20 tokens', async function () {
+    let relay = await Relay.deployed()
+    let token = await Token.deployed()
+
+    let paused = await token.paused.call()
+    if (paused) {
+      // unpause token to allow transfers
+      await token.unpause({from: accounts[0]})
+    }
+
+    let tokenAmount = new BigNumber('10000')
+
+    // transfer tokens in
+    await token.transfer(relay.address, tokenAmount.toString(), {from: accounts[0]})
+
+    let contractBalanceBefore = await token.balanceOf(relay.address)
+    let ownerBalanceBefore = await token.balanceOf(accounts[0])
+
+    await relay.transferAnyERC20Token(token.address, tokenAmount.toString(), {from: accounts[0]})
+
+    let contractBalanceAfter = await token.balanceOf(relay.address)
+    let ownerBalanceAfter = await token.balanceOf(accounts[0])
+
+    assert.equal(contractBalanceBefore.minus(tokenAmount).toString(), contractBalanceAfter.toString())
+    assert.equal(ownerBalanceBefore.plus(tokenAmount).toString(), ownerBalanceAfter.toString())
+  })
+  it('should not let user set 0 address for license sale contract address', async function () {
+    let relay = await Relay.deployed()
+    let exceptionOccured = false
+    try {
+      await relay.setLicenseSalesContractAddress('0x0000000000000000000000000000000000000000')
+    } catch (e) {
+      exceptionOccured = true
+    }
+    assert.equal(exceptionOccured, true)
+  })  
+  it('should not let user set 0 address for registry', async function () {
+    let relay = await Relay.deployed()
+    let exceptionOccured = false
+    try {
+      await relay.setRegistryContractAddress('0x0000000000000000000000000000000000000000')
+    } catch (e) {
+      exceptionOccured = true
+    }
+    assert.equal(exceptionOccured, true)
+  })
+  it('should not let user set 0 address for api calls', async function () {
+    let relay = await Relay.deployed()
+    let exceptionOccured = false
+    try {
+      await relay.setApiCallsContractAddress('0x0000000000000000000000000000000000000000')
+    } catch (e) {
+      exceptionOccured = true
+    }
+    assert.equal(exceptionOccured, true)
+  })
+  it('should not let user set 0 address for api registry contract address', async function () {
+    let relay = await Relay.deployed()
+    let exceptionOccured = false
+    try {
+      await relay.setApiRegistryContractAddress('0x0000000000000000000000000000000000000000')
+    } catch (e) {
+      exceptionOccured = true
+    }
+    assert.equal(exceptionOccured, true)
   })
 })

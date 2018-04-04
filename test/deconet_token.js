@@ -216,4 +216,59 @@ contract('DeconetToken', function (accounts) {
     let tokenBalanceAcctTwoAfter = await token.balanceOf.call(accounts[2])
     assert.equal(tokenBalanceAcctTwoBefore.add(new BigNumber('10000')).eq(tokenBalanceAcctTwoAfter), true)
   })
+
+  it('can transfer out accidently sent erc20 tokens', async function () {
+    let token = await Token.deployed()
+
+    let paused = await token.paused.call()
+    if (paused) {
+      // unpause token to allow transfers
+      await token.unpause({from: accounts[0]})
+    }
+
+    let tokenAmount = new BigNumber('10000')
+
+    // transfer tokens in
+    await token.transfer(token.address, tokenAmount.toString(), {from: accounts[0]})
+
+    let contractBalanceBefore = await token.balanceOf(token.address)
+    let ownerBalanceBefore = await token.balanceOf(accounts[0])
+
+    await token.transferAnyERC20Token(token.address, tokenAmount.toString(), {from: accounts[0]})
+
+    let contractBalanceAfter = await token.balanceOf(token.address)
+    let ownerBalanceAfter = await token.balanceOf(accounts[0])
+
+    assert.equal(contractBalanceBefore.minus(tokenAmount).toString(), contractBalanceAfter.toString())
+    assert.equal(ownerBalanceBefore.plus(tokenAmount).toString(), ownerBalanceAfter.toString())
+  })
+
+  it('should have working increaseApproval and decreaseApproval functions', async function () {
+    let token = await Token.deployed()
+
+    let tokenAmount = new BigNumber('10000')
+    let increaseAmount = new BigNumber('50')
+    let decreaseAmount = new BigNumber('200')
+    let acctOwner = accounts[2]
+    let spender = accounts[3]
+
+    await token.approve(spender, tokenAmount.toString(), {from: acctOwner})
+
+    let approvedAmount = await token.allowance(acctOwner, spender)
+    assert.equal(approvedAmount.toString(), tokenAmount.toString())
+
+    // increase approval
+    await token.increaseApproval(spender, increaseAmount.toString(), {from: acctOwner})
+    let approvedAmountAfter = await token.allowance(acctOwner, spender)
+    assert.equal(approvedAmountAfter.toString(), tokenAmount.plus(increaseAmount).toString())
+
+    // reset approvedAmount to it's real value
+    approvedAmount = approvedAmountAfter
+
+    // decrease approval
+    await token.decreaseApproval(spender, decreaseAmount.toString(), {from: acctOwner})
+    approvedAmountAfter = await token.allowance(acctOwner, spender)
+    assert.equal(approvedAmountAfter.toString(), approvedAmount.minus(decreaseAmount).toString())
+    assert.equal(approvedAmountAfter.toString(), tokenAmount.plus(increaseAmount).minus(decreaseAmount).toString())
+  })
 })
