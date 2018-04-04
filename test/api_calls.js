@@ -1155,25 +1155,34 @@ it('should let buyers set their first use time', async function () {
         let sellerBalanceAfter = await web3.eth.getBalance(accounts[1])
         let sellerTokenBalanceAfter = await token.balanceOf(accounts[1])
         let buyerCreditsAfter = await apiCalls.creditsBalanceOf(account)
+        let buyerSpent = buyerCreditsBefore.minus(buyerCreditsAfter)
 
         let blockNum = result.receipt.blockNumber
         let blockNumInfo = await web3.eth.getBlock(blockNum)
         let now = new BigNumber(blockNumInfo.timestamp)
 
-        let maxSpent = now.minus(accountEntry.firstUseTime).times(accountEntry.approved)
+        let maxApprovedAmount = now.minus(accountEntry.firstUseTime).times(accountEntry.approved)
 
         let buyerExceededApprovedAmount = await apiCalls.buyerExceededApprovedAmount(apiId, account)
 
         buyerInfo = await apiCalls.buyerInfoOf(account)
+        let overdraftedAfter = buyerInfo[0]
+        let lifetimeOverdraftCountAfter = buyerInfo[1]
+        let lifetimeCreditsUsedAfter = buyerInfo[3]
+        let lifetimeExceededApprovalAmountCountAfter = buyerInfo[4]
 
-        // confirm that the buyer spent less than their approved limit in maxSpent
-        assert(maxSpent.minus(new BigNumber(buyerInfo[3].toString())).isGreaterThanOrEqualTo(new BigNumber('0')), true)
+        // confirm that lifetimeCreditsUsed is working correctly
+        assert.equal(buyerSpent.toString(), lifetimeCreditsUsedAfter.minus(lifetimeCreditsUsedBefore).toString())
+
+        // confirm that the buyer spent less than their approved limit in maxApprovedAmount
+        assert(maxApprovedAmount.minus(buyerSpent).isGreaterThanOrEqualTo(new BigNumber('0')), true)
+
 
         // test for all 4 final cases
         if (accountEntry.credits.isGreaterThanOrEqualTo(accountEntry.owed)) {
-          assert.equal(buyerInfo[0], false) // account is not overdrafted
-          assert.equal(buyerInfo[1].toString(), lifetimeOverdraftCountBefore.toString()) // lifetime overdraft count.  should not have increased
-          if (maxSpent.isGreaterThanOrEqualTo(accountEntry.owed)) {
+          assert.equal(overdraftedAfter, false) // account is not overdrafted
+          assert.equal(lifetimeOverdraftCountAfter.toString(), lifetimeOverdraftCountBefore.toString()) // lifetime overdraft count.  should not have increased
+          if (maxApprovedAmount.isGreaterThanOrEqualTo(accountEntry.owed)) {
             assert.equal(buyerExceededApprovedAmount, false)
             assert.equal(buyerInfo[4].toString(), lifetimeExceededApprovalAmountCountBefore.toString()) // lifetimeExceededAmounts should be unchanged
             // verify that buyer paid what they owe in entirety
@@ -1186,28 +1195,34 @@ it('should let buyers set their first use time', async function () {
             assert.equal(buyerExceededApprovedAmount, true)
             assert.equal(buyerInfo[4].toString(), lifetimeExceededApprovalAmountCountBefore.plus(new BigNumber('1')).toString()) // lifetimeExceededAmounts should have increased by 1
             // verify that buyer paid max amount spendable
-            assert.equal(maxSpent.toString(), buyerCreditsBefore.minus(buyerCreditsAfter).toString())
+            assert.equal(maxApprovedAmount.toString(), buyerCreditsBefore.minus(buyerCreditsAfter).toString())
             // verifu seller was rewarded if some eth was paid
-            if (!maxSpent.eq(new BigNumber('0'))) {
+            if (!buyerSpent.eq(new BigNumber('0'))) {
               assert.equal(sellerTokenBalanceAfter.minus(sellerTokenBalanceBefore).toString(), tokenReward.toString())
+              assert.equal(result.logs[0].event, 'LogSpendCredits')
+              assert.equal(result.logs[1].event, 'LogAPICallsPaid')
             }
           }
         } else {
           // overdraft
-          assert.equal(buyerInfo[0], true) // overdrafted should be true
-          assert.equal(buyerInfo[1].toString(), lifetimeOverdraftCountBefore.plus(new BigNumber('1')).toString()) // lifetime overdraft count.  This should have 1 added to it
+          assert.equal(overdraftedAfter, true) // overdrafted should be true
+          assert.equal(lifetimeOverdraftCountAfter.toString(), lifetimeOverdraftCountBefore.plus(new BigNumber('1')).toString()) // lifetime overdraft count.  This should have 1 added to it
 
-          if (accountEntry.credits.isGreaterThanOrEqualTo(maxSpent)) {
-            assert.equal(maxSpent.toString(), buyerCreditsBefore.minus(buyerCreditsAfter).toString())
+          if (accountEntry.credits.isGreaterThanOrEqualTo(maxApprovedAmount)) {
+            assert.equal(maxApprovedAmount.toString(), buyerCreditsBefore.minus(buyerCreditsAfter).toString())
             // verifu seller was rewarded if some eth was paid
-            if (!maxSpent.eq(new BigNumber('0'))) {
+            if (!buyerSpent.eq(new BigNumber('0'))) {
               assert.equal(sellerTokenBalanceAfter.minus(sellerTokenBalanceBefore).toString(), tokenReward.toString())
+              assert.equal(result.logs[0].event, 'LogSpendCredits')
+              assert.equal(result.logs[1].event, 'LogAPICallsPaid')
             }
           } else {
             assert.equal(accountEntry.credits.toString(), buyerCreditsBefore.minus(buyerCreditsAfter).toString())
             // verifu seller was rewarded if some eth was paid
-            if (!accountEntry.credits.eq(new BigNumber('0'))) {
+            if (!buyerSpent.eq(new BigNumber('0'))) {
               assert.equal(sellerTokenBalanceAfter.minus(sellerTokenBalanceBefore).toString(), tokenReward.toString())
+              assert.equal(result.logs[0].event, 'LogSpendCredits')
+              assert.equal(result.logs[1].event, 'LogAPICallsPaid')
             }
           }
         }
