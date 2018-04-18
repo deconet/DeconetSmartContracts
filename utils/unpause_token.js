@@ -5,7 +5,7 @@ var HDWalletProvider = require("truffle-hdwallet-provider")
 let tokenJson = require('../build/contracts/DeconetToken.json')
 
 let ownerAddress = null
-let tokenContractAddress = '0x396a6f136180fe8ab7106478535496f3ba07f61c' // process.env.DECONET_TOKEN_CONTRACT_ADDRESS
+let tokenContractAddress = '0xe9c9f7982b19bceba923a2e3153f3753be6ea37b' // process.env.DECONET_TOKEN_CONTRACT_ADDRESS
 
 const network = 'ropsten'
 
