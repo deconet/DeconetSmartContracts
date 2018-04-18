@@ -11,8 +11,8 @@ let web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'))
 let toAddress = '0xA2266e01703E4CA0Ffc4b374635acDbDABda7793'
 
 // send from here. key for acct index 8 in ganache
-let fromAddress = '0x6330A553Fc93768F612722BB8c2eC78aC90B3bbc'
-let privKey = '0x0f62d96d6675f32685bbdb8ac13cda7c23436f63efbb9d07700d8669ff12b7c4'
+let fromAddress = '0x433Ee8dCC67A153611F1F3aDdF01a9eDA9b63f0D'
+let privKey = '0x7a07f4c33e67368609cb2fdd5cdbdb63772751de1b2ba414512320240637b6fb'
 web3.eth.accounts.privateKeyToAccount(privKey)
 
 // also import contract priv key index 0 in ganache
@@ -22,7 +22,21 @@ web3.eth.accounts.privateKeyToAccount(privKey)
 
 
 // send eth
-const txParams = {
+let txParams = {
+  to: toAddress,
+  from: fromAddress,
+  value: 10000000000000000000 // 10 eth
+}
+
+web3.eth.sendTransaction(txParams)
+.then(function (receipt) {
+  console.log('receipt: ', receipt)
+})
+
+// also send 10 eth to thi address
+toAddress = '0xdbd360F30097fB6d938dcc8B7b62854B36160B45'
+
+txParams = {
   to: toAddress,
   from: fromAddress,
   value: 10000000000000000000 // 10 eth
