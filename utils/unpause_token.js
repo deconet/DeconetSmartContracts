@@ -5,9 +5,15 @@ var HDWalletProvider = require("truffle-hdwallet-provider")
 let tokenJson = require('../build/contracts/DeconetToken.json')
 
 let ownerAddress = null
-let tokenContractAddress = '0xe9c9f7982b19bceba923a2e3153f3753be6ea37b' // process.env.DECONET_TOKEN_CONTRACT_ADDRESS
+let tokenContractAddress = null
 
-const network = 'ropsten'
+var args = process.argv.slice(2);
+if (args.length < 1) { 
+  console.log('Usage: node unpause_token.js <network>')
+  return
+}
+
+let network = args[0]
 
 let web3 = null
 
@@ -17,11 +23,17 @@ if (network === 'ropsten') {
   var provider = new HDWalletProvider(mnemonic, process.env.DECONET_ETH_RPC_URL)
   ownerAddress = provider.getAddress()
   web3 = new Web3(provider)
+  tokenContractAddress = process.env.DECONET_TOKEN_CONTRACT_ADDRESS
 } else if (network === 'development') {
-  ownerAddress = '0x433Ee8dCC67A153611F1F3aDdF01a9eDA9b63f0D'
+  if (args.length !== 2) { 
+    console.log('Usage: node unpause_token.js <network> <privateKeyOfGanacheAcctZero>')
+    return
+  }
+  tokenContractAddress = tokenJson.networks['95'].address
   web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'))
-  let privKey = '0x7a07f4c33e67368609cb2fdd5cdbdb63772751de1b2ba414512320240637b6fb'
-  web3.eth.accounts.privateKeyToAccount(privKey)
+  let privKey = '0x' + args[1]
+  let acct = web3.eth.accounts.privateKeyToAccount(privKey)
+  ownerAddress = acct.address
 }
 console.log('ownerAddress: ' + ownerAddress)
 
