@@ -55,7 +55,7 @@ module.exports = function (deployer) {
   }).then(() => {
     console.log('Setting api calls contract address on relay to ' + apiCalls.address)
     return relay.setApiCallsContractAddress(apiCalls.address)
-  }).then(() => {
+  })/*.then(() => {
     console.log('Giving LicenseSale contract ability to transfer 5% of owner tokens')
     let fivePercent = '50000000000000000000000000'
     return deconetToken.approve(licenseSales.address, fivePercent)
@@ -63,5 +63,5 @@ module.exports = function (deployer) {
     console.log('Giving APICalls contract ability to transfer 5% of owner tokens')
     let fivePercent = '50000000000000000000000000'
     return deconetToken.approve(apiCalls.address, fivePercent)
-  })
+  })*/
 }

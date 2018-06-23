@@ -9,7 +9,7 @@ let tokenContractAddress = null
 
 var args = process.argv.slice(2);
 if (args.length < 1) { 
-  console.log('Usage: node unpause_token.js <network>')
+  console.log('Usage: node pause_token.js <network>')
   return
 }
 
@@ -39,7 +39,7 @@ console.log('ownerAddress: ' + ownerAddress)
 
 let tokenContract = new web3.eth.Contract(tokenJson.abi, tokenContractAddress)
 
-tokenContract.methods.unpause()
+tokenContract.methods.pause()
 .send({from: ownerAddress, gasLimit: '4000000'})
 .on('transactionHash', (hash) => {
   console.log('hash: ')
