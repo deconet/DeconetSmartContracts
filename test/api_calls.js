@@ -955,6 +955,9 @@ it('should let buyers set their first use time or use a default one if not set',
     assert.equal(ethBalanceBefore.minus(creditAmount).minus(weiConsumedByGas).eq(ethBalanceAfter), true)
     assert.equal(addCreditsTxn.logs[0].event, 'LogDepositCredits')
 
+    ethBalanceBefore = await web3.eth.getBalance(accounts[7])
+    creditsBalanceBefore = await apiCalls.creditsBalanceOf(accounts[7])
+
     // deposit credits for accounts[7]
     // accts 7 will NOT set a first use time
     addCreditsTxn = await apiCalls.addCredits(accounts[7], {from: accounts[7], value: creditAmount.toNumber(), gasPrice: gasPrice.toNumber()})
