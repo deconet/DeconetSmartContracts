@@ -11,8 +11,8 @@ let web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'))
 let toAddress = '0xA2266e01703E4CA0Ffc4b374635acDbDABda7793'
 
 // send from here. key for acct index 8 in ganache
-let fromAddress = '0x433Ee8dCC67A153611F1F3aDdF01a9eDA9b63f0D'
-let privKey = '0x7a07f4c33e67368609cb2fdd5cdbdb63772751de1b2ba414512320240637b6fb'
+let fromAddress = '0x1b88dBc6cD9D12160e6FFAa0Af2d064cEc44e777'
+let privKey = '5ba0b748b5b2d282167f6bbbfdc72e3595d005bfc948d9b0389aca6f433cbca5'
 web3.eth.accounts.privateKeyToAccount(privKey)
 
 // also import contract priv key index 0 in ganache

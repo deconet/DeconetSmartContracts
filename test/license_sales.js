@@ -101,7 +101,7 @@ contract('LicenseSales', function (accounts) {
 
     let saleFee = await ls.saleFee.call()
     let contractEthBalanceAfter = await web3.eth.getBalance(ls.address)
-    let networkFee = modulePrice * 100 / saleFee.toNumber() / 100
+    let networkFee = modulePrice * (saleFee.toNumber() / 100)
     let sellerPayout = modulePrice - networkFee
     let ethDiff = ethBalanceAfter.minus(ethBalanceBefore).toNumber()
     assert.equal(ethDiff, sellerPayout, 'The seller account was not transferred the right amount of eth after the sale')

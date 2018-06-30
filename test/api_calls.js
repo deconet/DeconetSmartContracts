@@ -286,7 +286,7 @@ contract('APICalls', function (accounts) {
     let tokenBalanceAfter = await token.balanceOf.call(accounts[1])
     let totalPayable = apiCallCount.times(pricePerCall)
     let saleFee = await apiCalls.saleFee.call()
-    let networkFee = totalPayable.times(new BigNumber('100')).div(saleFee).div(new BigNumber('100'))
+    let networkFee = BigNumber(totalPayable.times(saleFee.div(100)))
     let calculatedProfit = totalPayable.minus(networkFee)
 
     assert.equal(tokenBalanceBefore.add(tokenReward).toString(), tokenBalanceAfter.toString())
@@ -685,7 +685,8 @@ contract('APICalls', function (accounts) {
     assert.equal(result.logs[0].event, 'LogSpendCredits')
     assert.equal(result.logs[1].event, 'LogAPICallsPaid')
     // console.log('------------------')
-    // console.log(result.logs)
+    console.log('woof woof')
+    console.log(result.logs[1])
 
     gasUsed = result.receipt.gasUsed
     weiConsumedByGas = gasPrice.times(BigNumber(gasUsed))
@@ -694,10 +695,10 @@ contract('APICalls', function (accounts) {
     let tokenBalanceAfter = await token.balanceOf.call(accounts[1])
     let totalPayable = maxSpent
     let saleFee = await apiCalls.saleFee.call()
-    let networkFee = totalPayable.times(new BigNumber('100')).div(saleFee).div(new BigNumber('100'))
+    let networkFee = BigNumber(totalPayable.times(saleFee.div(100)))
     let calculatedProfit = totalPayable.minus(networkFee)
 
-    assert.equal(sellerBalanceBefore.minus(weiConsumedByGas).plus(calculatedProfit).eq(sellerBalanceAfter), true)
+    assert.equal(sellerBalanceBefore.minus(weiConsumedByGas).plus(calculatedProfit).toString(), sellerBalanceAfter.toString())
     assert.equal(tokenBalanceBefore.plus(tokenReward).toString(), tokenBalanceAfter.toString())
 
     // check that buyerExceededApprovedAmount is true for acct2 and false for acct3
@@ -880,7 +881,7 @@ contract('APICalls', function (accounts) {
     let tokenBalanceAfter = await token.balanceOf.call(accounts[1])
     let totalPayable = creditAmount
     let saleFee = await apiCalls.saleFee.call()
-    let networkFee = totalPayable.times(new BigNumber('100')).div(saleFee).div(new BigNumber('100'))
+    let networkFee = BigNumber(totalPayable.times(saleFee.div(100)))
     let calculatedProfit = totalPayable.minus(networkFee)
 
     assert.equal(sellerBalanceBefore.minus(weiConsumedByGas).plus(calculatedProfit).eq(sellerBalanceAfter), true)
@@ -1117,7 +1118,7 @@ it('should let buyers set their first use time or use a default one if not set',
     let tokenBalanceAfter = await token.balanceOf.call(accounts[1])
     let totalPayable = maxSpentAcctSix.plus(maxSpentAcctSeven)
     let saleFee = await apiCalls.saleFee.call()
-    let networkFee = totalPayable.times(new BigNumber('100')).div(saleFee).div(new BigNumber('100'))
+    let networkFee = BigNumber(totalPayable.times(saleFee.div(100)))
     let calculatedProfit = Math.round(totalPayable.minus(networkFee))
     // the seller got paid maxSpent
     assert.equal(sellerBalanceBefore.minus(weiConsumedByGas).plus(calculatedProfit).toString(), sellerBalanceAfter.toString())
@@ -1294,7 +1295,7 @@ it('should let buyers use a default first use time of 1 week ago if not set, and
     let tokenBalanceAfter = await token.balanceOf.call(accounts[1])
     let totalPayable = maxSpentAcctSeven
     let saleFee = await apiCalls.saleFee.call()
-    let networkFee = totalPayable.times(new BigNumber('100')).div(saleFee).div(new BigNumber('100'))
+    let networkFee = BigNumber(totalPayable.times(saleFee.div(100)))
     let calculatedProfit = Math.round(totalPayable.minus(networkFee))
     // the seller got paid maxSpent
     assert.equal(sellerBalanceBefore.minus(weiConsumedByGas).plus(calculatedProfit).toString(), sellerBalanceAfter.toString())

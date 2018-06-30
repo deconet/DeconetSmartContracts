@@ -126,7 +126,7 @@ contract APICalls is Ownable {
         tokenReward = 100 * 10**18;
 
         // default saleFee of 10%
-        saleFee = 10;
+        saleFee = 3;
 
         // 604,800 seconds = 1 week.  this is the default for when a user started using an api (1 week ago)
         defaultBuyerLastPaidAt = 604800;
@@ -225,11 +225,11 @@ contract APICalls is Ownable {
 
         (pricePerCall, sellerUsername, apiName, sellerAddress) = apiRegistry.getApiByIdWithoutDynamics(apiId);
 
-        // // make sure the caller is either the api owner or the deconet reporting address
+        // make sure the caller is either the api owner or the deconet reporting address
         require(sellerAddress != address(0));
         require(msg.sender == sellerAddress || msg.sender == usageReportingAddress);
 
-        // // make sure the module is actually valid
+        // make sure the api is actually valid
         require(sellerUsername != "" && apiName != "");
 
         uint totalPrice = pricePerCall.mul(numCalls);
@@ -286,7 +286,7 @@ contract APICalls is Ownable {
 
         // calculate fee and payout
         // fixed point math at 2 decimal places
-        uint fee = buyerPaid.mul(100).div(saleFee).div(100);
+        uint fee = buyerPaid.mul(100).div(uint(10000).div(saleFee));
         uint payout = buyerPaid.sub(fee);
 
         // log that we stored the fee so we know we can take it out later
@@ -340,7 +340,7 @@ contract APICalls is Ownable {
 
         // calculate fee and payout
         // fixed point math at 2 decimal places
-        uint fee = totalPayable.mul(100).div(saleFee).div(100);
+        uint fee = totalPayable.mul(100).div(uint(10000).div(saleFee));
         uint payout = totalPayable.sub(fee);
 
         // log that we stored the fee so we know we can take it out later
