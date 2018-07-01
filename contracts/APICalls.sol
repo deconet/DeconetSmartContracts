@@ -126,7 +126,7 @@ contract APICalls is Ownable {
         tokenReward = 100 * 10**18;
 
         // default saleFee of 10%
-        saleFee = 7;
+        saleFee = 10;
 
         // 604,800 seconds = 1 week.  this is the default for when a user started using an api (1 week ago)
         defaultBuyerLastPaidAt = 604800;

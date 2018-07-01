@@ -54,7 +54,7 @@ contract LicenseSales is Ownable {
         tokenReward = 100 * 10**18;
 
         // default saleFee of 10%
-        saleFee = 3;
+        saleFee = 10;
 
         // default withdrawAddress is owner
         withdrawAddress = msg.sender;
