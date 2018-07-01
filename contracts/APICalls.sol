@@ -126,7 +126,7 @@ contract APICalls is Ownable {
         tokenReward = 100 * 10**18;
 
         // default saleFee of 10%
-        saleFee = 3;
+        saleFee = 7;
 
         // 604,800 seconds = 1 week.  this is the default for when a user started using an api (1 week ago)
         defaultBuyerLastPaidAt = 604800;
@@ -285,8 +285,7 @@ contract APICalls is Ownable {
         }
 
         // calculate fee and payout
-        // fixed point math at 2 decimal places
-        uint fee = buyerPaid.mul(100).div(uint(10000).div(saleFee));
+        uint fee = buyerPaid.mul(saleFee).div(100);
         uint payout = buyerPaid.sub(fee);
 
         // log that we stored the fee so we know we can take it out later
@@ -339,8 +338,7 @@ contract APICalls is Ownable {
         }
 
         // calculate fee and payout
-        // fixed point math at 2 decimal places
-        uint fee = totalPayable.mul(100).div(uint(10000).div(saleFee));
+        uint fee = totalPayable.mul(saleFee).div(100);
         uint payout = totalPayable.sub(fee);
 
         // log that we stored the fee so we know we can take it out later

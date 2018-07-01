@@ -54,7 +54,7 @@ contract LicenseSales is Ownable {
         tokenReward = 100 * 10**18;
 
         // default saleFee of 10%
-        saleFee = 9;
+        saleFee = 3;
 
         // default withdrawAddress is owner
         withdrawAddress = msg.sender;
@@ -141,8 +141,7 @@ contract LicenseSales is Ownable {
         require(sellerUsername != "" && moduleName != "" && sellerAddress != address(0) && licenseId != "");
 
         // calculate fee and payout
-        // fixed point math at 2 decimal places
-        uint fee = msg.value.mul(100).div(uint(10000).div(saleFee));
+        uint fee = msg.value.mul(saleFee).div(100); 
         uint payout = msg.value.sub(fee);
 
         // log the sale
