@@ -685,8 +685,6 @@ contract('APICalls', function (accounts) {
     assert.equal(result.logs[0].event, 'LogSpendCredits')
     assert.equal(result.logs[1].event, 'LogAPICallsPaid')
     // console.log('------------------')
-    console.log('woof woof')
-    console.log(result.logs[1])
 
     gasUsed = result.receipt.gasUsed
     weiConsumedByGas = gasPrice.times(BigNumber(gasUsed))
