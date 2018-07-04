@@ -1,6 +1,6 @@
-var HDWalletProvider = require('truffle-hdwallet-provider')
+var HDWalletProvider = require('truffle-hdwallet-provider');
 // matching address is 0x648d692e5c507c233d0f9d9fea062429003b3144
-let mnemonic = process.env.DECONET_BLOCKCHAIN_ROPSTEN_MNEMONIC
+let mnemonic = process.env.DECONET_BLOCKCHAIN_ROPSTEN_MNEMONIC;
 module.exports = {
   networks: {
     development: {
@@ -34,4 +34,4 @@ module.exports = {
       gasPrice: 0x01
     }
   }
-}
+};
