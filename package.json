@@ -14,7 +14,7 @@
     "url": "git+https://github.com/deconet/DeconetTokens.git"
   },
   "author": "Chris Cassano / Deconet",
-  "license": "GPL-3.0",
+  "license": "AGPL-3.0",
   "bugs": {
     "url": "https://github.com/deconet/DeconetTokens/issues"
   },
@@ -27,7 +27,7 @@
     "truffle-hdwallet-provider": "0.0.3",
     "truffle-ledger-provider": "file:../truffle-ledger-provider",
     "uuid": "^3.2.1",
-    "web3": "^0.20.6",
+    "web3": "^1.0.0-beta.34",
     "zeppelin-solidity": "1.8.0"
   },
   "devDependencies": {
