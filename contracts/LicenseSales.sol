@@ -1,10 +1,10 @@
 pragma solidity 0.4.24;
 
-import "zeppelin-solidity/contracts/ownership/Ownable.sol";
+import "../node_modules/zeppelin-solidity/contracts/ownership/Ownable.sol";
 import "./Relay.sol";
 import "./Registry.sol";
 import "./DeconetToken.sol";
-import "zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
+import "../node_modules/zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 
 
 // ----------------------------------------------------------------------------
