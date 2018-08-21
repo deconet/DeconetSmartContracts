@@ -37,6 +37,3 @@ web3.eth.getAccounts()
     console.log(response)
 })
 
-
-
-

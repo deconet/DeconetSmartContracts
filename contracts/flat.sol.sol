@@ -1,14 +1,7 @@
 pragma solidity 0.4.24;
-
-
-import "../node_modules/zeppelin-solidity/contracts/ownership/Ownable.sol";
-import "../node_modules/zeppelin-solidity/contracts/lifecycle/Pausable.sol";
-import "../node_modules/zeppelin-solidity/contracts/token/ERC20/StandardToken.sol";
-
-// ----------------------------------------------------------------------------
-// Deconet Token is a standard ERC20 token except that it's pausable and
-// only the owner can transfer when paused
-// ----------------------------------------------------------------------------
+// produced by the Solididy File Flattener (c) David Appleton 2018
+// contact : dave@akomba.com
+// released under Apache 2.0 licence
 contract DeconetToken is StandardToken, Ownable, Pausable {
     // token naming etc
     string public constant symbol = "DCO";
@@ -84,3 +77,4 @@ contract DeconetToken is StandardToken, Ownable, Pausable {
         return super.decreaseApproval(_spender, _subtractedValue);
     }
 }
+

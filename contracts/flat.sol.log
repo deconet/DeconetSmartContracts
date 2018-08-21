@@ -1,0 +1,14 @@
+2018/08/20 21:54:32 pre processing DeconetToken.sol
+2018/08/20 21:54:32 pre processing zeppelin-solidity/contracts/ownership/Ownable.sol
+2018/08/20 21:54:32 pre processing zeppelin-solidity/contracts/lifecycle/Pausable.sol
+2018/08/20 21:54:32 pre processing zeppelin-solidity/contracts/token/ERC20/StandardToken.sol
+2018/08/20 21:54:32 DeconetToken.sol remains unresolved
+2018/08/20 21:54:32 Resolved  Ownable.sol
+2018/08/20 21:54:32 Resolved  Pausable.sol
+2018/08/20 21:54:32 Resolved  StandardToken.sol
+2018/08/20 21:54:32 DeconetToken.sol remains unresolved
+2018/08/20 21:54:32 Written Ownable.sol (0) lines
+2018/08/20 21:54:32 Written Pausable.sol (0) lines
+2018/08/20 21:54:32 Written StandardToken.sol (0) lines
+2018/08/20 21:54:32 Resolved  DeconetToken.sol
+2018/08/20 21:54:32 Written DeconetToken.sol (76) lines

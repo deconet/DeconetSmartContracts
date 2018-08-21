@@ -8,6 +8,7 @@ contract Relay is Ownable {
     address public registryContractAddress;
     address public apiRegistryContractAddress;
     address public apiCallsContractAddress;
+    address public softwareLicenseTokenContractAddress;
     uint public version;
 
     // ------------------------------------------------------------------------
@@ -54,5 +55,13 @@ contract Relay is Ownable {
     function setApiCallsContractAddress(address newAddress) public onlyOwner {
         require(newAddress != address(0));
         apiCallsContractAddress = newAddress;
+    }
+
+    // ------------------------------------------------------------------------
+    // Sets the software license token contract address
+    // ------------------------------------------------------------------------
+    function setSoftwareLicenseTokenContractAddress(address newAddress) public onlyOwner {
+        require(newAddress != address(0));
+        softwareLicenseTokenContractAddress = newAddress;
     }
 }

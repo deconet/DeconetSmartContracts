@@ -4,7 +4,9 @@ import "zeppelin-solidity/contracts/ownership/Ownable.sol";
 import "./Relay.sol";
 import "./Registry.sol";
 import "./DeconetToken.sol";
+import "./SoftwareLicenseToken.sol";
 import "zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
+import "../other_dependencies/solidity-stringutils-master/src/strings.sol"
 
 
 // ----------------------------------------------------------------------------
@@ -12,6 +14,7 @@ import "zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 // ----------------------------------------------------------------------------
 contract LicenseSales is Ownable {
     using SafeMath for uint;
+    using strings for *;
 
     // the amount rewarded to a seller for selling a license
     uint public tokenReward;
@@ -31,14 +34,20 @@ contract LicenseSales is Ownable {
     // the address that is authorized to withdraw eth
     address private withdrawAddress;
 
+    // number of sales, incremented on each sale to be used as a saleId
+    uint public numSales;
+
+    // deconet domain name for generating NFT URIs
+    string public deconetNftMetadataUri;
+
     event LicenseSale(
         bytes32 moduleName,
         bytes32 sellerUsername,
         address indexed sellerAddress,
         address indexed buyerAddress,
         uint price,
-        uint soldAt,
-        uint rewardedTokens,
+        uint saleId,
+        address registryAddress,
         uint networkFee,
         bytes4 licenseId
     );
@@ -58,6 +67,8 @@ contract LicenseSales is Ownable {
 
         // default withdrawAddress is owner
         withdrawAddress = msg.sender;
+
+        deconetNftMetadataUri = "https://app.deco.network/licenses/"
     }
 
     // ------------------------------------------------------------------------
@@ -144,6 +155,9 @@ contract LicenseSales is Ownable {
         uint fee = msg.value.mul(saleFee).div(100); 
         uint payout = msg.value.sub(fee);
 
+        // this will be the new saleId
+        numSales += 1;
+
         // log the sale
         emit LicenseSale(
             moduleName,
@@ -151,11 +165,17 @@ contract LicenseSales is Ownable {
             sellerAddress,
             msg.sender,
             price,
-            block.timestamp,
-            tokenReward,
+            numSales,
+            registryAddress,
             fee,
             licenseId
         );
+
+        // mint the ERC721 token
+        SoftwareLicenseToken licenseTokenContract = SoftwareLicenseToken(relay.softwareLicenseTokenContractAddress());
+        // string tokenUri = deconetNftMetadataUri.toSlice().concat(numSales.toSlice());
+        string tokenUri = string(abi.encodePacked(deconetNftMetadataUri, numSales));
+        licenseTokenContract.mintUniqueTokenTo(msg.sender, numSales, tokenUri);
 
         // give seller some tokens for the sale
         rewardTokens(sellerAddress);
