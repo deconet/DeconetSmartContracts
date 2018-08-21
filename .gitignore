@@ -8,3 +8,6 @@ build
 # ctags 
 tags
 tags.*
+
+# macOS meta files
+.DS_Store
