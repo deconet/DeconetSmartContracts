@@ -696,23 +696,23 @@ contract APICalls is Ownable {
     function removeAddressFromNonzeroBalancesArray(uint apiId, address toRemove) private {
         APIBalance storage apiBalance = owed[apiId];
         uint position = apiBalance.nonzeroAddressesPosition[toRemove];
-        // if (apiBalance.nonzeroAddresses[position] == toRemove) {
-        //     apiBalance.nonzeroAddresses[position] = apiBalance.nonzeroAddresses[apiBalance.nonzeroAddresses.length - 1];
-        //     apiBalance.nonzeroAddresses.length--;
-        // }
-
-        bool foundElement = false;
-
-        for (uint i = 0; i < apiBalance.nonzeroAddresses.length-1; i++) {
-            if (apiBalance.nonzeroAddresses[i] == toRemove) {
-                foundElement = true;
-            }
-            if (foundElement == true) {
-                apiBalance.nonzeroAddresses[i] = apiBalance.nonzeroAddresses[i+1];
-            }
-        }
-        if (foundElement == true || apiBalance.nonzeroAddresses[apiBalance.nonzeroAddresses.length-1] == toRemove) {
+        if (apiBalance.nonzeroAddresses[position] == toRemove) {
+            apiBalance.nonzeroAddresses[position] = apiBalance.nonzeroAddresses[apiBalance.nonzeroAddresses.length - 1];
             apiBalance.nonzeroAddresses.length--;
         }
+
+        // bool foundElement = false;
+
+        // for (uint i = 0; i < apiBalance.nonzeroAddresses.length-1; i++) {
+        //     if (apiBalance.nonzeroAddresses[i] == toRemove) {
+        //         foundElement = true;
+        //     }
+        //     if (foundElement == true) {
+        //         apiBalance.nonzeroAddresses[i] = apiBalance.nonzeroAddresses[i+1];
+        //     }
+        // }
+        // if (foundElement == true || apiBalance.nonzeroAddresses[apiBalance.nonzeroAddresses.length-1] == toRemove) {
+        //     apiBalance.nonzeroAddresses.length--;
+        // }
     }
 }
