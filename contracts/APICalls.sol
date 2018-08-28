@@ -555,7 +555,7 @@ contract APICalls is Ownable {
         apiBalance.amounts[buyerAddress] = buyerNowOwes;
 
         // if the buyer now owes zero, then remove them from nonzeroAddresses
-        if (buyerNowOwes != 0) {
+        if (buyerNowOwes == 0) {
             removeAddressFromNonzeroBalancesArray(apiId, buyerAddress);
         }
         // if the buyer paid nothing, we are done here.
@@ -702,7 +702,7 @@ contract APICalls is Ownable {
                 apiBalance.nonzeroAddresses[i] = apiBalance.nonzeroAddresses[i+1];
             }
         }
-        if (foundElement == true) {
+        if (foundElement == true || apiBalance.nonzeroAddresses[apiBalance.nonzeroAddresses.length-1] == toRemove) {
             apiBalance.nonzeroAddresses.length--;
         }
     }

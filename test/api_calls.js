@@ -1492,6 +1492,16 @@ it('should let buyers use a default first use time of 1 week ago if not set, and
         // confirm that the buyer spent less than their approved limit in maxApprovedAmount
         assert(maxApprovedAmount.minus(buyerSpent).isGreaterThanOrEqualTo(new BigNumber('0')), true)
 
+        // determine whether or not account is in nonzeroAddresses
+        let nonzeroAddresses = []
+        let elementCount = await apiCalls.nonzeroAddressesLengthForApi(apiId)
+        if (elementCount != 0){
+            for(var k = 0; k < elementCount; k++){
+                let nonzeroAddr = await apiCalls.nonzeroAddressesElementForApi(apiId, k)
+                nonzeroAddresses.push(nonzeroAddr)
+            }
+        }
+        assert.equal(nonzeroAddresses.length, elementCount)
 
         // test for all 4 final cases
         if (accountEntry.credits.isGreaterThanOrEqualTo(accountEntry.owed)) {
@@ -1506,6 +1516,10 @@ it('should let buyers use a default first use time of 1 week ago if not set, and
             assert.equal(sellerTokenBalanceAfter.minus(sellerTokenBalanceBefore).toString(), tokenReward.toString())
             assert.equal(result.logs[0].event, 'LogSpendCredits')
             assert.equal(result.logs[1].event, 'LogAPICallsPaid')
+
+            // verify that the buyer is no longer in nonzeroAddresses array
+            assert.equal(nonzeroAddresses.indexOf(account), -1)
+
           } else {
             assert.equal(buyerExceededApprovedAmount, true)
             assert.equal(buyerInfo[4].toString(), lifetimeExceededApprovalAmountCountBefore.plus(new BigNumber('1')).toString()) // lifetimeExceededAmounts should have increased by 1
@@ -1517,11 +1531,16 @@ it('should let buyers use a default first use time of 1 week ago if not set, and
               assert.equal(result.logs[0].event, 'LogSpendCredits')
               assert.equal(result.logs[1].event, 'LogAPICallsPaid')
             }
+            // verify that the buyer is still in nonzeroAddresses array
+            assert.notEqual(nonzeroAddresses.indexOf(account), -1)
           }
         } else {
           // overdraft
           assert.equal(overdraftedAfter, true) // overdrafted should be true
           assert.equal(lifetimeOverdraftCountAfter.toString(), lifetimeOverdraftCountBefore.plus(new BigNumber('1')).toString()) // lifetime overdraft count.  This should have 1 added to it
+
+          // verify that the buyer is still in nonzeroAddresses array
+          assert.notEqual(nonzeroAddresses.indexOf(account), -1)
 
           if (accountEntry.credits.isGreaterThanOrEqualTo(maxApprovedAmount)) {
             assert.equal(maxApprovedAmount.toString(), buyerCreditsBefore.minus(buyerCreditsAfter).toString())
