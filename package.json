@@ -23,6 +23,7 @@
     "bignumber": "^1.1.0",
     "bignumber.js": "^6.0.0",
     "ethereumjs-tx": "^1.3.3",
+    "scrypt": "^6.0.3",
     "truffle-contract": "^3.0.4",
     "truffle-hdwallet-provider": "0.0.3",
     "truffle-ledger-provider": "file:../truffle-ledger-provider",

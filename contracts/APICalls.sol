@@ -696,7 +696,7 @@ contract APICalls is Ownable {
     function removeAddressFromNonzeroBalancesArray(uint apiId, address toRemove) private {
         APIBalance storage apiBalance = owed[apiId];
         uint position = apiBalance.nonzeroAddressesPosition[toRemove];
-        if (apiBalance.nonzeroAddresses[position] == toRemove) {
+        if (position < apiBalance.nonzeroAddresses.length && apiBalance.nonzeroAddresses[position] == toRemove) {
             apiBalance.nonzeroAddresses[position] = apiBalance.nonzeroAddresses[apiBalance.nonzeroAddresses.length - 1];
             apiBalance.nonzeroAddresses.length--;
         }
