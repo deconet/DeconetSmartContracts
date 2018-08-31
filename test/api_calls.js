@@ -289,7 +289,11 @@ contract('APICalls', function (accounts) {
     let networkFee = BigNumber(totalPayable.times(saleFee.div(100)))
     let calculatedProfit = totalPayable.minus(networkFee)
 
-    assert.equal(tokenBalanceBefore.add(tokenReward).toString(), tokenBalanceAfter.toString())
+    if (process.env.DECONET_ACTIVATE_TOKEN_REWARD == "true") {
+      assert.equal(tokenBalanceBefore.add(tokenReward).toString(), tokenBalanceAfter.toString())
+    } else {
+      assert.equal(tokenBalanceBefore.toString(), tokenBalanceAfter.toString())
+    }
 
     assert.equal(sellerBalanceBefore.minus(weiConsumedByGas).add(calculatedProfit).eq(sellerBalanceAfter), true)
 
@@ -697,7 +701,12 @@ contract('APICalls', function (accounts) {
     let calculatedProfit = totalPayable.minus(networkFee)
 
     assert.equal(sellerBalanceBefore.minus(weiConsumedByGas).plus(calculatedProfit).toString(), sellerBalanceAfter.toString())
-    assert.equal(tokenBalanceBefore.plus(tokenReward).toString(), tokenBalanceAfter.toString())
+
+    if (process.env.DECONET_ACTIVATE_TOKEN_REWARD == "true") {
+      assert.equal(tokenBalanceBefore.plus(tokenReward).toString(), tokenBalanceAfter.toString())
+    } else {
+      assert.equal(tokenBalanceBefore.toString(), tokenBalanceAfter.toString())
+    }
 
     // check that buyerExceededApprovedAmount is true for acct2 and false for acct3
     // this is becaue accts3 is overdrafted and that takes precedence over execeededAmount
@@ -883,7 +892,12 @@ contract('APICalls', function (accounts) {
     let calculatedProfit = totalPayable.minus(networkFee)
 
     assert.equal(sellerBalanceBefore.minus(weiConsumedByGas).plus(calculatedProfit).eq(sellerBalanceAfter), true)
-    assert.equal(tokenBalanceBefore.plus(tokenReward).toString(), tokenBalanceAfter.toString())
+
+    if (process.env.DECONET_ACTIVATE_TOKEN_REWARD == "true") {
+      assert.equal(tokenBalanceBefore.plus(tokenReward).toString(), tokenBalanceAfter.toString())
+    } else {
+      assert.equal(tokenBalanceBefore.toString(), tokenBalanceAfter.toString())
+    }
 
     // check that buyerExceededApprovedAmount is falser for acct2 and false for acct3
     // this is becaue accts3 is overdrafted and that takes precedence over execeededAmount
@@ -1120,8 +1134,13 @@ it('should let buyers set their first use time or use a default one if not set',
     let calculatedProfit = Math.round(totalPayable.minus(networkFee))
     // the seller got paid maxSpent
     assert.equal(sellerBalanceBefore.minus(weiConsumedByGas).plus(calculatedProfit).toString(), sellerBalanceAfter.toString())
-    // tokens for 2 buyers should be transferred
-    assert.equal(tokenBalanceBefore.plus(tokenReward.times(new BigNumber('2'))).toString(), tokenBalanceAfter.toString())
+
+    if (process.env.DECONET_ACTIVATE_TOKEN_REWARD == "true") {
+      // tokens for 2 buyers should be transferred
+      assert.equal(tokenBalanceBefore.plus(tokenReward.times(new BigNumber('2'))).toString(), tokenBalanceAfter.toString())
+    } else {
+      assert.equal(tokenBalanceBefore.toString(), tokenBalanceAfter.toString())
+    }
 
     // check that buyerExceededApprovedAmount is true for acct6
     let execeededApproval = await apiCalls.buyerExceededApprovedAmount(apiId, accounts[6])
@@ -1297,8 +1316,13 @@ it('should let buyers use a default first use time of 1 week ago if not set, and
     let calculatedProfit = Math.round(totalPayable.minus(networkFee))
     // the seller got paid maxSpent
     assert.equal(sellerBalanceBefore.minus(weiConsumedByGas).plus(calculatedProfit).toString(), sellerBalanceAfter.toString())
-    // tokens for 1 buyer should be transferred
-    assert.equal(tokenBalanceBefore.plus(tokenReward).toString(), tokenBalanceAfter.toString())
+
+    if (process.env.DECONET_ACTIVATE_TOKEN_REWARD == "true") {
+      // tokens for 1 buyer should be transferred
+      assert.equal(tokenBalanceBefore.plus(tokenReward).toString(), tokenBalanceAfter.toString())
+    } else {
+      assert.equal(tokenBalanceBefore.toString(), tokenBalanceAfter.toString())
+    }
 
     // check that buyerExceededApprovedAmount is true for acct7
     execeededApproval = await apiCalls.buyerExceededApprovedAmount(apiId, accounts[7])
@@ -1512,8 +1536,12 @@ it('should let buyers use a default first use time of 1 week ago if not set, and
             assert.equal(buyerInfo[4].toString(), lifetimeExceededApprovalAmountCountBefore.toString()) // lifetimeExceededAmounts should be unchanged
             // verify that buyer paid what they owe in entirety
             assert.equal(accountEntry.owed.toString(), buyerCreditsBefore.minus(buyerCreditsAfter).toString())
-            // verify that seller was rewarded tokens
-            assert.equal(sellerTokenBalanceAfter.minus(sellerTokenBalanceBefore).toString(), tokenReward.toString())
+            if (process.env.DECONET_ACTIVATE_TOKEN_REWARD == "true") {
+              // verify that seller was rewarded tokens
+              assert.equal(sellerTokenBalanceAfter.minus(sellerTokenBalanceBefore).toString(), tokenReward.toString())
+            } else {
+              assert.equal(sellerTokenBalanceAfter.toString(), sellerTokenBalanceBefore.toString())
+            }
             assert.equal(result.logs[0].event, 'LogSpendCredits')
             assert.equal(result.logs[1].event, 'LogAPICallsPaid')
 
@@ -1527,7 +1555,11 @@ it('should let buyers use a default first use time of 1 week ago if not set, and
             assert.equal(maxApprovedAmount.toString(), buyerCreditsBefore.minus(buyerCreditsAfter).toString())
             // verifu seller was rewarded if some eth was paid
             if (!buyerSpent.eq(new BigNumber('0'))) {
-              assert.equal(sellerTokenBalanceAfter.minus(sellerTokenBalanceBefore).toString(), tokenReward.toString())
+              if (process.env.DECONET_ACTIVATE_TOKEN_REWARD == "true") {
+                assert.equal(sellerTokenBalanceAfter.minus(sellerTokenBalanceBefore).toString(), tokenReward.toString())
+              } else {
+                assert.equal(sellerTokenBalanceAfter.toString(), sellerTokenBalanceBefore.toString())
+              }
               assert.equal(result.logs[0].event, 'LogSpendCredits')
               assert.equal(result.logs[1].event, 'LogAPICallsPaid')
             }
@@ -1546,7 +1578,11 @@ it('should let buyers use a default first use time of 1 week ago if not set, and
             assert.equal(maxApprovedAmount.toString(), buyerCreditsBefore.minus(buyerCreditsAfter).toString())
             // verifu seller was rewarded if some eth was paid
             if (!buyerSpent.eq(new BigNumber('0'))) {
-              assert.equal(sellerTokenBalanceAfter.minus(sellerTokenBalanceBefore).toString(), tokenReward.toString())
+              if (process.env.DECONET_ACTIVATE_TOKEN_REWARD == "true") {
+                assert.equal(sellerTokenBalanceAfter.minus(sellerTokenBalanceBefore).toString(), tokenReward.toString())
+              } else {
+                assert.equal(sellerTokenBalanceAfter.toString(), sellerTokenBalanceBefore.toString())
+              }
               assert.equal(result.logs[0].event, 'LogSpendCredits')
               assert.equal(result.logs[1].event, 'LogAPICallsPaid')
             }
@@ -1554,7 +1590,11 @@ it('should let buyers use a default first use time of 1 week ago if not set, and
             assert.equal(accountEntry.credits.toString(), buyerCreditsBefore.minus(buyerCreditsAfter).toString())
             // verifu seller was rewarded if some eth was paid
             if (!buyerSpent.eq(new BigNumber('0'))) {
-              assert.equal(sellerTokenBalanceAfter.minus(sellerTokenBalanceBefore).toString(), tokenReward.toString())
+              if (process.env.DECONET_ACTIVATE_TOKEN_REWARD == "true") {
+                assert.equal(sellerTokenBalanceAfter.minus(sellerTokenBalanceBefore).toString(), tokenReward.toString())
+              } else {
+                assert.equal(sellerTokenBalanceAfter.toString(), sellerTokenBalanceBefore.toString())
+              }
               assert.equal(result.logs[0].event, 'LogSpendCredits')
               assert.equal(result.logs[1].event, 'LogAPICallsPaid')
             }

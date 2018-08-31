@@ -18,3 +18,5 @@ Find more about how our license sales contracts work here: https://medium.com/de
 Find more about how our API selling contracts work here: https://medium.com/deconet/selling-apis-and-api-calls-on-deco-network-2722b4d0b0be
 
 More docs coming soon!
+
+To test, use "truffle test".  Then, run the tests again with "DECONET_ACTIVATE_TOKEN_REWARD=true truffle test"
