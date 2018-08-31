@@ -97,7 +97,11 @@ contract('LicenseSales', function (accounts) {
     let tokenBalanceAfter = (await token.balanceOf.call(accounts[2])).toNumber()
     let ethBalanceAfter = await web3.eth.getBalance(accounts[2])
     let tokenReward = await ls.tokenReward.call()
-    assert.equal(tokenBalanceAfter, tokenBalanceBefore + tokenReward.toNumber(), 'accounts[2] was not transferred the right amount of Deconet Tokens after the sale')
+    if (process.env.DECONET_ACTIVATE_TOKEN_REWARD == "true") {
+      assert.equal(tokenBalanceAfter, tokenBalanceBefore + tokenReward.toNumber(), 'accounts[2] was not transferred the right amount of Deconet Tokens after the sale')
+    } else {
+      assert.equal(tokenBalanceAfter, tokenBalanceBefore, 'accounts[2] was not transferred the right amount of Deconet Tokens after the sale')
+    }
 
     let saleFee = await ls.saleFee.call()
     let contractEthBalanceAfter = await web3.eth.getBalance(ls.address)

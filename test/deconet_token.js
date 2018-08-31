@@ -40,14 +40,22 @@ contract('DeconetToken', function (accounts) {
     let token = await Token.deployed()
     let ls = await LicenseSales.deployed()
     let result = await token.allowance.call(accounts[0], ls.address)
-    assert.equal(result.eq(licenseSalesSupplyAllowance), true, 'balance is wrong')
+    if (process.env.DECONET_ACTIVATE_TOKEN_REWARD == "true") {
+      assert.equal(result.eq(licenseSalesSupplyAllowance), true, 'balance is wrong')
+    } else {
+      assert.equal(result.eq(BigNumber('0')), true, 'balance is wrong')
+    }
   })
 
   it('should return the correct allowance of api calls contract', async function () {
     let token = await Token.deployed()
     let apiCalls = await APICalls.deployed()
     let result = await token.allowance.call(accounts[0], apiCalls.address)
-    assert.equal(result.eq(apiCallsSupplyAllowance), true, 'balance is wrong')
+    if (process.env.DECONET_ACTIVATE_TOKEN_REWARD == "true") {
+      assert.equal(result.eq(apiCallsSupplyAllowance), true, 'balance is wrong')
+    } else {
+      assert.equal(result.eq(BigNumber('0')), true, 'balance is wrong')
+    }
   })
 
   it('should transfer right token', async function () {
