@@ -25,6 +25,7 @@ node utils/unpause_token.js development $PRIVATE_KEY
 # print env vars
 node utils/print_env_for_rails_tests.js $PRIVATE_KEY
 
+
 # set env vars
 `node utils/print_env_for_rails_tests.js $PRIVATE_KEY`
 

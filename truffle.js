@@ -25,7 +25,9 @@ module.exports = {
       network_id: '*' // Match any network id
     },
     ropsten: {
-      provider: new LedgerWalletProvider(ledgerOptions, 'https://ropsten.infura.io/JTdaA5dJvlwfCfdgT5Cm'),
+      provider: function() {
+        return new LedgerWalletProvider(ledgerOptions, 'https://ropsten.infura.io/JTdaA5dJvlwfCfdgT5Cm')
+      },
       /*function () {
         remote infura
         return new HDWalletProvider(mnemonic, 'https://ropsten.infura.io/JTdaA5dJvlwfCfdgT5Cm')
@@ -39,13 +41,17 @@ module.exports = {
       gasPrice: 1000000000 // 1 gwei
     },
     mainnet: {
-      provider: new LedgerWalletProvider(ledgerOptions, 'http://18.208.64.51:8545'),
+      provider: function() {
+        return new LedgerWalletProvider(ledgerOptions, 'http://18.208.64.51:8545')
+      },
       network_id: 1,
       gas: 7000000,
       gasPrice: 5000000000 // 5 gwei
     },
     rinkeby: {
-      provider: new LedgerWalletProvider(ledgerOptions, 'https://rinkeby.infura.io/JTdaA5dJvlwfCfdgT5Cm'),
+      provider: function() {
+        return new LedgerWalletProvider(ledgerOptions, 'https://rinkeby.infura.io/JTdaA5dJvlwfCfdgT5Cm')
+      },
       /*function () {
         return new HDWalletProvider(mnemonic, 'https://rinkeby.infura.io/JTdaA5dJvlwfCfdgT5Cm')
       },*/
@@ -54,7 +60,9 @@ module.exports = {
       gasPrice: 3000000000 // 3 gwei
     },
     kovan: {
-      provider: new LedgerWalletProvider(ledgerOptions, 'https://kovan.infura.io/JTdaA5dJvlwfCfdgT5Cm'),
+      provider: function() {
+        return new LedgerWalletProvider(ledgerOptions, 'https://kovan.infura.io/JTdaA5dJvlwfCfdgT5Cm')
+      },
       /*function () {
         return new HDWalletProvider(mnemonic, 'https://rinkeby.infura.io/JTdaA5dJvlwfCfdgT5Cm')
       },*/

@@ -55,6 +55,8 @@ contract APICalls is Ownable {
         address[] nonzeroAddresses;
         // maps address -> tiemstamp of when buyer last paid
         mapping(address => uint) buyerLastPaidAt;
+        // used to find address position in nonzeroAddresses
+        mapping (address => uint) nonzeroAddressesPosition;
     }
 
     // Stores basic info about a buyer including their lifetime stats and reputation info
@@ -119,7 +121,7 @@ contract APICalls is Ownable {
     // Constructor
     // ------------------------------------------------------------------------
     constructor() public {
-        version = 1;
+        version = 2;
 
         // default token reward of 100 tokens.  
         // token has 18 decimal places so that's why 100 * 10^18
@@ -240,6 +242,7 @@ contract APICalls is Ownable {
 
         if (apiBalance.amounts[buyerAddress] == 0) {
             // add buyerAddress to list of addresses with nonzero balance for this api
+            apiBalance.nonzeroAddressesPosition[buyerAddress] = apiBalance.nonzeroAddresses.length;
             apiBalance.nonzeroAddresses.push(buyerAddress);
         }
 
@@ -603,6 +606,7 @@ contract APICalls is Ownable {
 
             // if the buyer still owes something, make sure we keep them in the nonzeroAddresses array
             if (buyerNowOwes != 0) {
+                apiBalance.nonzeroAddressesPosition[buyerAddress] = apiBalance.nonzeroAddresses.length;
                 apiBalance.nonzeroAddresses.push(buyerAddress);
             }
             // if the buyer paid more than 0, log the spend.
@@ -691,18 +695,9 @@ contract APICalls is Ownable {
 
     function removeAddressFromNonzeroBalancesArray(uint apiId, address toRemove) private {
         APIBalance storage apiBalance = owed[apiId];
-
-        bool foundElement = false;
-
-        for (uint i = 0; i < apiBalance.nonzeroAddresses.length-1; i++) {
-            if (apiBalance.nonzeroAddresses[i] == toRemove) {
-                foundElement = true;
-            }
-            if (foundElement == true) {
-                apiBalance.nonzeroAddresses[i] = apiBalance.nonzeroAddresses[i+1];
-            }
-        }
-        if (foundElement == true || apiBalance.nonzeroAddresses[apiBalance.nonzeroAddresses.length-1] == toRemove) {
+        uint position = apiBalance.nonzeroAddressesPosition[toRemove];
+        if (position < apiBalance.nonzeroAddresses.length && apiBalance.nonzeroAddresses[position] == toRemove) {
+            apiBalance.nonzeroAddresses[position] = apiBalance.nonzeroAddresses[apiBalance.nonzeroAddresses.length - 1];
             apiBalance.nonzeroAddresses.length--;
         }
     }
