@@ -20,3 +20,6 @@ Find more about how our API selling contracts work here: https://medium.com/deco
 More docs coming soon!
 
 To test, use "truffle test".  Then, run the tests again with "DECONET_ACTIVATE_TOKEN_REWARD=true truffle test"
+
+
+Note for deploying on a non-testnet: we updated the APICalls.sol contract and created a migration for it.  If you're doing a fresh deploy on the mainnet, you can ignore the migration 3_api_calls_v2.js because the new version will already be deployed in the 2_ migration.

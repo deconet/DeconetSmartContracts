@@ -93,8 +93,4 @@ module.exports = function (deployer) {
       return Promise.resolve()
     }
   })
-  .then(() => {
-    beep(3)
-    console.log('Done')
-  })
 }
