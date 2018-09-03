@@ -34,11 +34,13 @@ module.exports = {
         // local GETH which supports debug
         // return new HDWalletProvider(mnemonic, 'http://127.0.0.1:8549')
         // remote GETH
-        return new HDWalletProvider(mnemonic, process.env.DECONET_ROPSTEN_NODE_URL)
+        //return new HDWalletProvider(mnemonic, process.env.DECONET_ROPSTEN_NODE_URL)
+        // geonda.io
+        return new HDWalletProvider(mnemonic, 'http://35.170.208.0:8545')
       },
       network_id: 3,
       gas: 4700000,
-      gasPrice: 1000000000 // 1 gwei
+      gasPrice: 10000000000 // 10 gwei
     },
     mainnet: {
       provider: function() {
