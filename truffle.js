@@ -44,7 +44,9 @@ module.exports = {
     },
     mainnet: {
       provider: function() {
-        return new LedgerWalletProvider(ledgerOptions, 'http://18.208.64.51:8545')
+        // return new LedgerWalletProvider(ledgerOptions, 'http://18.208.64.51:8545')
+        // return new LedgerWalletProvider(ledgerOptions, "https://rapidly-renewed-buzzard.quiknode.io")
+        return new LedgerWalletProvider(ledgerOptions, "https://mainnet.infura.io/JTdaA5dJvlwfCfdgT5Cm")
       },
       network_id: 1,
       gas: 7000000,
