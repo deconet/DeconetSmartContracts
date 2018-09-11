@@ -20,3 +20,9 @@ Find more about how our API selling contracts work here: https://medium.com/deco
 More docs coming soon!
 
 To test, use "truffle test".  Then, run the tests again with "DECONET_ACTIVATE_TOKEN_REWARD=true truffle test"
+
+# Contributing
+
+Deconet is a community-driven project that welcomes all kinds of contributions.  We appreciate contributing code, reporting bugs, and helping us grow our community.
+
+To get involved, please [join our Slack](https://join.slack.com/t/deconet-community/shared_invite/enQtNDMzMDQ1NzAzOTY5LThhYWFmZDliYTJkODAwYzA2MTdhNTk1YTcyZmE1Y2YwMjdiNTU1MTEyZTM0ZDBkYzNiYzM0NDI4N2IzMDdjMTU) and check out our [developer guide](https://deco.network/developers.html).
