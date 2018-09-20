@@ -1,0 +1,58 @@
+2018/09/20 16:49:29 pre processing contracts/APICalls.sol
+2018/09/20 16:49:29 pre processing contracts/Relay.sol
+2018/09/20 16:49:29 pre processing contracts/APIRegistry.sol
+2018/09/20 16:49:29 pre processing contracts/DeconetToken.sol
+2018/09/20 16:49:29 pre processing node_modules/zeppelin-solidity/contracts/token/ERC20/ERC20.sol
+2018/09/20 16:49:29 pre processing node_modules/zeppelin-solidity/contracts/lifecycle/Pausable.sol
+2018/09/20 16:49:29 pre processing node_modules/zeppelin-solidity/contracts/token/ERC20/StandardToken.sol
+2018/09/20 16:49:29 pre processing node_modules/zeppelin-solidity/contracts/ownership/Ownable.sol
+2018/09/20 16:49:29 pre processing node_modules/zeppelin-solidity/contracts/token/ERC20/ERC20Basic.sol
+2018/09/20 16:49:29 pre processing node_modules/zeppelin-solidity/contracts/token/ERC20/BasicToken.sol
+2018/09/20 16:49:29 pre processing node_modules/zeppelin-solidity/contracts/math/SafeMath.sol
+2018/09/20 16:49:29 Pausable.sol remains unresolved
+2018/09/20 16:49:29 StandardToken.sol remains unresolved
+2018/09/20 16:49:29 Resolved  ERC20Basic.sol
+2018/09/20 16:49:29 BasicToken.sol remains unresolved
+2018/09/20 16:49:29 Resolved  Ownable.sol
+2018/09/20 16:49:29 DeconetToken.sol remains unresolved
+2018/09/20 16:49:29 ERC20.sol remains unresolved
+2018/09/20 16:49:29 APICalls.sol remains unresolved
+2018/09/20 16:49:29 Relay.sol remains unresolved
+2018/09/20 16:49:29 APIRegistry.sol remains unresolved
+2018/09/20 16:49:29 Resolved  SafeMath.sol
+2018/09/20 16:49:29 StandardToken.sol remains unresolved
+2018/09/20 16:49:29 Written ERC20Basic.sol (7) lines
+2018/09/20 16:49:29 BasicToken.sol remains unresolved
+2018/09/20 16:49:29 Written Ownable.sol (35) lines
+2018/09/20 16:49:29 DeconetToken.sol remains unresolved
+2018/09/20 16:49:29 Resolved  ERC20.sol
+2018/09/20 16:49:29 APICalls.sol remains unresolved
+2018/09/20 16:49:29 Resolved  Pausable.sol
+2018/09/20 16:49:29 Relay.sol remains unresolved
+2018/09/20 16:49:29 APIRegistry.sol remains unresolved
+2018/09/20 16:49:29 Written SafeMath.sol (42) lines
+2018/09/20 16:49:29 Relay.sol remains unresolved
+2018/09/20 16:49:29 APIRegistry.sol remains unresolved
+2018/09/20 16:49:29 Resolved  BasicToken.sol
+2018/09/20 16:49:29 DeconetToken.sol remains unresolved
+2018/09/20 16:49:29 Written ERC20.sol (7) lines
+2018/09/20 16:49:29 APICalls.sol remains unresolved
+2018/09/20 16:49:29 Written Pausable.sol (40) lines
+2018/09/20 16:49:29 StandardToken.sol remains unresolved
+2018/09/20 16:49:29 DeconetToken.sol remains unresolved
+2018/09/20 16:49:29 APICalls.sol remains unresolved
+2018/09/20 16:49:29 StandardToken.sol remains unresolved
+2018/09/20 16:49:29 Written BasicToken.sol (41) lines
+2018/09/20 16:49:29 Resolved  APIRegistry.sol
+2018/09/20 16:49:29 Resolved  Relay.sol
+2018/09/20 16:49:29 Written Relay.sol (53) lines
+2018/09/20 16:49:29 Written APIRegistry.sol (165) lines
+2018/09/20 16:49:29 DeconetToken.sol remains unresolved
+2018/09/20 16:49:29 APICalls.sol remains unresolved
+2018/09/20 16:49:29 Resolved  StandardToken.sol
+2018/09/20 16:49:29 Written StandardToken.sol (88) lines
+2018/09/20 16:49:29 Resolved  DeconetToken.sol
+2018/09/20 16:49:29 APICalls.sol remains unresolved
+2018/09/20 16:49:29 Written DeconetToken.sol (76) lines
+2018/09/20 16:49:29 Resolved  APICalls.sol
+2018/09/20 16:49:29 Written APICalls.sol (693) lines
