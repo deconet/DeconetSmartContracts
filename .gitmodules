@@ -1,0 +1,3 @@
+[submodule "other_dependencies/ds-value"]
+	path = other_dependencies/ds-value
+	url = https://github.com/dapphub/ds-value.git
