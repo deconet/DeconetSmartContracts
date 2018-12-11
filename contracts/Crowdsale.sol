@@ -4,18 +4,18 @@ import "../node_modules/zeppelin-solidity/contracts/ownership/Ownable.sol";
 import "./DeconetToken.sol";
 import "./Medianizer.sol";
 import "../node_modules/zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
-import "../other_dependencies/ds-value/lib/ds-thing/lib/ds-math/src/math.sol";
+import "../other_dependencies/ds-math/src/math.sol";
 
 
 // ----------------------------------------------------------------------------
 // Handles the crowdsale of tokens
 // ----------------------------------------------------------------------------
 contract Crowdsale is Ownable, DSMath {
-    using SafeMath for uint;
-
     Medianizer public priceFeedContract;
 
     address public opsAdmin;
+
+    uint public ethMinContributionAmount = 0;
 
     uint256 public tokensPerDollar = 1;
     uint256 public usdRaised;
@@ -76,6 +76,9 @@ contract Crowdsale is Ownable, DSMath {
     // close or open the crowdsale
     function setCrowdsaleClosed(bool _newValue) public onlyOwner {
         crowdsaleClosed = _newValue;
+        if (_newValue) {
+            emit SaleEnded(ethRaised, usdRaised);
+        }
     }
 
     // set the tokens per dollar
@@ -84,6 +87,7 @@ contract Crowdsale is Ownable, DSMath {
     }
 
     function setPriceFeedContractAddress(address _priceFeedAddress) public onlyOwner {
+        require(_priceFeedAddress != address(0), "Price feed contract address must not be zero.");
         priceFeedContract = Medianizer(_priceFeedAddress);
     }
 
@@ -98,20 +102,20 @@ contract Crowdsale is Ownable, DSMath {
     // Owner can transfer out any ETH
     // ------------------------------------------------------------------------
     function withdrawEther() public {
-        require(msg.sender == withdrawAddress);
-        withdrawAddress.transfer(this.balance);
+        require(msg.sender == withdrawAddress, "Sender must be withdrawal address");
+        withdrawAddress.transfer(address(this).balance);
     }
 
     // ------------------------------------------------------------------------
     // Owner can set address of who can withdraw
     // ------------------------------------------------------------------------
     function setWithdrawAddress(address _withdrawAddress) public onlyOwner {
-        require(_withdrawAddress != address(0));
+        require(_withdrawAddress != address(0), "Withdraw address must not be zero.");
         withdrawAddress = _withdrawAddress;
     }
 
     function setOpsAdminAddress(address _opsAdminAddress) public onlyOwner {
-        require(_opsAdminAddress != address(0));
+        require(_opsAdminAddress != address(0), "Ops admin address must not be zero.");
         opsAdmin = _opsAdminAddress;
     }
 
@@ -119,13 +123,24 @@ contract Crowdsale is Ownable, DSMath {
     // Owner can set address of token contract
     // ------------------------------------------------------------------------
     function setTokenContractAddress(address _tokenContractAddress) public onlyOwner {
-        require(_tokenContractAddress != address(0));
+        require(_tokenContractAddress != address(0), "Token contract address must not be zero.");
         tokenContract = DeconetToken(_tokenContractAddress);
+    }
+
+    // ------------------------------------------------------------------------
+    // Owner can set ETH minumum contribution amount
+    // ------------------------------------------------------------------------
+    function setEthMinContributionAmount(uint _amount) public onlyOwner {
+        ethMinContributionAmount = _amount;
     }
 
     function deposit() internal {
         require(!crowdsaleClosed, "The crowdsale is closed");
         require(whitelistedAddresses[msg.sender], "You are not on the token sale whitelist");
+        require(
+            msg.value >= ethMinContributionAmount, 
+            "Contribution amount must be greater than configured minimum."
+        );
 
         // get eth price from makerdao oracle
         uint256 ethPrice = getEthPrice();
@@ -134,16 +149,16 @@ contract Crowdsale is Ownable, DSMath {
         uint256 usdBought = wmul(msg.value, ethPrice);
 
         // calculate how many tokens they get for that usd
-        uint256 tokensBought = usdBought * tokensPerDollar;
+        uint256 tokensBought = wmul(usdBought, tokensPerDollar);
 
         // log the contribution
-        ethContributions[msg.sender] = ethContributions[msg.sender].add(msg.value);
+        ethContributions[msg.sender] = add(ethContributions[msg.sender], msg.value);
 
         // add to the total USD raised
-        usdRaised = usdRaised.add(usdBought);
+        usdRaised = add(usdRaised, usdBought);
 
         // add to the total ETH raised
-        ethRaised = ethRaised.add(msg.value);
+        ethRaised = add(ethRaised, msg.value);
 
         // transfer the tokens to the buyer
         tokenContract.transfer(msg.sender, tokensBought);

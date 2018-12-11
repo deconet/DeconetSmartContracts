@@ -11,3 +11,6 @@ tags.*
 
 # macOS meta files
 .DS_Store
+
+*.logs
+*.log

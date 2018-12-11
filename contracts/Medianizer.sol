@@ -4,9 +4,13 @@ pragma solidity 0.4.24;
 // in production, the real deployed medianizer contract address would be used
 // this one is used for local testing etc
 
-import "../other_dependencies/ds-value/src/value.sol";
+import "./ds-value/value.sol";
 
 contract Medianizer is DSThing {
+    /// Used for testing MakerDAO's medianizer fails.
+    bool public shouldFailComputing = false;
+
+
     event LogValue(bytes32 val);
 
     uint128 val;
@@ -78,7 +82,12 @@ contract Medianizer is DSThing {
 
     function compute() public view returns (bytes32, bool) {
         // hardcoded for testing purposes
-        return (0x00000000000000000000000000000000000000000000000b36f7a46de4ef8000, true);
+        return (0x00000000000000000000000000000000000000000000000b36f7a46de4ef8000, !shouldFailComputing);
     }
 
+    /// Test methods 
+
+    function setShouldFailComputing(bool value) public {
+        shouldFailComputing = value;
+    }
 }

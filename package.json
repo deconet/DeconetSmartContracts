@@ -38,6 +38,6 @@
     "jest": "^23.2.0",
     "react-test-renderer": "^16.4.1",
     "react-testing-library": "^4.1.0",
-    "solidity-coverage": "^0.4.15"
+    "solidity-coverage": "^0.5.11"
   }
 }
