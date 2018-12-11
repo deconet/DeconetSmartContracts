@@ -48,7 +48,7 @@ contract("Crowdsale", async (accounts) => {
     expect(result[0]).to.be.equal(undefined)
     expect(result[1]).to.be.equal(undefined)
   })
-  
+
   it("should let owner to close and open crowdsale.", async () => {
     let setAndCheck = async (newValue) => {
       let txn = await crowdsale.setCrowdsaleClosed(newValue, {from: mainAccount})
@@ -222,7 +222,7 @@ contract("Crowdsale", async (accounts) => {
   })
 
   it(
-    "shouldn't set zero withdraw address by owner or fail whole txn by not an owner.", 
+    "shouldn't set zero withdraw address by owner or fail whole txn by not an owner.",
     async () => {
       let checkFailure = async (sender, address) => {
         await crowdsale.setWithdrawAddress(
@@ -249,7 +249,7 @@ contract("Crowdsale", async (accounts) => {
   })
 
   it(
-    "shouldn't set zero ops admin address by owner or fail whole txn by not an owner.", 
+    "shouldn't set zero ops admin address by owner or fail whole txn by not an owner.",
     async () => {
       let checkFailure = async (sender, address) => {
         await crowdsale.setOpsAdminAddress(
@@ -281,7 +281,7 @@ contract("Crowdsale", async (accounts) => {
   })
 
   it(
-    "shouldn't set zero token contract address by owner or fail whole txn by not an owner.", 
+    "shouldn't set zero token contract address by owner or fail whole txn by not an owner.",
     async () => {
       let checkFailure = async (sender, address) => {
         await crowdsale.setTokenContractAddress(
@@ -308,7 +308,7 @@ contract("Crowdsale", async (accounts) => {
       let actualAmount = await crowdsale.ethMinContributionAmount()
       expect(actualAmount.toString()).to.be.equal(amount.toString())
     }
-    
+
     await setAndCheck("0.00001")
     await setAndCheck("0.01")
     await setAndCheck("100")
@@ -316,7 +316,7 @@ contract("Crowdsale", async (accounts) => {
   })
 
   it(
-    "shouldn't set ETH min contribution amount by not an owner.", 
+    "shouldn't set ETH min contribution amount by not an owner.",
     async () => {
       let checkFailure = async (sender, amount) => {
         await crowdsale.setEthMinContributionAmount(
@@ -368,7 +368,7 @@ contract("Crowdsale", async (accounts) => {
   })
 
   it(
-    "should fail updating whitelisted status of an address correctly from not owner or ops admin address.", 
+    "should fail updating whitelisted status of an address correctly from not owner or ops admin address.",
     async () => {
       let opsAdmin = accounts[9]
       await crowdsale.setOpsAdminAddress(opsAdmin, {from: mainAccount})
@@ -377,8 +377,8 @@ contract("Crowdsale", async (accounts) => {
         let phase = status ? "1" : "0"
         let storedStatus = await crowdsale.whitelistedAddresses.call(address)
         await crowdsale.updateWhitelist(
-          address, 
-          phase, 
+          address,
+          phase,
           {from: sender}
         ).catch(async (err) => {
           assert.isOk(err, "Exception should be thrown for that transaction.")
@@ -411,7 +411,7 @@ contract("Crowdsale", async (accounts) => {
     )
 
     let tokensPerDollar = new BigNumber(10).pow(19)
-    
+
     await crowdsale.setTokenContractAddress(testToken.address, {from: mainAccount})
     await crowdsale.setTokensPerDollar(tokensPerDollar.toString(), {from: mainAccount})
     await crowdsale.setCrowdsaleClosed(false, {from: mainAccount})
@@ -474,7 +474,7 @@ contract("Crowdsale", async (accounts) => {
   })
 
   it(
-    "should fail processing deposit for some expected reason.", 
+    "should fail processing deposit for some expected reason.",
     async () => {
       let testToken = await DeconetToken.new({from: accounts[1], gasPrice: 1})
       await testToken.unpause({from: accounts[1]})
@@ -486,7 +486,7 @@ contract("Crowdsale", async (accounts) => {
       )
 
       let tokensPerDollar = new BigNumber(10).pow(19)
-      
+
       await crowdsale.setEthMinContributionAmount("0", {from: mainAccount})
       await crowdsale.setTokenContractAddress(testToken.address, {from: mainAccount})
       await crowdsale.setTokensPerDollar(tokensPerDollar.toString(), {from: mainAccount})
@@ -566,7 +566,7 @@ contract("Crowdsale", async (accounts) => {
     )
 
     let tokensPerDollar = new BigNumber(10).pow(19)
-    
+
     await crowdsale.setTokenContractAddress(testToken.address, {from: mainAccount})
     await crowdsale.setTokensPerDollar(tokensPerDollar.toString(), {from: mainAccount})
     await crowdsale.setCrowdsaleClosed(false, {from: mainAccount})
@@ -602,7 +602,7 @@ contract("Crowdsale", async (accounts) => {
     )
 
     let tokensPerDollar = new BigNumber(10).pow(19)
-    
+
     await crowdsale.setTokenContractAddress(testToken.address, {from: mainAccount})
     await crowdsale.setTokensPerDollar(tokensPerDollar.toString(), {from: mainAccount})
     await crowdsale.setCrowdsaleClosed(false, {from: mainAccount})
@@ -623,7 +623,7 @@ contract("Crowdsale", async (accounts) => {
           assert.fail("Should have failed above.")
         }
       })
-      
+
     }
 
     await crowdsale.setWithdrawAddress(accounts[1], {from: mainAccount})
@@ -634,4 +634,3 @@ contract("Crowdsale", async (accounts) => {
     await withdrawAndCheckFailure(accounts[4])
   })
 })
-
