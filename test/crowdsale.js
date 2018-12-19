@@ -34,7 +34,7 @@ contract("Crowdsale", async (accounts) => {
     await DeployMedianizerAndSetToCrowdsale()
     await medianizer.setShouldFailComputing(false)
     let medianizerPriceAndStatus = await medianizer.compute()
-    let medianizerPrice = web3.toDecimal(medianizerPriceAndStatus[0])
+    let medianizerPrice = web3.utils.toBN(medianizerPriceAndStatus[0])
     let crowdsalePrice = await crowdsale.getEthPrice()
     expect(crowdsalePrice.toString()).to.be.equal(medianizerPrice.toString())
   })
@@ -303,7 +303,7 @@ contract("Crowdsale", async (accounts) => {
 
   it("should set ETH min contribution amount by owner.", async () => {
     let setAndCheck = async (amount) => {
-      amount = web3.toWei(amount)
+      amount = web3.utils.toWei(amount)
       await crowdsale.setEthMinContributionAmount(amount.toString(), {from: mainAccount})
       let actualAmount = await crowdsale.ethMinContributionAmount()
       expect(actualAmount.toString()).to.be.equal(amount.toString())
@@ -320,7 +320,7 @@ contract("Crowdsale", async (accounts) => {
     async () => {
       let checkFailure = async (sender, amount) => {
         await crowdsale.setEthMinContributionAmount(
-          web3.toWei(amount),
+          web3.utils.toWei(amount),
           { from: sender, gasPrice: 1 }
         ).catch(async (err) => {
           assert.isOk(err, "Exception should be thrown for that transaction.")
@@ -419,7 +419,7 @@ contract("Crowdsale", async (accounts) => {
 
     let contributeAndCheckState = async (contributor, amount) => {
       await crowdsale.updateWhitelist(contributor, "1", {from: mainAccount})
-      amount = new BigNumber(web3.toWei(amount))
+      amount = new BigNumber(web3.utils.toWei(amount))
       let contribution = await crowdsale.ethContributions(contributor)
       let usdRaised = await crowdsale.usdRaised()
       let ethRaised = await crowdsale.ethRaised()
@@ -439,30 +439,26 @@ contract("Crowdsale", async (accounts) => {
       let actualContractBalance = await testToken.balanceOf(crowdsale.address)
 
       expect(actualContribution.toString()).to.be.equal(
-        contribution.plus(amount).toString()
+        new BigNumber(contribution).plus(amount).toString()
       )
       expect(actualUsdRaised.toString()).to.be.equal(
-        usdRaised.plus(usdAmount).toString()
+        new BigNumber(usdRaised).plus(usdAmount).toString()
       )
       expect(actualEthRaised.toString()).to.be.equal(
-        ethRaised.plus(amount).toString()
+        new BigNumber(ethRaised).plus(amount).toString()
       )
       expect(actualSenderBalance.toString()).to.be.equal(
-        initialSenderBalance.plus(tokensAmount).toString()
+        new BigNumber(initialSenderBalance).plus(tokensAmount).toString()
       )
       expect(actualContractBalance.toString()).to.be.equal(
-        initialContractBalance.minus(tokensAmount).toString()
+        new BigNumber(initialContractBalance).minus(tokensAmount).toString()
       )
 
       let emittedEvent = txn.logs[0]
       expect(emittedEvent.event).to.be.equal("FundTransfer")
       expect(emittedEvent.args.backer).to.be.equal(contributor)
-      expect(
-        new BigNumber(emittedEvent.args.tokenAmount.toString()).toString()
-      ).to.be.equal(tokensAmount.toString())
-      expect(
-        new BigNumber(emittedEvent.args.usdAmount.toString()).toString()
-      ).to.be.equal(usdAmount.toString())
+      expect(emittedEvent.args.tokenAmount.toString()).to.be.equal(tokensAmount.toString())
+      expect(emittedEvent.args.usdAmount.toString()).to.be.equal(usdAmount.toString())
       expect(emittedEvent.args.ethPrice.toString()).to.be.equal(ethPrice.toString())
     }
 
@@ -494,7 +490,7 @@ contract("Crowdsale", async (accounts) => {
       await DeployMedianizerAndSetToCrowdsale()
 
       let contributeAndCheckState = async (contributor, amount) => {
-        amount = new BigNumber(web3.toWei(amount))
+        amount = new BigNumber(web3.utils.toWei(amount))
         await crowdsale.sendTransaction(
           {from: contributor, value: amount.toString()}
         ).catch(async (err) => {
@@ -510,7 +506,7 @@ contract("Crowdsale", async (accounts) => {
 
       await crowdsale.updateWhitelist(contributor, "1", {from: mainAccount})
       // the contribution should go through.
-      await crowdsale.sendTransaction({from: contributor, value: web3.toWei("1".toString())})
+      await crowdsale.sendTransaction({from: contributor, value: web3.utils.toWei("1".toString())})
 
       // Fail if address is not whitelisted.
       await crowdsale.updateWhitelist(contributor, "0", {from: mainAccount})
@@ -519,10 +515,10 @@ contract("Crowdsale", async (accounts) => {
       await crowdsale.updateWhitelist(contributor, "1", {from: mainAccount})
 
       // Fail because set min contribution amount is super high.
-      await crowdsale.setEthMinContributionAmount(web3.toWei("1000"), {from: mainAccount})
+      await crowdsale.setEthMinContributionAmount(web3.utils.toWei("1000"), {from: mainAccount})
       await contributeAndCheckState(contributor, "0.3")
 
-      await crowdsale.setEthMinContributionAmount(web3.toWei("0.05"), {from: mainAccount})
+      await crowdsale.setEthMinContributionAmount(web3.utils.toWei("0.05"), {from: mainAccount})
 
       // Fail while crowdsale is closed any contributions are forbidden.
       await crowdsale.setCrowdsaleClosed(true, {from: mainAccount})
@@ -551,7 +547,7 @@ contract("Crowdsale", async (accounts) => {
       await crowdsale.setTokenContractAddress(testToken.address, {from: mainAccount})
 
       // Confirming that everything gets back to operational state and this contribution should go through.
-      await crowdsale.sendTransaction({from: contributor, value: web3.toWei("1".toString())})
+      await crowdsale.sendTransaction({from: contributor, value: web3.utils.toWei("1".toString())})
     }
   )
 
@@ -570,15 +566,15 @@ contract("Crowdsale", async (accounts) => {
     await crowdsale.setTokenContractAddress(testToken.address, {from: mainAccount})
     await crowdsale.setTokensPerDollar(tokensPerDollar.toString(), {from: mainAccount})
     await crowdsale.setCrowdsaleClosed(false, {from: mainAccount})
-    await crowdsale.setEthMinContributionAmount(web3.toWei("0.05"), {from: mainAccount})
+    await crowdsale.setEthMinContributionAmount(web3.utils.toWei("0.05"), {from: mainAccount})
     await DeployMedianizerAndSetToCrowdsale()
     let contributor = accounts[2]
     await crowdsale.updateWhitelist(contributor, "1", {from: mainAccount})
-    await crowdsale.sendTransaction({from: contributor, value: web3.toWei("1")})
+    await crowdsale.sendTransaction({from: contributor, value: web3.utils.toWei("1")})
 
     let withdraw = async (sender) => {
       let balance = await web3.eth.getBalance(crowdsale.address)
-      expect(balance.gt("0")).to.be.true
+      expect(new BigNumber(balance).gt("0")).to.be.true
       await crowdsale.withdrawEther({from: sender})
       balance = await web3.eth.getBalance(crowdsale.address)
       expect(balance.toString()).to.be.equal("0")
@@ -586,7 +582,7 @@ contract("Crowdsale", async (accounts) => {
 
     await crowdsale.setWithdrawAddress(accounts[1], {from: mainAccount})
     await withdraw(accounts[1])
-    await crowdsale.sendTransaction({from: contributor, value: web3.toWei("0.1")})
+    await crowdsale.sendTransaction({from: contributor, value: web3.utils.toWei("0.1")})
     await crowdsale.setWithdrawAddress(accounts[2], {from: mainAccount})
     await withdraw(accounts[2])
   })
@@ -606,11 +602,11 @@ contract("Crowdsale", async (accounts) => {
     await crowdsale.setTokenContractAddress(testToken.address, {from: mainAccount})
     await crowdsale.setTokensPerDollar(tokensPerDollar.toString(), {from: mainAccount})
     await crowdsale.setCrowdsaleClosed(false, {from: mainAccount})
-    await crowdsale.setEthMinContributionAmount(web3.toWei("0.05"), {from: mainAccount})
+    await crowdsale.setEthMinContributionAmount(web3.utils.toWei("0.05"), {from: mainAccount})
     await DeployMedianizerAndSetToCrowdsale()
     let contributor = accounts[2]
     await crowdsale.updateWhitelist(contributor, "1", {from: mainAccount})
-    await crowdsale.sendTransaction({from: contributor, value: web3.toWei("1")})
+    await crowdsale.sendTransaction({from: contributor, value: web3.utils.toWei("1")})
 
     let withdrawAndCheckFailure = async (sender) => {
       let balance = await web3.eth.getBalance(crowdsale.address)

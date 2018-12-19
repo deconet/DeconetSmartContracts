@@ -1,6 +1,8 @@
 var uuid = require('uuid')
 var BigNumber = require('bignumber.js')
 
+BigNumber.config({ EXPONENTIAL_AT: 1e+9 })
+
 var Registry = artifacts.require('./Registry.sol')
 var Token = artifacts.require('./DeconetToken.sol')
 
@@ -12,62 +14,62 @@ contract('Registry', function (accounts) {
   })
 
   it('should let a user list and edit and get a module', async function () {
-    let sellerUsername = uuid.v4().substr(0, 32)
-    let moduleName = uuid.v4().substr(0, 32)
-    let modulePrice = 100000
+    let sellerUsername = web3.utils.toHex(uuid.v4().substr(0, 32))
+    let moduleName = web3.utils.toHex(uuid.v4().substr(0, 32))
+    let modulePrice = new BigNumber(100000)
     let licenseId = '0x00000001'
     let registry = await Registry.deployed()
 
     let usernameAndProjectName = `${sellerUsername}/${moduleName}`
     let numModulesBefore = await registry.numModules.call()
 
-    await registry.listModule(modulePrice, sellerUsername, moduleName, usernameAndProjectName, licenseId, { from: accounts[1] })
+    await registry.listModule(modulePrice.toString(), sellerUsername, moduleName, usernameAndProjectName, licenseId, { from: accounts[1] })
 
     let numModulesAfter = await registry.numModules.call()
     assert.equal(numModulesAfter.toNumber(), numModulesBefore.toNumber() + 1)
 
     // // check that the module is actually in the registry
     let moduleId = await registry.getModuleId(usernameAndProjectName)
-    assert.notEqual(moduleId.toNumber(), 0)
+    assert.notEqual(moduleId.toString(), '0')
 
     let module = await registry.getModuleById(moduleId, { from: accounts[4] })
-    assert.equal(module.length, 5)
-    assert.equal(module[0].toNumber(), modulePrice)
-    assert.equal(web3.toAscii(module[1]), sellerUsername)
-    assert.equal(web3.toAscii(module[2]), moduleName)
+
+    assert.equal(module[0].toString(), modulePrice.toString())
+    assert.equal(module[1], sellerUsername)
+    assert.equal(module[2], moduleName)
     assert.equal(module[3], accounts[1])
     assert.equal(module[4], licenseId)
 
     // test editing the module as contract owner
-    let newPrice = 50000
+    let newPrice = new BigNumber(50000)
     let newLicenseId = '0x00000002'
-    await registry.editModule(moduleId, newPrice, accounts[2], newLicenseId, { from: accounts[0] })
+    await registry.editModule(moduleId, newPrice.toString(), accounts[2], newLicenseId, { from: accounts[0] })
 
     module = await registry.getModuleById(moduleId, { from: accounts[4] })
-    assert.equal(module.length, 5)
-    assert.equal(module[0].toNumber(), newPrice)
-    assert.equal(web3.toAscii(module[1]), sellerUsername)
-    assert.equal(web3.toAscii(module[2]), moduleName)
+
+    assert.equal(module[0].toString(), newPrice.toString())
+    assert.equal(module[1], sellerUsername)
+    assert.equal(module[2], moduleName)
     assert.equal(module[3], accounts[2])
     assert.equal(module[4], newLicenseId)
 
     // test editing the module as module owner
-    newPrice = 25000
+    newPrice = new BigNumber(25000)
     newLicenseId = '0x00000003'
-    await registry.editModule(moduleId, newPrice, accounts[3], newLicenseId, { from: accounts[2] })
+    await registry.editModule(moduleId, newPrice.toString(), accounts[3], newLicenseId, { from: accounts[2] })
 
     module = await registry.getModuleById(moduleId, { from: accounts[4] })
-    assert.equal(module.length, 5)
-    assert.equal(module[0].toNumber(), newPrice)
-    assert.equal(web3.toAscii(module[1]), sellerUsername)
-    assert.equal(web3.toAscii(module[2]), moduleName)
+
+    assert.equal(module[0].toString(), newPrice.toString())
+    assert.equal(module[1], sellerUsername)
+    assert.equal(module[2], moduleName)
     assert.equal(module[3], accounts[3])
     assert.equal(module[4], newLicenseId)
 
     // test editing the module as a random non-owner account (should fail)
     let exceptionGenerated = false
     try {
-      await registry.editModule(moduleId, 20000, accounts[5], '0x00000004', { from: accounts[4] })
+      await registry.editModule(moduleId, '20000', accounts[5], '0x00000004', { from: accounts[4] })
     } catch (e) {
       exceptionGenerated = true
     }
@@ -88,17 +90,17 @@ contract('Registry', function (accounts) {
     exceptionGenerated = false
     try {
       // test editing the module as a random non-owner account (should fail)
-      await registry.editModule('99999999', 20000, accounts[3], '0x00000004', { from: accounts[3] })
+      await registry.editModule('99999999', '20000', accounts[3], '0x00000004', { from: accounts[3] })
     } catch (e) {
       exceptionGenerated = true
     }
     assert.equal(exceptionGenerated, true)
 
     module = await registry.getModuleById(moduleId, { from: accounts[4] })
-    assert.equal(module.length, 5)
-    assert.equal(module[0].toNumber(), newPrice)
-    assert.equal(web3.toAscii(module[1]), sellerUsername)
-    assert.equal(web3.toAscii(module[2]), moduleName)
+
+    assert.equal(module[0].toString(), newPrice.toString())
+    assert.equal(module[1], sellerUsername)
+    assert.equal(module[2], moduleName)
     assert.equal(module[3], accounts[3])
     assert.equal(module[4], newLicenseId)
   })
@@ -109,7 +111,7 @@ contract('Registry', function (accounts) {
 
     for(let i = 1; i <= numModules.toNumber(); i++) {
       let module = await registry.getModuleById(i, { from: accounts[4] })
-      assert.equal(module.length, 4)
+
       assert.notEqual(module[0].toNumber(), false)
       assert.notEqual(module[1], false)
       assert.notEqual(module[2], false)
@@ -119,16 +121,16 @@ contract('Registry', function (accounts) {
   })
 
   it('should let a user list and get a module by name', async function () {
-    let sellerUsername = uuid.v4().substr(0, 32)
-    let moduleName = uuid.v4().substr(0, 32)
-    let modulePrice = 100000
+    let sellerUsername = web3.utils.toHex(uuid.v4().substr(0, 32))
+    let moduleName = web3.utils.toHex(uuid.v4().substr(0, 32))
+    let modulePrice = new BigNumber(100000)
     let licenseId = '0x00000001'
     let registry = await Registry.deployed()
 
     let usernameAndProjectName = `${sellerUsername}/${moduleName}`
     let numModulesBefore = await registry.numModules.call()
 
-    await registry.listModule(modulePrice, sellerUsername, moduleName, usernameAndProjectName, licenseId, { from: accounts[1] })
+    await registry.listModule(modulePrice.toString(), sellerUsername, moduleName, usernameAndProjectName, licenseId, { from: accounts[1] })
 
     let numModulesAfter = await registry.numModules.call()
     assert.equal(numModulesAfter.toNumber(), numModulesBefore.toNumber() + 1)
@@ -136,7 +138,7 @@ contract('Registry', function (accounts) {
     // make sure that we can't list a module with a name that is already listed
     let exceptionGenerated = false
     try {
-      await registry.listModule(modulePrice, sellerUsername, moduleName, usernameAndProjectName, licenseId, { from: accounts[1] })
+      await registry.listModule(modulePrice.toString(), sellerUsername, moduleName, usernameAndProjectName, licenseId, { from: accounts[1] })
     } catch (e) {
       exceptionGenerated = true
     }
@@ -144,26 +146,26 @@ contract('Registry', function (accounts) {
 
     // // check that the module is actually in the registry
     let moduleId = await registry.getModuleId(usernameAndProjectName)
-    assert.notEqual(moduleId.toNumber(), 0)
+    assert.notEqual(moduleId.toString(), '0')
 
     let module = await registry.getModuleByName(usernameAndProjectName, { from: accounts[4] })
-    assert.equal(module.length, 5)
-    assert.equal(module[0].toNumber(), modulePrice)
-    assert.equal(web3.toAscii(module[1]), sellerUsername)
-    assert.equal(web3.toAscii(module[2]), moduleName)
+
+    assert.equal(module[0].toString(), modulePrice.toString())
+    assert.equal(module[1], sellerUsername)
+    assert.equal(module[2], moduleName)
     assert.equal(module[3], accounts[1])
     assert.equal(module[4], licenseId)
 
     // test editing the module
-    let newPrice = 50000
+    let newPrice = new BigNumber(50000)
     let newLicenseId = '0x00000002'
-    await registry.editModule(moduleId, newPrice, accounts[2], newLicenseId, { from: accounts[0] })
+    await registry.editModule(moduleId, newPrice.toString(), accounts[2], newLicenseId, { from: accounts[0] })
 
     module = await registry.getModuleByName(usernameAndProjectName, { from: accounts[4] })
-    assert.equal(module.length, 5)
-    assert.equal(module[0].toNumber(), newPrice)
-    assert.equal(web3.toAscii(module[1]), sellerUsername)
-    assert.equal(web3.toAscii(module[2]), moduleName)
+
+    assert.equal(module[0].toString(), newPrice.toString())
+    assert.equal(module[1], sellerUsername)
+    assert.equal(module[2], moduleName)
     assert.equal(module[3], accounts[2])
     assert.equal(module[4], newLicenseId)
   })
@@ -224,13 +226,13 @@ contract('Registry', function (accounts) {
     let contractBalanceAfter = await token.balanceOf(registry.address)
     let ownerBalanceAfter = await token.balanceOf(accounts[0])
 
-    assert.equal(contractBalanceBefore.minus(tokenAmount).toString(), contractBalanceAfter.toString())
-    assert.equal(ownerBalanceBefore.plus(tokenAmount).toString(), ownerBalanceAfter.toString())
+    assert.equal(new BigNumber(contractBalanceBefore).minus(tokenAmount).toString(), contractBalanceAfter.toString())
+    assert.equal(new BigNumber(ownerBalanceBefore).plus(tokenAmount).toString(), ownerBalanceAfter.toString())
   })
 
   it('should not let a user list a module with bad inputs', async function () {
-    let sellerUsername = ''
-    let moduleName = ''
+    let sellerUsername = web3.utils.toHex('')
+    let moduleName = web3.utils.toHex('')
     let modulePrice = '0'
     let licenseId = '0x00000000'
     let registry = await Registry.deployed()

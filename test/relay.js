@@ -4,6 +4,8 @@ var Registry = artifacts.require('./Registry.sol')
 var LicenseSales = artifacts.require('./LicenseSales.sol')
 var BigNumber = require('bignumber.js')
 
+BigNumber.config({ EXPONENTIAL_AT: 1e+9 })
+
 
 contract('Relay', function (accounts) {
   it('should be possible to deploy and set license sales and registry contract addresses', async function () {
@@ -15,13 +17,13 @@ contract('Relay', function (accounts) {
 
     let relay = await Relay.deployed()
 
-    let newLicenseSalesContractAddress = '0xc2fa1bace4dda22d84a466884493fad6f71e0275'
+    let newLicenseSalesContractAddress = web3.utils.toChecksumAddress('0xc2fa1bace4dda22d84a466884493fad6f71e0275')
     await relay.setLicenseSalesContractAddress(newLicenseSalesContractAddress)
 
     let licenseSalesContractAddress = await relay.licenseSalesContractAddress.call({ from: accounts[4] })
     assert.equal(newLicenseSalesContractAddress, licenseSalesContractAddress)
 
-    let newRegistryContractAddress = '0xcbffa1ee1e37ee59923c444c727c54720c774c62'
+    let newRegistryContractAddress = web3.utils.toChecksumAddress('0xcbffa1ee1e37ee59923c444c727c54720c774c62')
     await relay.setRegistryContractAddress(newRegistryContractAddress)
 
     let registryContractAddress = await relay.registryContractAddress.call({ from: accounts[4] })
@@ -68,9 +70,10 @@ contract('Relay', function (accounts) {
     let contractBalanceAfter = await token.balanceOf(relay.address)
     let ownerBalanceAfter = await token.balanceOf(accounts[0])
 
-    assert.equal(contractBalanceBefore.minus(tokenAmount).toString(), contractBalanceAfter.toString())
-    assert.equal(ownerBalanceBefore.plus(tokenAmount).toString(), ownerBalanceAfter.toString())
+    assert.equal(new BigNumber(contractBalanceBefore).minus(tokenAmount).toString(), contractBalanceAfter.toString())
+    assert.equal(new BigNumber(ownerBalanceBefore).plus(tokenAmount).toString(), ownerBalanceAfter.toString())
   })
+
   it('should not let user set 0 address for license sale contract address', async function () {
     let relay = await Relay.deployed()
     let exceptionOccured = false
@@ -80,7 +83,8 @@ contract('Relay', function (accounts) {
       exceptionOccured = true
     }
     assert.equal(exceptionOccured, true)
-  })  
+  })
+
   it('should not let user set 0 address for registry', async function () {
     let relay = await Relay.deployed()
     let exceptionOccured = false
@@ -91,6 +95,7 @@ contract('Relay', function (accounts) {
     }
     assert.equal(exceptionOccured, true)
   })
+
   it('should not let user set 0 address for api calls', async function () {
     let relay = await Relay.deployed()
     let exceptionOccured = false
@@ -101,6 +106,7 @@ contract('Relay', function (accounts) {
     }
     assert.equal(exceptionOccured, true)
   })
+
   it('should not let user set 0 address for api registry contract address', async function () {
     let relay = await Relay.deployed()
     let exceptionOccured = false

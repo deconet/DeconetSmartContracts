@@ -1,4 +1,4 @@
-pragma solidity 0.4.24;
+pragma solidity 0.4.25;
 
 // this implements the compute() function that is normally implemented by the MakerDAO medianizer contract
 // in production, the real deployed medianizer contract address would be used
@@ -85,7 +85,7 @@ contract Medianizer is DSThing {
         return (0x00000000000000000000000000000000000000000000000b36f7a46de4ef8000, !shouldFailComputing);
     }
 
-    /// Test methods 
+    /// Test methods
 
     function setShouldFailComputing(bool value) public {
         shouldFailComputing = value;

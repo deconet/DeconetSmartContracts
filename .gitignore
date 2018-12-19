@@ -1,6 +1,6 @@
 # dependencies
 node_modules/*
-!node_modules/zeppelin-solidity
+!node_modules/openzeppelin-solidity
 
 # production
 build

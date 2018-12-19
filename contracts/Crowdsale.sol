@@ -1,9 +1,9 @@
-pragma solidity 0.4.24;
+pragma solidity 0.4.25;
 
-import "../node_modules/zeppelin-solidity/contracts/ownership/Ownable.sol";
+import "../node_modules/openzeppelin-solidity/contracts/ownership/Ownable.sol";
 import "./DeconetToken.sol";
 import "./Medianizer.sol";
-import "../node_modules/zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
+import "../node_modules/openzeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 import "../other_dependencies/ds-math/src/math.sol";
 
 
@@ -138,7 +138,7 @@ contract Crowdsale is Ownable, DSMath {
         require(!crowdsaleClosed, "The crowdsale is closed");
         require(whitelistedAddresses[msg.sender], "You are not on the token sale whitelist");
         require(
-            msg.value >= ethMinContributionAmount, 
+            msg.value >= ethMinContributionAmount,
             "Contribution amount must be greater than configured minimum."
         );
 

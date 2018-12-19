@@ -1,6 +1,8 @@
 var BigNumber = require('bignumber.js')
 var uuid = require('uuid')
 
+BigNumber.config({ EXPONENTIAL_AT: 1e+9 })
+
 var Token = artifacts.require('./DeconetToken.sol')
 var Relay = artifacts.require('./Relay.sol')
 var Registry = artifacts.require('./Registry.sol')
@@ -19,20 +21,20 @@ const Promisify = (inner) =>
   );
 
 contract('DeconetToken', function (accounts) {
-  var correctTotalSupply = BigNumber('1e+27')
+  var correctTotalSupply = new BigNumber('1e+27')
   var licenseSalesSupplyAllowance = correctTotalSupply.div(20) // 5 percent
   var apiCallsSupplyAllowance = correctTotalSupply.div(20) // 5 percent
 
   it('should have the right total supply', async function () {
     let token = await Token.deployed()
     let result = await token.totalSupply.call()
-    assert.equal(result.eq(correctTotalSupply), true, 'total supply is wrong')
+    assert.equal(correctTotalSupply.eq(result), true, 'total supply is wrong')
   })
 
   it('should return the balance of token owner', async function () {
     let token = await Token.deployed()
     let result = await token.balanceOf.call(accounts[0])
-    assert.equal(result.eq(correctTotalSupply), true, 'balance is wrong')
+    assert.equal(correctTotalSupply.eq(result), true, 'balance is wrong')
   })
 
 
@@ -41,9 +43,9 @@ contract('DeconetToken', function (accounts) {
     let ls = await LicenseSales.deployed()
     let result = await token.allowance.call(accounts[0], ls.address)
     if (process.env.DECONET_ACTIVATE_TOKEN_REWARD == "true") {
-      assert.equal(result.eq(licenseSalesSupplyAllowance), true, 'balance is wrong')
+      assert.equal(licenseSalesSupplyAllowance.eq(result), true, 'balance is wrong')
     } else {
-      assert.equal(result.eq(BigNumber('0')), true, 'balance is wrong')
+      assert.equal(new BigNumber('0').eq(result), true, 'balance is wrong')
     }
   })
 
@@ -52,28 +54,28 @@ contract('DeconetToken', function (accounts) {
     let apiCalls = await APICalls.deployed()
     let result = await token.allowance.call(accounts[0], apiCalls.address)
     if (process.env.DECONET_ACTIVATE_TOKEN_REWARD == "true") {
-      assert.equal(result.eq(apiCallsSupplyAllowance), true, 'balance is wrong')
+      assert.equal(apiCallsSupplyAllowance.eq(result), true, 'balance is wrong')
     } else {
-      assert.equal(result.eq(BigNumber('0')), true, 'balance is wrong')
+      assert.equal(new BigNumber('0').eq(result), true, 'balance is wrong')
     }
   })
 
   it('should transfer right token', async function () {
     let token = await Token.deployed()
-    await token.transfer(accounts[1], 500000)
+    await token.transfer(accounts[1], '500000')
     let result = await token.balanceOf.call(accounts[0])
-    assert.equal(result.eq(correctTotalSupply.minus(500000)), true, 'accounts[0] balance is wrong')
+    assert.equal(correctTotalSupply.minus(500000).eq(result), true, 'accounts[0] balance is wrong')
     result = await token.balanceOf.call(accounts[1])
-    assert.equal(result.toNumber(), 500000, 'accounts[1] balance is wrong')
+    assert.equal(result.toString(), '500000', 'accounts[1] balance is wrong')
   })
 
   it("should give accounts[1] authority to spend account[0]'s token", async function () {
     let token = await Token.deployed()
 
     // try approval again
-    await token.approve(accounts[1], 200000)
+    await token.approve(accounts[1], '200000')
     let result = await token.allowance.call(accounts[0], accounts[1])
-    assert.equal(result.toNumber(), 200000, 'allowance is wrong')
+    assert.equal(result.toString(), '200000', 'allowance is wrong')
 
     // check if token is paused.  if not, pause it.
     let paused = await token.paused.call()
@@ -84,7 +86,7 @@ contract('DeconetToken', function (accounts) {
     // try token transfer without unpausing token.  should get an exception
     let exceptionGenerated = false
     try {
-      await token.transferFrom(accounts[0], accounts[2], 200000, {from: accounts[1]})
+      await token.transferFrom(accounts[0], accounts[2], '200000', {from: accounts[1]})
     } catch (e) {
       exceptionGenerated = true
     }
@@ -95,11 +97,11 @@ contract('DeconetToken', function (accounts) {
 
     await token.transferFrom(accounts[0], accounts[2], 200000, {from: accounts[1]})
     result = await token.balanceOf.call(accounts[0])
-    assert.equal(result.eq(correctTotalSupply.minus(700000)), true, 'accounts[0] balance is wrong')
+    assert.equal(correctTotalSupply.minus('700000').eq(result), true, 'accounts[0] balance is wrong')
     result = await token.balanceOf.call(accounts[1])
-    assert.equal(result.toNumber(), 500000, 'accounts[1] balance is wrong')
+    assert.equal(result.toString(), '500000', 'accounts[1] balance is wrong')
     result = await token.balanceOf.call(accounts[2])
-    assert.equal(result.toNumber(), 200000, 'accounts[2] balance is wrong')
+    assert.equal(result.toString(), '200000', 'accounts[2] balance is wrong')
   })
 
   it('should show the transfer event', async function () {
@@ -148,13 +150,13 @@ contract('DeconetToken', function (accounts) {
     let tokenBalanceAcctOneBefore = await token.balanceOf.call(accounts[1])
     let tokenBalanceAcctTwoBefore = await token.balanceOf.call(accounts[2])
 
-    await token.transfer(accounts[2], 10000, {from: accounts[1]})
+    await token.transfer(accounts[2], '10000', {from: accounts[1]})
 
     let tokenBalanceAcctOneAfter = await token.balanceOf.call(accounts[1])
     let tokenBalanceAcctTwoAfter = await token.balanceOf.call(accounts[2])
 
-    assert.equal(tokenBalanceAcctOneBefore.minus(new BigNumber('10000')).eq(tokenBalanceAcctOneAfter), true)
-    assert.equal(tokenBalanceAcctTwoBefore.add(new BigNumber('10000')).eq(tokenBalanceAcctTwoAfter), true)
+    assert.equal(new BigNumber(tokenBalanceAcctOneBefore).minus(new BigNumber('10000')).eq(tokenBalanceAcctOneAfter), true)
+    assert.equal(new BigNumber(tokenBalanceAcctTwoBefore).plus(new BigNumber('10000')).eq(tokenBalanceAcctTwoAfter), true)
 
     // pause the token
     await token.pause({from: accounts[0]})
@@ -176,15 +178,15 @@ contract('DeconetToken', function (accounts) {
     tokenBalanceAcctOneAfter = await token.balanceOf.call(accounts[1])
     tokenBalanceAcctTwoAfter = await token.balanceOf.call(accounts[2])
 
-    assert.equal(tokenBalanceAcctOneBefore.eq(tokenBalanceAcctOneAfter), true)
-    assert.equal(tokenBalanceAcctTwoBefore.eq(tokenBalanceAcctTwoAfter), true)
+    assert.equal(tokenBalanceAcctOneBefore.toString(), tokenBalanceAcctOneAfter.toString())
+    assert.equal(tokenBalanceAcctTwoBefore.toString(), tokenBalanceAcctTwoAfter.toString())
   })
 
   it('should only be transferrable by the owner when the contract is paused', async function () {
     let token = await Token.deployed()
 
     // first, give accounts[1] some tokens from owner.  this should work.
-    await token.transfer(accounts[1], 100000)
+    await token.transfer(accounts[1], '100000')
 
     // get balance before we attempt the transfer
     let tokenBalanceAcctOneBefore = await token.balanceOf.call(accounts[1])
@@ -199,7 +201,7 @@ contract('DeconetToken', function (accounts) {
     // we should get an exception
     let exceptionGenerated = false
     try {
-      await token.transfer(accounts[2], 10000, {from: accounts[1]})
+      await token.transfer(accounts[2], '10000', {from: accounts[1]})
     } catch (e) {
       exceptionGenerated = true
     }
@@ -219,10 +221,10 @@ contract('DeconetToken', function (accounts) {
 
     tokenBalanceAcctOneAfter = await token.balanceOf.call(accounts[1])
 
-    assert.equal(tokenBalanceAcctOneBefore.minus(new BigNumber('10000')).eq(tokenBalanceAcctOneAfter), true)
+    assert.equal(new BigNumber(tokenBalanceAcctOneBefore).minus(new BigNumber('10000')).eq(tokenBalanceAcctOneAfter), true)
 
     let tokenBalanceAcctTwoAfter = await token.balanceOf.call(accounts[2])
-    assert.equal(tokenBalanceAcctTwoBefore.add(new BigNumber('10000')).eq(tokenBalanceAcctTwoAfter), true)
+    assert.equal(new BigNumber('10000').plus(tokenBalanceAcctTwoBefore), tokenBalanceAcctTwoAfter.toString())
   })
 
   it('can transfer out accidently sent erc20 tokens', async function () {
@@ -247,8 +249,8 @@ contract('DeconetToken', function (accounts) {
     let contractBalanceAfter = await token.balanceOf(token.address)
     let ownerBalanceAfter = await token.balanceOf(accounts[0])
 
-    assert.equal(contractBalanceBefore.minus(tokenAmount).toString(), contractBalanceAfter.toString())
-    assert.equal(ownerBalanceBefore.plus(tokenAmount).toString(), ownerBalanceAfter.toString())
+    assert.equal(new BigNumber(contractBalanceBefore).minus(tokenAmount).toString(), contractBalanceAfter.toString())
+    assert.equal(tokenAmount.plus(ownerBalanceBefore).toString(), ownerBalanceAfter.toString())
   })
 
   it('should have working increaseApproval and decreaseApproval functions', async function () {
@@ -276,7 +278,7 @@ contract('DeconetToken', function (accounts) {
     // decrease approval
     await token.decreaseApproval(spender, decreaseAmount.toString(), {from: acctOwner})
     approvedAmountAfter = await token.allowance(acctOwner, spender)
-    assert.equal(approvedAmountAfter.toString(), approvedAmount.minus(decreaseAmount).toString())
-    assert.equal(approvedAmountAfter.toString(), tokenAmount.plus(increaseAmount).minus(decreaseAmount).toString())
+    assert.equal(approvedAmountAfter.toString(), new BigNumber(approvedAmount).minus(decreaseAmount).toString())
+    assert.equal(approvedAmountAfter.toString(), increaseAmount.plus(tokenAmount).minus(decreaseAmount).toString())
   })
 })

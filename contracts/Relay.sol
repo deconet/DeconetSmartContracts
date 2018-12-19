@@ -1,7 +1,7 @@
-pragma solidity 0.4.24;
+pragma solidity 0.4.25;
 
-import "../node_modules/zeppelin-solidity/contracts/ownership/Ownable.sol";
-import "../node_modules/zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
+import "../node_modules/openzeppelin-solidity/contracts/ownership/Ownable.sol";
+import "../node_modules/openzeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 
 contract Relay is Ownable {
     address public licenseSalesContractAddress;

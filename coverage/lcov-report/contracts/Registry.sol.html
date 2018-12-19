@@ -189,7 +189,8 @@
 144
 145
 146
-147</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+147
+148</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -214,8 +215,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2×</span>
-<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -230,11 +231,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">5×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4×</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3×</span>
 <span class="cline-any cline-yes">3×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -270,18 +271,18 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">8×</span>
+<span class="cline-any cline-yes">10×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">8×</span>
-<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-yes">3×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">6×</span>
-<span class="cline-any cline-yes">6×</span>
-<span class="cline-any cline-yes">6×</span>
-<span class="cline-any cline-yes">6×</span>
-<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-yes">7×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -318,27 +319,28 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-yes">9×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">5×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">5×</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4×</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3×</span>
 <span class="cline-any cline-yes">3×</span>
 <span class="cline-any cline-yes">3×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">pragma solidity 0.4.24;
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">pragma solidity 0.4.25;
 &nbsp;
-import "../node_modules/zeppelin-solidity/contracts/ownership/Ownable.sol";
-import "../node_modules/zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
+import "../node_modules/openzeppelin-solidity/contracts/ownership/Ownable.sol";
+import "../node_modules/openzeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 &nbsp;
 contract Registry is Ownable {
 &nbsp;
@@ -405,19 +407,19 @@ contract Registry is Ownable {
     // ------------------------------------------------------------------------
     function getModuleById(
         uint moduleId
-    ) 
-        public 
-        view 
+    )
+        public
+        view
         returns (
-            uint price, 
-            bytes32 sellerUsername, 
-            bytes32 moduleName, 
-            address sellerAddress, 
+            uint price,
+            bytes32 sellerUsername,
+            bytes32 moduleName,
+            address sellerAddress,
             bytes4 licenseId
-        ) 
+        )
     {
         ModuleForSale storage module = modules[moduleId];
-        
+&nbsp;
 &nbsp;
         if (module.sellerAddress == address(0)) {
             return;
@@ -435,16 +437,16 @@ contract Registry is Ownable {
     // ------------------------------------------------------------------------
     function getModuleByName(
         string usernameAndProjectName
-    ) 
-        public 
+    )
+        public
         view
         returns (
-            uint price, 
-            bytes32 sellerUsername, 
-            bytes32 moduleName, 
-            address sellerAddress, 
+            uint price,
+            bytes32 sellerUsername,
+            bytes32 moduleName,
+            address sellerAddress,
             bytes4 licenseId
-        ) 
+        )
     {
         uint moduleId = moduleIds[usernameAndProjectName];
         if (moduleId == 0) {
@@ -481,13 +483,14 @@ contract Registry is Ownable {
         module.sellerAddress = sellerAddress;
         module.licenseId = licenseId;
     }
-}</pre></td></tr>
+}
+&nbsp;</pre></td></tr>
 </table></pre>
 <div class='push'></div><!-- for sticky footer -->
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Tue Dec 11 2018 17:11:18 GMT+0300 (+03)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Wed Dec 19 2018 23:51:25 GMT+0300 (+03)
 </div>
 </div>
 <script src="../prettify.js"></script>
