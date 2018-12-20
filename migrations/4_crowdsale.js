@@ -4,23 +4,23 @@ var Crowdsale = artifacts.require('./Crowdsale.sol')
 
 const beep = require('../utils/beep')
 
-module.exports = function (deployer, network, accounts) {
+module.exports = async (deployer, network, accounts) => {
   let crowdsale, deconetToken
-  deconetToken = DeconetToken.at(DeconetToken.address)
+  deconetToken = await DeconetToken.at(DeconetToken.address)
 
   console.log('Deploying crowdsale')
-  deployer.deploy(Crowdsale)
-  .then(() => {
-    crowdsale = Crowdsale.at(Crowdsale.address)
-    console.log('Giving Crowdsale contract ability to transfer 50% of owner tokens')
-    let fiftyPercent = '500000000000000000000000000'
-    return deconetToken.approve(crowdsale.address, fiftyPercent)
-  })
-  .then() => {
-    console.log('Setting token contract address for Crowdsale')
-    return crowdsale.setTokenContractAddress(deconetToken.address)
-  }).then(() => {
-    beep(3)
-    console.log('Done')
-  })
+  await deployer.deploy(Crowdsale)
+
+  crowdsale = await Crowdsale.at(Crowdsale.address)
+  console.log('Giving Crowdsale contract ability to transfer 50% of owner tokens')
+  let fiftyPercent = '500000000000000000000000000'
+  await deconetToken.approve(crowdsale.address, fiftyPercent)
+
+
+  console.log('Setting token contract address for Crowdsale')
+  await crowdsale.setTokenContractAddress(deconetToken.address)
+
+  beep(3)
+  console.log('Done')
+
 }
