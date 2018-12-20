@@ -1,6 +1,6 @@
 var HDWalletProvider = require('truffle-hdwallet-provider')
 
-// const LedgerWalletProvider = require('@deconet/truffle-ledger-provider')
+const LedgerWalletProvider = require('@deconet/truffle-ledger-provider')
 
 const ledgerOptions = {
   networkId: 1,
@@ -62,7 +62,7 @@ module.exports = {
       gasPrice: 3000000000 // 3 gwei
     },
     kovan: {
-      provider: 
+      provider:
       /*function() {
         return new LedgerWalletProvider(ledgerOptions, 'https://kovan.infura.io/JTdaA5dJvlwfCfdgT5Cm')
       },*/

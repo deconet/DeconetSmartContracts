@@ -1,3 +1,0 @@
-[submodule "other_dependencies/ds-math"]
-	path = other_dependencies/ds-math
-	url = https://github.com/dapphub/ds-math.git
