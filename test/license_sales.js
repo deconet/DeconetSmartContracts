@@ -1,6 +1,8 @@
 var BigNumber = require('bignumber.js')
 var uuid = require('uuid')
 
+BigNumber.config({ EXPONENTIAL_AT: 1e+9 })
+
 var Token = artifacts.require('./DeconetToken.sol')
 var Relay = artifacts.require('./Relay.sol')
 var Registry = artifacts.require('./Registry.sol')
@@ -47,7 +49,7 @@ contract('LicenseSales', function (accounts) {
     await ls.setRelayContractAddress(newAddress)
 
     relayAddress = await ls.relayContractAddress.call()
-    assert.equal(newAddress, relayAddress)
+    assert.equal(web3.utils.toChecksumAddress(newAddress), relayAddress)
 
     // set it back
     await ls.setRelayContractAddress(relay.address)
@@ -56,9 +58,9 @@ contract('LicenseSales', function (accounts) {
   })
 
   it('should be able to list and buy a module', async function () {
-    let sellerUsername = uuid.v4().substr(0, 32)
-    let moduleName = uuid.v4().substr(0, 32)
-    let modulePrice = 50000
+    let sellerUsername = web3.utils.toHex(uuid.v4().substr(0, 32))
+    let moduleName = web3.utils.toHex(uuid.v4().substr(0, 32))
+    let modulePrice = new BigNumber(50000)
     let licenseId = '0x00000001'
     let registry = await Registry.deployed()
     let token = await Token.deployed()
@@ -73,59 +75,61 @@ contract('LicenseSales', function (accounts) {
 
     let usernameAndProjectName = `${sellerUsername}/${moduleName}`
 
-    await registry.listModule(modulePrice, sellerUsername, moduleName, usernameAndProjectName, licenseId, { from: accounts[2] })
+    await registry.listModule(modulePrice.toString(), sellerUsername, moduleName, usernameAndProjectName, licenseId, { from: accounts[2] })
 
     // check that the module is actually in the registry
     let moduleId = await registry.getModuleId(usernameAndProjectName)
-    assert.notEqual(moduleId.toNumber(), 0)
+    assert.notEqual(moduleId.toString(), '0')
 
     // try sending but with less eth that the price of the module
     let exceptionGenerated = false
     try {
-      await ls.makeSale(moduleId, {from: accounts[1], value: modulePrice - 100})
+      await ls.makeSale(moduleId, {from: accounts[1], value: modulePrice.minus(100).toString() })
     } catch (e) {
       exceptionGenerated = true
     }
     assert.equal(exceptionGenerated, true)
 
-    let tokenBalanceBefore = (await token.balanceOf.call(accounts[2])).toNumber()
+    let tokenBalanceBefore = (await token.balanceOf.call(accounts[2])).toString()
     let ethBalanceBefore = await web3.eth.getBalance(accounts[2])
     let contractEthBalanceBefore = await web3.eth.getBalance(ls.address)
 
-    await ls.makeSale(moduleId, {from: accounts[1], value: modulePrice})
+    await ls.makeSale(moduleId, {from: accounts[1], value: modulePrice.toString() })
 
-    let tokenBalanceAfter = (await token.balanceOf.call(accounts[2])).toNumber()
+    let tokenBalanceAfter = (await token.balanceOf.call(accounts[2])).toString()
     let ethBalanceAfter = await web3.eth.getBalance(accounts[2])
     let tokenReward = await ls.tokenReward.call()
     if (process.env.DECONET_ACTIVATE_TOKEN_REWARD == "true") {
-      assert.equal(tokenBalanceAfter, tokenBalanceBefore + tokenReward.toNumber(), 'accounts[2] was not transferred the right amount of Deconet Tokens after the sale')
+      assert.equal(tokenBalanceAfter, new BigNumber(tokenBalanceBefore).plus(tokenReward).toString(), 'accounts[2] was not transferred the right amount of Deconet Tokens after the sale')
     } else {
       assert.equal(tokenBalanceAfter, tokenBalanceBefore, 'accounts[2] was not transferred the right amount of Deconet Tokens after the sale')
     }
 
-    let saleFee = await ls.saleFee.call()
-    let contractEthBalanceAfter = await web3.eth.getBalance(ls.address)
-    let networkFee = modulePrice * (saleFee.toNumber() / 100)
-    let sellerPayout = modulePrice - networkFee
-    let ethDiff = ethBalanceAfter.minus(ethBalanceBefore).toNumber()
-    assert.equal(ethDiff, sellerPayout, 'The seller account was not transferred the right amount of eth after the sale')
+    let saleFee = new BigNumber(await ls.saleFee.call())
+    let contractEthBalanceAfter = new BigNumber(await web3.eth.getBalance(ls.address))
+    let networkFee = saleFee.div(100).times(modulePrice)
+    let sellerPayout = modulePrice.minus(networkFee)
+    let ethDiff = new BigNumber(ethBalanceAfter).minus(ethBalanceBefore)
+    assert.equal(ethDiff.toString(), sellerPayout.toString(), 'The seller account was not transferred the right amount of eth after the sale')
 
-    let contractEthDiff = contractEthBalanceAfter.minus(contractEthBalanceBefore).toNumber()
-    assert.equal(contractEthDiff, modulePrice - sellerPayout, 'The contract account does not have the right amount of eth in it after the sale')
+    let contractEthDiff = contractEthBalanceAfter.minus(contractEthBalanceBefore)
+    assert.equal(contractEthDiff.toString(), modulePrice.minus(sellerPayout).toString(), 'The contract account does not have the right amount of eth in it after the sale')
 
-    let saleEvent = ls.LicenseSale({}, {fromBlock: 0, toBlock: 'latest'})
-    let sales = await Promisify(cb => saleEvent.get(cb))
+    let sales = await ls.getPastEvents(
+      "LicenseSale",
+      {fromBlock: "latest", toBlock: "latest"}
+    )
 
     assert.equal(sales.length, 1)
-    
+
     let sale = sales[0].args
 
-    assert.equal(web3.toAscii(sale.moduleName), moduleName)
-    assert.equal(web3.toAscii(sale.sellerUsername), sellerUsername)
+    assert.equal(sale.moduleName, moduleName)
+    assert.equal(sale.sellerUsername, sellerUsername)
     assert.equal(sale.sellerAddress, accounts[2])
     assert.equal(sale.buyerAddress, accounts[1])
-    assert.equal(sale.price.toNumber(), modulePrice)
-    assert.equal(sale.soldAt.toNumber() > 0, true)
+    assert.equal(sale.price.toString(), modulePrice.toString())
+    assert.equal(new BigNumber(sale.soldAt).gt(0), true)
     assert.equal(sale.rewardedTokens.toString(), tokenReward.toString())
     assert.equal(sale.networkFee.toString(), networkFee.toString())
     assert.equal(sale.licenseId, '0x00000001', 'wrong license')
@@ -134,11 +138,11 @@ contract('LicenseSales', function (accounts) {
     let gasPrice = new BigNumber('1')
     let contractBalanceBefore = await web3.eth.getBalance(ls.address)
     await ls.setWithdrawAddress(accounts[1])
-    let withdrawAddressBalanceBefore = await web3.eth.getBalance(accounts[1])
+    let withdrawAddressBalanceBefore = new BigNumber(await web3.eth.getBalance(accounts[1]))
 
     result = await ls.withdrawEther({from: accounts[1], gasPrice: gasPrice.toNumber()})
     gasUsed = result.receipt.gasUsed
-    weiConsumedByGas = gasPrice.times(BigNumber(gasUsed))
+    weiConsumedByGas = gasPrice.times(gasUsed)
 
     let contractBalanceAfter = await web3.eth.getBalance(ls.address)
     assert.equal(contractBalanceAfter.toString(), '0')
@@ -187,8 +191,8 @@ contract('LicenseSales', function (accounts) {
     let contractBalanceAfter = await token.balanceOf(licenseSales.address)
     let ownerBalanceAfter = await token.balanceOf(accounts[0])
 
-    assert.equal(contractBalanceBefore.minus(tokenAmount).toString(), contractBalanceAfter.toString())
-    assert.equal(ownerBalanceBefore.plus(tokenAmount).toString(), ownerBalanceAfter.toString())
+    assert.equal(new BigNumber(contractBalanceBefore).minus(tokenAmount).toString(), contractBalanceAfter.toString())
+    assert.equal(new BigNumber(ownerBalanceBefore).plus(tokenAmount).toString(), ownerBalanceAfter.toString())
   })
 
   it('should be possible to set the sale fee', async function () {

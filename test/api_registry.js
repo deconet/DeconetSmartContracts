@@ -1,6 +1,8 @@
 var uuid = require('uuid')
 var BigNumber = require('bignumber.js')
 
+BigNumber.config({ EXPONENTIAL_AT: 1e+9 })
+
 var APIRegistry = artifacts.require('./APIRegistry.sol')
 var Token = artifacts.require('./DeconetToken.sol')
 
@@ -12,8 +14,8 @@ contract('APIRegistry', function (accounts) {
   })
 
   it('should let a user list and edit and get an api', async function () {
-    let sellerUsername = uuid.v4().substr(0, 32)
-    let apiName = uuid.v4().substr(0, 32)
+    let sellerUsername = web3.utils.toHex(uuid.v4().substr(0, 32))
+    let apiName = web3.utils.toHex(uuid.v4().substr(0, 32))
     let hostname = uuid.v4() + '.com'
     let docsUrl = hostname + '/docs'
     let pricePerCall = 10000
@@ -31,10 +33,9 @@ contract('APIRegistry', function (accounts) {
     assert.notEqual(apiId.toNumber(), 0)
 
     let api = await apiRegistry.getApiById(apiId, { from: accounts[4] })
-    assert.equal(api.length, 6)
     assert.equal(api[0].toNumber(), pricePerCall)
-    assert.equal(web3.toAscii(api[1]), sellerUsername)
-    assert.equal(web3.toAscii(api[2]), apiName)
+    assert.equal(api[1], sellerUsername)
+    assert.equal(api[2], apiName)
     assert.equal(api[3], accounts[1])
     assert.equal(api[4], hostname)
     assert.equal(api[5], docsUrl)
@@ -45,10 +46,10 @@ contract('APIRegistry', function (accounts) {
     await apiRegistry.editApi(apiId, newPrice, accounts[2], newDocsUrl, { from: accounts[0] })
 
     api = await apiRegistry.getApiById(apiId, { from: accounts[4] })
-    assert.equal(api.length, 6)
+
     assert.equal(api[0].toNumber(), newPrice)
-    assert.equal(web3.toAscii(api[1]), sellerUsername)
-    assert.equal(web3.toAscii(api[2]), apiName)
+    assert.equal(api[1], sellerUsername)
+    assert.equal(api[2], apiName)
     assert.equal(api[3], accounts[2])
     assert.equal(api[4], hostname)
     assert.equal(api[5], newDocsUrl)
@@ -59,10 +60,10 @@ contract('APIRegistry', function (accounts) {
     await apiRegistry.editApi(apiId, newPrice, accounts[3], newDocsUrl, { from: accounts[2] })
 
     api = await apiRegistry.getApiById(apiId, { from: accounts[4] })
-    assert.equal(api.length, 6)
+
     assert.equal(api[0].toNumber(), newPrice)
-    assert.equal(web3.toAscii(api[1]), sellerUsername)
-    assert.equal(web3.toAscii(api[2]), apiName)
+    assert.equal(api[1], sellerUsername)
+    assert.equal(api[2], apiName)
     assert.equal(api[3], accounts[3])
     assert.equal(api[4], hostname)
     assert.equal(api[5], newDocsUrl)
@@ -78,10 +79,10 @@ contract('APIRegistry', function (accounts) {
     assert.equal(exceptionGenerated, true)
 
     api = await apiRegistry.getApiById(apiId, { from: accounts[4] })
-    assert.equal(api.length, 6)
+
     assert.equal(api[0].toNumber(), newPrice)
-    assert.equal(web3.toAscii(api[1]), sellerUsername)
-    assert.equal(web3.toAscii(api[2]), apiName)
+    assert.equal(api[1], sellerUsername)
+    assert.equal(api[2], apiName)
     assert.equal(api[3], accounts[3])
     assert.equal(api[4], hostname)
     assert.equal(api[5], newDocsUrl)
@@ -93,7 +94,7 @@ contract('APIRegistry', function (accounts) {
 
     for(let i = 1; i <= numApis.toNumber(); i++) {
       let api = await apiRegistry.getApiById(i, { from: accounts[4] })
-      assert.equal(api.length, 6)
+
       assert.notEqual(api[0].toNumber(), false)
       assert.notEqual(api[1], false)
       assert.notEqual(api[2], false)
@@ -104,8 +105,8 @@ contract('APIRegistry', function (accounts) {
   })
 
   it('should let a user list and get an api by name', async function () {
-    let sellerUsername = uuid.v4().substr(0, 32)
-    let apiName = uuid.v4().substr(0, 32)
+    let sellerUsername = web3.utils.toHex(uuid.v4().substr(0, 32))
+    let apiName = web3.utils.toHex(uuid.v4().substr(0, 32))
     let hostname = uuid.v4() + '.com'
     let docsUrl = hostname + '/docs'
     let pricePerCall = 10000
@@ -123,10 +124,10 @@ contract('APIRegistry', function (accounts) {
     assert.notEqual(apiId.toNumber(), 0)
 
     let api = await apiRegistry.getApiByName(hostname, { from: accounts[4] })
-    assert.equal(api.length, 6)
+
     assert.equal(api[0].toNumber(), pricePerCall)
-    assert.equal(web3.toAscii(api[1]), sellerUsername)
-    assert.equal(web3.toAscii(api[2]), apiName)
+    assert.equal(api[1], sellerUsername)
+    assert.equal(api[2], apiName)
     assert.equal(api[3], accounts[1])
     assert.equal(api[4], hostname)
     assert.equal(api[5], docsUrl)
@@ -146,18 +147,18 @@ contract('APIRegistry', function (accounts) {
     await apiRegistry.editApi(apiId, newPrice, accounts[2], newDocsUrl, { from: accounts[0] })
 
     api = await apiRegistry.getApiByName(hostname, { from: accounts[4] })
-    assert.equal(api.length, 6)
+
     assert.equal(api[0].toNumber(), newPrice)
-    assert.equal(web3.toAscii(api[1]), sellerUsername)
-    assert.equal(web3.toAscii(api[2]), apiName)
+    assert.equal(api[1], sellerUsername)
+    assert.equal(api[2], apiName)
     assert.equal(api[3], accounts[2])
     assert.equal(api[4], hostname)
     assert.equal(api[5], newDocsUrl)
   })
 
 it('should let a user list and get an api without dynamics', async function () {
-    let sellerUsername = uuid.v4().substr(0, 32)
-    let apiName = uuid.v4().substr(0, 32)
+    let sellerUsername = web3.utils.toHex(uuid.v4().substr(0, 32))
+    let apiName = web3.utils.toHex(uuid.v4().substr(0, 32))
     let hostname = uuid.v4() + '.com'
     let docsUrl = hostname + '/docs'
     let pricePerCall = 10000
@@ -175,10 +176,10 @@ it('should let a user list and get an api without dynamics', async function () {
     assert.notEqual(apiId.toNumber(), 0)
 
     let api = await apiRegistry.getApiByIdWithoutDynamics(apiId, { from: accounts[4] })
-    assert.equal(api.length, 4)
+
     assert.equal(api[0].toNumber(), pricePerCall)
-    assert.equal(web3.toAscii(api[1]), sellerUsername)
-    assert.equal(web3.toAscii(api[2]), apiName)
+    assert.equal(api[1], sellerUsername)
+    assert.equal(api[2], apiName)
     assert.equal(api[3], accounts[1])
 
      // test editing the api as contract owner
@@ -187,10 +188,10 @@ it('should let a user list and get an api without dynamics', async function () {
     await apiRegistry.editApi(apiId, newPrice, accounts[2], newDocsUrl, { from: accounts[0] })
 
     api = await apiRegistry.getApiByIdWithoutDynamics(apiId, { from: accounts[4] })
-    assert.equal(api.length, 4)
+
     assert.equal(api[0].toNumber(), newPrice)
-    assert.equal(web3.toAscii(api[1]), sellerUsername)
-    assert.equal(web3.toAscii(api[2]), apiName)
+    assert.equal(api[1], sellerUsername)
+    assert.equal(api[2], apiName)
     assert.equal(api[3], accounts[2])
   })
 
@@ -234,12 +235,12 @@ it('should let a user list and get an api without dynamics', async function () {
     let contractBalanceAfter = await token.balanceOf(apiRegistry.address)
     let ownerBalanceAfter = await token.balanceOf(accounts[0])
 
-    assert.equal(contractBalanceBefore.minus(tokenAmount).toString(), contractBalanceAfter.toString())
-    assert.equal(ownerBalanceBefore.plus(tokenAmount).toString(), ownerBalanceAfter.toString())
+    assert.equal(new BigNumber(contractBalanceBefore).minus(tokenAmount).toString(), contractBalanceAfter.toString())
+    assert.equal(new BigNumber(ownerBalanceBefore).plus(tokenAmount).toString(), ownerBalanceAfter.toString())
   })
   it('should not let a user list an API with bad inputs', async function () {
-    let sellerUsername = ''
-    let apiName = ''
+    let sellerUsername = web3.utils.toHex('')
+    let apiName = web3.utils.toHex('')
     let hostname = ''
     let docsUrl = ''
     let pricePerCall = '0'

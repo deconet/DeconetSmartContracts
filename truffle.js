@@ -1,10 +1,6 @@
-var HDWalletProvider = require('truffle-hdwallet-provider');
+var HDWalletProvider = require('truffle-hdwallet-provider')
 
-const LedgerWalletProvider = require('truffle-ledger-provider');
-
-// const LedgerProviderFactory = require("truffle-ledger-wallet-provider");
-
-// const LedgerWalletProvider = require("./utils/deconet-truffle-ledger-provider");
+const LedgerWalletProvider = require('@deconet/truffle-ledger-provider')
 
 const ledgerOptions = {
   networkId: 1,
@@ -12,10 +8,10 @@ const ledgerOptions = {
   askConfirm: false,
   accountsLength: 1,
   accountsOffset: 0,
-};  
+}
 
 // matching address is 0x648d692e5c507c233d0f9d9fea062429003b3144
-let mnemonic = process.env.DECONET_BLOCKCHAIN_ROPSTEN_MNEMONIC;
+let mnemonic = process.env.DECONET_BLOCKCHAIN_ROPSTEN_MNEMONIC
 
 module.exports = {
   networks: {
@@ -46,30 +42,33 @@ module.exports = {
       provider: function() {
         // return new LedgerWalletProvider(ledgerOptions, 'http://18.208.64.51:8545')
         // return new LedgerWalletProvider(ledgerOptions, "https://rapidly-renewed-buzzard.quiknode.io")
-        return new LedgerWalletProvider(ledgerOptions, "https://mainnet.infura.io/JTdaA5dJvlwfCfdgT5Cm")
+        //return new LedgerWalletProvider(ledgerOptions, "https://mainnet.infura.io/JTdaA5dJvlwfCfdgT5Cm")
+        return new HDWalletProvider(mnemonic, "https://mainnet.infura.io/JTdaA5dJvlwfCfdgT5Cm")
       },
       network_id: 1,
       gas: 7000000,
       gasPrice: 5000000000 // 5 gwei
     },
     rinkeby: {
-      provider: function() {
+      provider:
+      /* function() {
         return new LedgerWalletProvider(ledgerOptions, 'https://rinkeby.infura.io/JTdaA5dJvlwfCfdgT5Cm')
-      },
-      /*function () {
+      }, */
+      function () {
         return new HDWalletProvider(mnemonic, 'https://rinkeby.infura.io/JTdaA5dJvlwfCfdgT5Cm')
-      },*/
+      },
       network_id: 4,
       gas: 4700000,
       gasPrice: 3000000000 // 3 gwei
     },
     kovan: {
-      provider: function() {
+      provider:
+      /*function() {
         return new LedgerWalletProvider(ledgerOptions, 'https://kovan.infura.io/JTdaA5dJvlwfCfdgT5Cm')
-      },
-      /*function () {
-        return new HDWalletProvider(mnemonic, 'https://rinkeby.infura.io/JTdaA5dJvlwfCfdgT5Cm')
       },*/
+      function () {
+        return new HDWalletProvider(mnemonic, 'https://rinkeby.infura.io/JTdaA5dJvlwfCfdgT5Cm')
+      },
       network_id: 42,
       gas: 4700000,
       gasPrice: 1000000000 // 1 gwei
@@ -78,8 +77,17 @@ module.exports = {
       host: "127.0.0.1",
       network_id: "*",
       port: 8997,
-      gas: 9007199254740991,
+      gas: 0xfffffffffff,
       gasPrice: 0x01
     }
+  },
+  compilers: {
+    solc: {
+      version: "0.4.25",
+      optimizer: {
+        enabled: true,
+        runs: 200,
+      }
+    }
   }
-};
+}

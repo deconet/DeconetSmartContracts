@@ -1,7 +1,7 @@
-pragma solidity 0.4.24;
+pragma solidity 0.4.25;
 
-import "../node_modules/zeppelin-solidity/contracts/ownership/Ownable.sol";
-import "../node_modules/zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
+import "../node_modules/openzeppelin-solidity/contracts/ownership/Ownable.sol";
+import "../node_modules/openzeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 
 contract Registry is Ownable {
 
@@ -68,19 +68,19 @@ contract Registry is Ownable {
     // ------------------------------------------------------------------------
     function getModuleById(
         uint moduleId
-    ) 
-        public 
-        view 
+    )
+        public
+        view
         returns (
-            uint price, 
-            bytes32 sellerUsername, 
-            bytes32 moduleName, 
-            address sellerAddress, 
+            uint price,
+            bytes32 sellerUsername,
+            bytes32 moduleName,
+            address sellerAddress,
             bytes4 licenseId
-        ) 
+        )
     {
         ModuleForSale storage module = modules[moduleId];
-        
+
 
         if (module.sellerAddress == address(0)) {
             return;
@@ -98,16 +98,16 @@ contract Registry is Ownable {
     // ------------------------------------------------------------------------
     function getModuleByName(
         string usernameAndProjectName
-    ) 
-        public 
+    )
+        public
         view
         returns (
-            uint price, 
-            bytes32 sellerUsername, 
-            bytes32 moduleName, 
-            address sellerAddress, 
+            uint price,
+            bytes32 sellerUsername,
+            bytes32 moduleName,
+            address sellerAddress,
             bytes4 licenseId
-        ) 
+        )
     {
         uint moduleId = moduleIds[usernameAndProjectName];
         if (moduleId == 0) {

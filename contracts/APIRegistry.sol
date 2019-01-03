@@ -1,7 +1,8 @@
-pragma solidity 0.4.24;
+pragma solidity 0.4.25;
 
-import "../node_modules/zeppelin-solidity/contracts/ownership/Ownable.sol";
-import "../node_modules/zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
+import "../node_modules/openzeppelin-solidity/contracts/ownership/Ownable.sol";
+import "../node_modules/openzeppelin-solidity/contracts/token/ERC20/ERC20.sol";
+
 
 contract APIRegistry is Ownable {
 
@@ -41,7 +42,7 @@ contract APIRegistry is Ownable {
     function listApi(uint pricePerCall, bytes32 sellerUsername, bytes32 apiName, string hostname, string docsUrl) public {
         // make sure input params are valid
         require(pricePerCall != 0 && sellerUsername != "" && apiName != "" && bytes(hostname).length != 0);
-        
+
         // make sure the name isn't already taken
         require(apiIds[hostname] == 0);
 
@@ -70,15 +71,15 @@ contract APIRegistry is Ownable {
     // ------------------------------------------------------------------------
     function getApiByIdWithoutDynamics(
         uint apiId
-    ) 
+    )
         public
-        view 
+        view
         returns (
-            uint pricePerCall, 
+            uint pricePerCall,
             bytes32 sellerUsername,
-            bytes32 apiName, 
+            bytes32 apiName,
             address sellerAddress
-        ) 
+        )
     {
         APIForSale storage api = apis[apiId];
 
@@ -93,17 +94,17 @@ contract APIRegistry is Ownable {
     // ------------------------------------------------------------------------
     function getApiById(
         uint apiId
-    ) 
-        public 
-        view 
+    )
+        public
+        view
         returns (
-            uint pricePerCall, 
-            bytes32 sellerUsername, 
-            bytes32 apiName, 
-            address sellerAddress, 
-            string hostname, 
+            uint pricePerCall,
+            bytes32 sellerUsername,
+            bytes32 apiName,
+            address sellerAddress,
+            string hostname,
             string docsUrl
-        ) 
+        )
     {
         APIForSale storage api = apis[apiId];
 
@@ -120,17 +121,17 @@ contract APIRegistry is Ownable {
     // ------------------------------------------------------------------------
     function getApiByName(
         string _hostname
-    ) 
-        public 
-        view 
+    )
+        public
+        view
         returns (
-            uint pricePerCall, 
-            bytes32 sellerUsername, 
-            bytes32 apiName, 
-            address sellerAddress, 
-            string hostname, 
+            uint pricePerCall,
+            bytes32 sellerUsername,
+            bytes32 apiName,
+            address sellerAddress,
+            string hostname,
             string docsUrl
-        ) 
+        )
     {
         uint apiId = apiIds[_hostname];
         if (apiId == 0) {

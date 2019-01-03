@@ -7,6 +7,8 @@ var Registry = artifacts.require('./Registry.sol')
 var APIRegistry = artifacts.require('./APIRegistry.sol')
 var APICalls = artifacts.require('./APICalls.sol')
 
+BigNumber.config({ EXPONENTIAL_AT: 1e+9 })
+
 const Promisify = (inner) =>
   new Promise((resolve, reject) =>
     inner((err, res) => {
@@ -42,18 +44,18 @@ contract('APICalls', function (accounts) {
     let relay = await Relay.deployed()
 
     let relayAddress = await apiCalls.relayContractAddress.call()
-    assert.equal(relayAddress, relay.address)
+    assert.equal(web3.utils.toChecksumAddress(relayAddress), relay.address)
 
     let newAddress = '0xdf230f62739bedcb1bed428906232a44bc37de3a'
     await apiCalls.setRelayContractAddress(newAddress)
 
     relayAddress = await apiCalls.relayContractAddress.call()
-    assert.equal(newAddress, relayAddress)
+    assert.equal(web3.utils.toChecksumAddress(newAddress), relayAddress)
 
     // set it back
     await apiCalls.setRelayContractAddress(relay.address)
     relayAddress = await apiCalls.relayContractAddress.call()
-    assert.equal(relayAddress, relay.address)
+    assert.equal(web3.utils.toChecksumAddress(relayAddress), relay.address)
   })
 
   it('should have a settable defaultBuyerLastPaidAt variable', async function () {
@@ -77,8 +79,8 @@ contract('APICalls', function (accounts) {
   })
 
   it('should be able to list and report usage for an api', async function () {
-    let sellerUsername = uuid.v4().substr(0, 32)
-    let apiName = uuid.v4().substr(0, 32)
+    let sellerUsername = web3.utils.toHex(uuid.v4().substr(0, 32))
+    let apiName = web3.utils.toHex(uuid.v4().substr(0, 32))
     let hostname = uuid.v4() + '.com'
     let docsUrl = hostname + '/docs'
     let pricePerCall = 1
@@ -125,7 +127,9 @@ contract('APICalls', function (accounts) {
 
     let totalOwedAfter = await apiCalls.totalOwedForApi(apiId)
 
-    assert.equal(totalOwedBefore.add(new BigNumber('1000')).eq(totalOwedAfter), true)
+    assert.equal(
+      (new BigNumber(totalOwedBefore.toString())).plus('1000').eq(totalOwedAfter.toString()),
+      true)
   })
 
   it('should let buyers deposit credits, check their balance, and withdraw credits', async function () {
@@ -140,18 +144,29 @@ contract('APICalls', function (accounts) {
     let addCreditsTxn = await apiCalls.addCredits(accounts[2], {from: accounts[2], value: creditAmount.toNumber(), gasPrice: gasPrice.toNumber()})
 
     let gasUsed = addCreditsTxn.receipt.gasUsed
-    let weiConsumedByGas = gasPrice.times(BigNumber(gasUsed))
+    let weiConsumedByGas = gasPrice.times(new BigNumber(gasUsed))
 
     let ethBalanceAfter = await web3.eth.getBalance(accounts[2])
     let creditsBalanceAfter = await apiCalls.creditsBalanceOf(accounts[2])
 
-    assert.equal(creditsBalanceBefore.add(creditAmount).eq(creditsBalanceAfter), true)
-    assert.equal(ethBalanceBefore.minus(creditAmount).minus(weiConsumedByGas).eq(ethBalanceAfter), true)
+    assert.equal(
+      new BigNumber(creditsBalanceBefore.toString())
+        .plus(creditAmount)
+        .eq(creditsBalanceAfter.toString()),
+      true
+    )
+    assert.equal(
+      new BigNumber(ethBalanceBefore.toString())
+        .minus(creditAmount)
+        .minus(weiConsumedByGas)
+        .eq(ethBalanceAfter.toString()),
+      true
+    )
 
     // try to withdraw more credits than we have
     let exceptionGenerated = false
     try {
-      await apiCalls.withdrawCredits(creditsBalanceAfter.plus(new BigNumber('100')).toString(), {from: accounts[2], gasPrice: gasPrice.toNumber()})
+      await apiCalls.withdrawCredits(new BigNumber('100').plus(creditsBalanceAfter).toString(), {from: accounts[2], gasPrice: gasPrice.toNumber()})
     } catch (e) {
       exceptionGenerated = true
     }
@@ -168,8 +183,19 @@ contract('APICalls', function (accounts) {
     ethBalanceAfter = await web3.eth.getBalance(accounts[2])
     creditsBalanceAfter = await apiCalls.creditsBalanceOf(accounts[2])
 
-    assert.equal(ethBalanceBefore.minus(weiConsumedByGas).add(creditAmount).eq(ethBalanceAfter), true)
-    assert.equal(creditsBalanceBefore.minus(creditAmount).eq(creditsBalanceAfter), true)
+    assert.equal(
+      new BigNumber(ethBalanceBefore.toString())
+        .minus(weiConsumedByGas)
+        .plus(creditAmount)
+        .eq(ethBalanceAfter.toString()),
+      true
+    )
+    assert.equal(
+      new BigNumber(creditsBalanceBefore.toString())
+        .minus(creditAmount)
+        .eq(creditsBalanceAfter.toString()),
+      true
+    )
   })
 
   it('should let buyers deposit credits, use apis, and pay the seller for usage.  best case test where credits >= approved >= owed for accounts[2] and where owed > credits >= approved for accounts[3].', async function () {
@@ -192,13 +218,24 @@ contract('APICalls', function (accounts) {
     let ethBalanceAfter = await web3.eth.getBalance(accounts[2])
     let creditsBalanceAfter = await apiCalls.creditsBalanceOf(accounts[2])
 
-    assert.equal(creditsBalanceBefore.add(creditAmount).eq(creditsBalanceAfter), true)
-    assert.equal(ethBalanceBefore.minus(creditAmount).minus(weiConsumedByGas).eq(ethBalanceAfter), true)
+    assert.equal(
+      new BigNumber(creditsBalanceBefore.toString())
+        .plus(creditAmount)
+        .eq(creditsBalanceAfter.toString()),
+      true
+    )
+    assert.equal(
+      new BigNumber(ethBalanceBefore.toString())
+        .minus(creditAmount)
+        .minus(weiConsumedByGas)
+        .eq(ethBalanceAfter.toString()),
+      true
+    )
     assert.equal(addCreditsTxn.logs[0].event, 'LogDepositCredits')
 
 
-    let sellerUsername = uuid.v4().substr(0, 32)
-    let apiName = uuid.v4().substr(0, 32)
+    let sellerUsername = web3.utils.toHex(uuid.v4().substr(0, 32))
+    let apiName = web3.utils.toHex(uuid.v4().substr(0, 32))
     let hostname = uuid.v4() + '.com'
     let docsUrl = hostname + '/docs'
     let pricePerCall = new BigNumber('20')
@@ -211,7 +248,7 @@ contract('APICalls', function (accounts) {
     await apiRegistry.listApi(pricePerCall.toNumber(), sellerUsername, apiName, hostname, docsUrl, { from: accounts[1] })
 
     let numApisAfter = await apiRegistry.numApis.call()
-    assert.equal(numApisAfter.toNumber(), numApisBefore.toNumber() + 1)
+    assert.equal(numApisAfter.toString(), new BigNumber(numApisBefore.toString()).plus("1").toString())
 
     let apiId = await apiRegistry.getApiId(hostname)
 
@@ -229,8 +266,18 @@ contract('APICalls', function (accounts) {
     let totalOwedAfter = await apiCalls.totalOwedForApi(apiId)
     let amountOwedForAcctTwoAfter = await apiCalls.amountOwedForApiForBuyer(apiId, accounts[2])
 
-    assert.equal(totalOwedBefore.add(apiCallCount.times(pricePerCall)).eq(totalOwedAfter), true)
-    assert.equal(amountOwedForAcctTwoBefore.add(apiCallCount.times(pricePerCall)).eq(amountOwedForAcctTwoAfter), true)
+    assert.equal(
+      new BigNumber(totalOwedBefore.toString())
+        .plus(apiCallCount.times(pricePerCall))
+        .eq(totalOwedAfter.toString()),
+      true
+    )
+    assert.equal(
+      new BigNumber(amountOwedForAcctTwoBefore)
+        .plus(apiCallCount.times(pricePerCall))
+        .eq(amountOwedForAcctTwoAfter.toString()),
+      true
+  )
 
     totalOwedBefore = totalOwedAfter
     let amountOwedForAcctThreeBefore = await apiCalls.amountOwedForApiForBuyer(apiId, accounts[3])
@@ -252,8 +299,18 @@ contract('APICalls', function (accounts) {
     totalOwedAfter = await apiCalls.totalOwedForApi(apiId)
     let amountOwedForAcctThreeAfter = await apiCalls.amountOwedForApiForBuyer(apiId, accounts[3])
 
-    assert.equal(totalOwedBefore.add(apiCallCount.times(pricePerCall)).eq(totalOwedAfter), true)
-    assert.equal(amountOwedForAcctThreeBefore.add(apiCallCount.times(pricePerCall)).eq(amountOwedForAcctThreeAfter), true)
+    assert.equal(
+      new BigNumber(totalOwedBefore.toString())
+        .plus(apiCallCount.times(pricePerCall))
+        .eq(totalOwedAfter.toString()),
+      true
+    )
+    assert.equal(
+      new BigNumber(amountOwedForAcctThreeBefore.toString())
+        .plus(apiCallCount.times(pricePerCall))
+        .eq(amountOwedForAcctThreeAfter.toString()),
+      true
+    )
 
     let sellerBalanceBefore = await web3.eth.getBalance(accounts[1])
 
@@ -286,16 +343,25 @@ contract('APICalls', function (accounts) {
     let tokenBalanceAfter = await token.balanceOf.call(accounts[1])
     let totalPayable = apiCallCount.times(pricePerCall)
     let saleFee = await apiCalls.saleFee.call()
-    let networkFee = BigNumber(totalPayable.times(saleFee.div(100)))
+    let networkFee = new BigNumber(totalPayable.times(new BigNumber(saleFee.toString()).div(100)))
     let calculatedProfit = totalPayable.minus(networkFee)
 
     if (process.env.DECONET_ACTIVATE_TOKEN_REWARD == "true") {
-      assert.equal(tokenBalanceBefore.add(tokenReward).toString(), tokenBalanceAfter.toString())
+      assert.equal(
+        new BigNumber(tokenBalanceBefore.toString()).plus(tokenReward).toString(),
+        tokenBalanceAfter.toString()
+      )
     } else {
       assert.equal(tokenBalanceBefore.toString(), tokenBalanceAfter.toString())
     }
 
-    assert.equal(sellerBalanceBefore.minus(weiConsumedByGas).add(calculatedProfit).eq(sellerBalanceAfter), true)
+    assert.equal(
+      new BigNumber(sellerBalanceBefore.toString())
+        .minus(weiConsumedByGas)
+        .plus(calculatedProfit)
+        .eq(sellerBalanceAfter.toString()),
+      true
+    )
 
     amountOwedForAcctThreeAfter = await apiCalls.amountOwedForApiForBuyer(apiId, accounts[3])
     assert.equal(amountOwedForAcctThreeAfter.toString(), totalPayable.toString())
@@ -305,29 +371,30 @@ contract('APICalls', function (accounts) {
 
     // check that accounts[3] is overdrafted
     buyerInfo = await apiCalls.buyerInfoOf(accounts[3])
-    assert.equal(buyerInfo.length, 5)
-    assert.equal(buyerInfo[0], true) // overdrafted
-    assert.equal(buyerInfo[1], 1) // lifetime overdraft count
-    assert.equal(buyerInfo[2], 0) // credits
-    assert.equal(buyerInfo[3], 0) // lifetime credits used
-    assert.equal(buyerInfo[4], 0) // lifetimeExceededApprovalAmountCount
+    assert.equal(buyerInfo.overdrafted, true) // overdrafted
+    assert.equal(buyerInfo.lifetimeOverdraftCount.toString(), '1') // lifetime overdraft count
+    assert.equal(buyerInfo.credits.toString(), '0') // credits
+    assert.equal(buyerInfo.lifetimeCreditsUsed.toString(), '0') // lifetime credits used
+    assert.equal(buyerInfo.lifetimeExceededApprovalAmountCount.toString(), '0') // lifetimeExceededApprovalAmountCount
 
     // check that accounts[2] is not overdrafted
     buyerInfo = await apiCalls.buyerInfoOf(accounts[2])
-    assert.equal(buyerInfo.length, 5)
-    assert.equal(buyerInfo[0], false) // overdrafted
-    assert.equal(buyerInfo[1], 0) // lifetime overdraft count
-    assert.equal(buyerInfo[2].toString(), creditAmount.minus(totalPayable).toString()) // credits
-    assert.notEqual(buyerInfo[3].toString, '0')
-    assert.equal(buyerInfo[3].toString(), lifetimeCreditsUsedBeforeAcctTwo.plus(totalPayable).toString()) // lifetime credits used
-    assert.equal(buyerInfo[4], 0) // lifetimeExceededApprovalAmountCount
+    assert.equal(buyerInfo.overdrafted, false) // overdrafted
+    assert.equal(buyerInfo.lifetimeOverdraftCount.toString(), '0')
+    assert.equal(buyerInfo.credits.toString(), creditAmount.minus(totalPayable).toString())
+    assert.notEqual(buyerInfo.lifetimeCreditsUsed.toString(), '0')
+    assert.equal(
+      buyerInfo.lifetimeCreditsUsed.toString(),
+      new BigNumber(lifetimeCreditsUsedBeforeAcctTwo.toString()).plus(totalPayable).toString()
+    )
+    assert.equal(buyerInfo.lifetimeExceededApprovalAmountCount.toString(), '0')
 
     // check that nonzeroBalances holds accounts[3] only.
     let nonzeroAddressesLength = await apiCalls.nonzeroAddressesLengthForApi(apiId)
-    assert.equal(nonzeroAddressesLength.toString(), 1)
+    assert.equal(nonzeroAddressesLength.toString(), '1')
 
     let nonzeroAddressesElement = await apiCalls.nonzeroAddressesElementForApi(apiId, 0)
-    assert.equal(nonzeroAddressesElement, accounts[3])
+    assert.equal(web3.utils.toChecksumAddress(nonzeroAddressesElement), accounts[3])
 
     // test setting approval amount for an acct that already has a lastPaidAt.  it should fail.
     let exceptionGenerated = false
@@ -337,7 +404,7 @@ contract('APICalls', function (accounts) {
       exceptionGenerated = true
     }
     assert.equal(exceptionGenerated, true)
-    
+
 
     // test pulling out the txn fees
     let contractBalanceBefore = await web3.eth.getBalance(apiCalls.address)
@@ -350,13 +417,21 @@ contract('APICalls', function (accounts) {
 
     result = await apiCalls.withdrawEther(safeWithdrawAmount.toString(), {from: accounts[1], gasPrice: gasPrice.toNumber()})
     gasUsed = result.receipt.gasUsed
-    weiConsumedByGas = gasPrice.times(BigNumber(gasUsed))
+    weiConsumedByGas = gasPrice.times(new BigNumber(gasUsed))
 
     let contractBalanceAfter = await web3.eth.getBalance(apiCalls.address)
-    assert.equal(contractBalanceBefore.minus(networkFee).toString(), contractBalanceAfter.toString())
+    assert.equal(
+      new BigNumber(contractBalanceBefore.toString()).minus(networkFee.toString()).toString(),
+      contractBalanceAfter.toString()
+    )
 
     let withdrawAddressBalanceAfter = await web3.eth.getBalance(accounts[1])
-    assert.equal(withdrawAddressBalanceBefore.minus(weiConsumedByGas).plus(networkFee).toString(), withdrawAddressBalanceAfter.toString())
+    assert.equal(
+      new BigNumber(withdrawAddressBalanceBefore.toString())
+        .minus(weiConsumedByGas.toString())
+        .plus(networkFee.toString()).toString(),
+      withdrawAddressBalanceAfter.toString()
+    )
 
     // pull the remaining credits out
     ethBalanceBefore = await web3.eth.getBalance(accounts[2])
@@ -365,12 +440,19 @@ contract('APICalls', function (accounts) {
     let withdrawCreditsTxn = await apiCalls.withdrawCredits(creditsBalanceBefore.toString(), {from: accounts[2], gasPrice: gasPrice.toNumber()})
 
     gasUsed = withdrawCreditsTxn.receipt.gasUsed
-    weiConsumedByGas = gasPrice.times(BigNumber(gasUsed))
+    weiConsumedByGas = gasPrice.times(new BigNumber(gasUsed.toString()))
 
     ethBalanceAfter = await web3.eth.getBalance(accounts[2])
     creditsBalanceAfter = await apiCalls.creditsBalanceOf(accounts[2])
 
-    assert.equal(ethBalanceBefore.minus(weiConsumedByGas).minus(totalPayable).add(creditAmount).eq(ethBalanceAfter), true)
+    assert.equal(
+      new BigNumber(ethBalanceBefore.toString())
+        .minus(weiConsumedByGas)
+        .minus(totalPayable)
+        .plus(creditAmount)
+        .eq(ethBalanceAfter.toString()),
+      true
+    )
     assert.equal(creditsBalanceAfter.toString(), '0')
     assert.equal(withdrawCreditsTxn.logs[0].event, 'LogWithdrawCredits')
   })
@@ -395,13 +477,24 @@ contract('APICalls', function (accounts) {
     let ethBalanceAfter = await web3.eth.getBalance(accounts[2])
     let creditsBalanceAfter = await apiCalls.creditsBalanceOf(accounts[2])
 
-    assert.equal(creditsBalanceBefore.add(creditAmount).eq(creditsBalanceAfter), true)
-    assert.equal(ethBalanceBefore.minus(creditAmount).minus(weiConsumedByGas).eq(ethBalanceAfter), true)
+    assert.equal(
+      new BigNumber(creditsBalanceBefore.toString())
+        .plus(creditAmount)
+        .eq(creditsBalanceAfter.toString()),
+      true
+    )
+    assert.equal(
+      new BigNumber(ethBalanceBefore.toString())
+        .minus(creditAmount)
+        .minus(weiConsumedByGas)
+        .eq(ethBalanceAfter.toString()),
+      true
+    )
     assert.equal(addCreditsTxn.logs[0].event, 'LogDepositCredits')
 
 
-    let sellerUsername = uuid.v4().substr(0, 32)
-    let apiName = uuid.v4().substr(0, 32)
+    let sellerUsername = web3.utils.toHex(uuid.v4().substr(0, 32))
+    let apiName = web3.utils.toHex(uuid.v4().substr(0, 32))
     let hostname = uuid.v4() + '.com'
     let docsUrl = hostname + '/docs'
     let pricePerCall = new BigNumber('20')
@@ -432,8 +525,18 @@ contract('APICalls', function (accounts) {
     let totalOwedAfter = await apiCalls.totalOwedForApi(apiId)
     let amountOwedForAcctTwoAfter = await apiCalls.amountOwedForApiForBuyer(apiId, accounts[2])
 
-    assert.equal(totalOwedBefore.add(apiCallCount.times(pricePerCall)).eq(totalOwedAfter), true)
-    assert.equal(amountOwedForAcctTwoBefore.add(apiCallCount.times(pricePerCall)).eq(amountOwedForAcctTwoAfter), true)
+    assert.equal(
+      new BigNumber(totalOwedBefore.toString())
+        .plus(apiCallCount.times(pricePerCall))
+        .eq(totalOwedAfter.toString()),
+      true
+    )
+    assert.equal(
+      new BigNumber(amountOwedForAcctTwoBefore.toString())
+        .plus(apiCallCount.times(pricePerCall))
+        .eq(amountOwedForAcctTwoAfter.toString()),
+      true
+    )
 
     totalOwedBefore = totalOwedAfter
     let amountOwedForAcctThreeBefore = await apiCalls.amountOwedForApiForBuyer(apiId, accounts[3])
@@ -455,8 +558,18 @@ contract('APICalls', function (accounts) {
     totalOwedAfter = await apiCalls.totalOwedForApi(apiId)
     let amountOwedForAcctThreeAfter = await apiCalls.amountOwedForApiForBuyer(apiId, accounts[3])
 
-    assert.equal(totalOwedBefore.add(apiCallCount.times(pricePerCall)).eq(totalOwedAfter), true)
-    assert.equal(amountOwedForAcctThreeBefore.add(apiCallCount.times(pricePerCall)).eq(amountOwedForAcctThreeAfter), true)
+    assert.equal(
+      new BigNumber(totalOwedBefore.toString())
+        .plus(apiCallCount.times(pricePerCall))
+        .eq(totalOwedAfter.toString()),
+      true
+    )
+    assert.equal(
+      new BigNumber(amountOwedForAcctThreeBefore.toString())
+        .plus(apiCallCount.times(pricePerCall))
+        .eq(amountOwedForAcctThreeAfter.toString()),
+      true
+    )
 
     let sellerBalanceBefore = await web3.eth.getBalance(accounts[1])
     let tokenBalanceBefore = await token.balanceOf.call(accounts[1])
@@ -492,12 +605,12 @@ contract('APICalls', function (accounts) {
     buyerInfo = await apiCalls.buyerInfoOf(accounts[2])
     let overdraftCountAcctTwo = buyerInfo[1]
     let lifetimeCreditsUsedAcctTwo = buyerInfo[3]
-    let lifetimeExceededApprovalAmountCountAcctTwo = buyerInfo[4] 
+    let lifetimeExceededApprovalAmountCountAcctTwo = buyerInfo[4]
 
     result = await apiCalls.paySeller(apiId, {from: accounts[1], gasPrice: gasPrice.toNumber()})
 
     gasUsed = result.receipt.gasUsed
-    weiConsumedByGas = gasPrice.times(BigNumber(gasUsed))
+    weiConsumedByGas = gasPrice.times(new BigNumber(gasUsed))
 
     creditsBalanceAfter = await apiCalls.creditsBalanceOf(accounts[2])
 
@@ -507,12 +620,17 @@ contract('APICalls', function (accounts) {
     assert.equal(result.logs.length, 0) // no events happened because nothing was approved.
 
     gasUsed = result.receipt.gasUsed
-    weiConsumedByGas = gasPrice.times(BigNumber(gasUsed))
+    weiConsumedByGas = gasPrice.times(new BigNumber(gasUsed))
 
     let sellerBalanceAfter = await web3.eth.getBalance(accounts[1])
     let tokenBalanceAfter = await token.balanceOf.call(accounts[1])
     // the seller got paid nothing
-    assert.equal(sellerBalanceBefore.minus(weiConsumedByGas).eq(sellerBalanceAfter), true)
+    assert.equal(
+      new BigNumber(sellerBalanceBefore)
+        .minus(weiConsumedByGas)
+        .eq(sellerBalanceAfter.toString()),
+      true
+    )
     // no tokens should be transferred
     assert.equal(tokenBalanceBefore.toString(), tokenBalanceAfter.toString())
 
@@ -525,21 +643,26 @@ contract('APICalls', function (accounts) {
 
     // check that accounts[3] is overdrafted
     buyerInfo = await apiCalls.buyerInfoOf(accounts[3])
-    assert.equal(buyerInfo.length, 5)
-    assert.equal(buyerInfo[0], true) // overdrafted
-    assert.equal(buyerInfo[1].toString(), overdraftCountAcctThree.add(new BigNumber('1')).toString()) // lifetime overdraft count
-    assert.equal(buyerInfo[2], 0) // credits
-    assert.equal(buyerInfo[3], 0) // lifetime credits used
-    assert.equal(buyerInfo[4], 0) // lifetimeExceededApprovalAmountCount
+    assert.equal(buyerInfo.overdrafted, true)
+    assert.equal(
+      buyerInfo.lifetimeOverdraftCount.toString(),
+      new BigNumber(overdraftCountAcctThree).plus('1').toString()
+    )
+    assert.equal(buyerInfo.credits.toString(), '0')
+    assert.equal(buyerInfo.lifetimeCreditsUsed.toString(), '0')
+    assert.equal(buyerInfo.lifetimeExceededApprovalAmountCount.toString(), '0')
+
 
     // check that accounts[2] is not overdrafted but has an exceeded amount flag
     buyerInfo = await apiCalls.buyerInfoOf(accounts[2])
-    assert.equal(buyerInfo.length, 5)
-    assert.equal(buyerInfo[0], false) // overdrafted
-    assert.equal(buyerInfo[1], overdraftCountAcctTwo.toString()) // lifetime overdraft count
-    assert.equal(buyerInfo[2].toString(), creditAmount.toString()) // credits
-    assert.equal(buyerInfo[3].toString(), lifetimeCreditsUsedAcctTwo.toString()) // lifetime credits used
-    assert.equal(buyerInfo[4].toString(), lifetimeExceededApprovalAmountCountAcctTwo.plus(new BigNumber('1')).toString()) // lifetimeExceededApprovalAmountCount
+    assert.equal(buyerInfo.overdrafted, false)
+    assert.equal(buyerInfo.lifetimeOverdraftCount.toString(), overdraftCountAcctTwo.toString())
+    assert.equal(buyerInfo.credits.toString(), creditAmount.toString())
+    assert.equal(buyerInfo.lifetimeCreditsUsed.toString(), lifetimeCreditsUsedAcctTwo.toString())
+    assert.equal(
+      buyerInfo.lifetimeExceededApprovalAmountCount.toString(),
+      new BigNumber(lifetimeExceededApprovalAmountCountAcctTwo).plus('1').toString()
+    )
   })
 
   it('should only pay the seller the approved amounts.  tests case where credits >= owed > approved for acct 2 and owed > credits >= approved for acct 3', async function () {
@@ -569,13 +692,13 @@ contract('APICalls', function (accounts) {
     let ethBalanceAfter = await web3.eth.getBalance(accounts[2])
     let creditsBalanceAfter = await apiCalls.creditsBalanceOf(accounts[2])
 
-    assert.equal(creditsBalanceBefore.add(creditAmount).eq(creditsBalanceAfter), true)
-    assert.equal(ethBalanceBefore.minus(creditAmount).minus(weiConsumedByGas).eq(ethBalanceAfter), true)
+    assert.equal(new BigNumber(creditsBalanceBefore).plus(creditAmount).eq(creditsBalanceAfter.toString()), true)
+    assert.equal(new BigNumber(ethBalanceBefore).minus(creditAmount).minus(weiConsumedByGas).eq(ethBalanceAfter.toString()), true)
     assert.equal(addCreditsTxn.logs[0].event, 'LogDepositCredits')
 
 
-    let sellerUsername = uuid.v4().substr(0, 32)
-    let apiName = uuid.v4().substr(0, 32)
+    let sellerUsername = web3.utils.toHex(uuid.v4().substr(0, 32))
+    let apiName = web3.utils.toHex(uuid.v4().substr(0, 32))
     let hostname = uuid.v4() + '.com'
     let docsUrl = hostname + '/docs'
     let pricePerCall = new BigNumber('20000')
@@ -606,8 +729,18 @@ contract('APICalls', function (accounts) {
     let totalOwedAfter = await apiCalls.totalOwedForApi(apiId)
     let amountOwedForAcctTwoAfter = await apiCalls.amountOwedForApiForBuyer(apiId, accounts[2])
 
-    assert.equal(totalOwedBefore.add(apiCallCount.times(pricePerCall)).eq(totalOwedAfter), true)
-    assert.equal(amountOwedForAcctTwoBefore.add(apiCallCount.times(pricePerCall)).eq(amountOwedForAcctTwoAfter), true)
+    assert.equal(
+      new BigNumber(totalOwedBefore)
+        .plus(apiCallCount.times(pricePerCall))
+        .eq(totalOwedAfter.toString()),
+      true
+    )
+    assert.equal(
+      new BigNumber(amountOwedForAcctTwoBefore)
+        .plus(apiCallCount.times(pricePerCall))
+        .eq(amountOwedForAcctTwoAfter.toString()),
+      true
+    )
 
     totalOwedBefore = totalOwedAfter
     let amountOwedForAcctThreeBefore = await apiCalls.amountOwedForApiForBuyer(apiId, accounts[3])
@@ -629,8 +762,13 @@ contract('APICalls', function (accounts) {
     totalOwedAfter = await apiCalls.totalOwedForApi(apiId)
     let amountOwedForAcctThreeAfter = await apiCalls.amountOwedForApiForBuyer(apiId, accounts[3])
 
-    assert.equal(totalOwedBefore.add(apiCallCount.times(pricePerCall)).eq(totalOwedAfter), true)
-    assert.equal(amountOwedForAcctThreeBefore.add(apiCallCount.times(pricePerCall)).eq(amountOwedForAcctThreeAfter), true)
+    assert.equal(new BigNumber(totalOwedBefore).plus(apiCallCount.times(pricePerCall)).eq(totalOwedAfter.toString()), true)
+    assert.equal(
+      new BigNumber(amountOwedForAcctThreeBefore)
+        .plus(apiCallCount.times(pricePerCall))
+        .eq(amountOwedForAcctThreeAfter),
+      true
+    )
 
     let sellerBalanceBefore = await web3.eth.getBalance(accounts[1])
     let tokenBalanceBefore = await token.balanceOf.call(accounts[1])
@@ -656,7 +794,7 @@ contract('APICalls', function (accounts) {
 
     buyerInfo = await apiCalls.buyerInfoOf(accounts[2])
     let overdraftCountAcctTwo = buyerInfo[1]
-    let lifetimeCreditsUsedBeforeAcctTwo = buyerInfo[3] 
+    let lifetimeCreditsUsedBeforeAcctTwo = buyerInfo[3]
     let lifetimeExceededApprovalAmountCountBeforeAcctTwo = buyerInfo[4]
 
     let now = new BigNumber(Math.round(new Date().getTime() / 1000))
@@ -683,7 +821,7 @@ contract('APICalls', function (accounts) {
     // console.log('creditsBalanceBefore: ' + creditsBalanceBefore.toString())
     // console.log('creditsBalanceBefore - maxSpent: ' + creditsBalanceBefore.minus(maxSpent).toString())
     // console.log('creditsBalanceAfter: ' + creditsBalanceAfter.toString())
-    assert.equal(creditsBalanceBefore.minus(maxSpent).eq(creditsBalanceAfter), true)
+    assert.equal(new BigNumber(creditsBalanceBefore).minus(maxSpent).eq(creditsBalanceAfter.toString()), true)
 
     assert.equal(result.logs.length, 2) // two events happened - send credits and api paid
     assert.equal(result.logs[0].event, 'LogSpendCredits')
@@ -697,13 +835,22 @@ contract('APICalls', function (accounts) {
     let tokenBalanceAfter = await token.balanceOf.call(accounts[1])
     let totalPayable = maxSpent
     let saleFee = await apiCalls.saleFee.call()
-    let networkFee = BigNumber(totalPayable.times(saleFee.div(100)))
+    let networkFee = new BigNumber(totalPayable.times(saleFee).div(100))
     let calculatedProfit = totalPayable.minus(networkFee)
 
-    assert.equal(sellerBalanceBefore.minus(weiConsumedByGas).plus(calculatedProfit).toString(), sellerBalanceAfter.toString())
+    assert.equal(
+      new BigNumber(sellerBalanceBefore)
+        .minus(weiConsumedByGas)
+        .plus(calculatedProfit).toString(),
+      sellerBalanceAfter.toString()
+    )
 
     if (process.env.DECONET_ACTIVATE_TOKEN_REWARD == "true") {
-      assert.equal(tokenBalanceBefore.plus(tokenReward).toString(), tokenBalanceAfter.toString())
+      assert.equal(
+        new BigNumber(tokenBalanceBefore)
+          .plus(tokenReward).toString(),
+        tokenBalanceAfter.toString()
+      )
     } else {
       assert.equal(tokenBalanceBefore.toString(), tokenBalanceAfter.toString())
     }
@@ -717,21 +864,29 @@ contract('APICalls', function (accounts) {
 
     // check that accounts[3] is overdrafted
     buyerInfo = await apiCalls.buyerInfoOf(accounts[3])
-    assert.equal(buyerInfo.length, 5)
-    assert.equal(buyerInfo[0], true) // overdrafted
-    assert.equal(buyerInfo[1].toString(), overdraftCountAcctThree.add(new BigNumber('1')).toString()) // lifetime overdraft count
-    assert.equal(buyerInfo[2], 0) // credits
-    assert.equal(buyerInfo[3], 0) // lifetime credits used
-    assert.equal(buyerInfo[4], 0) // lifetimeExceededApprovalAmountCount
+    assert.equal(buyerInfo.overdrafted, true)
+    assert.equal(
+      buyerInfo.lifetimeOverdraftCount.toString(),
+      new BigNumber(overdraftCountAcctThree).plus('1').toString()
+    )
+    assert.equal(buyerInfo.credits.toString(), '0')
+    assert.equal(buyerInfo.lifetimeCreditsUsed.toString(), '0')
+    assert.equal(buyerInfo.lifetimeExceededApprovalAmountCount.toString(), '0')
+
 
     // check that accounts[2] is not overdrafted but has an exceeded amount flag
     buyerInfo = await apiCalls.buyerInfoOf(accounts[2])
-    assert.equal(buyerInfo.length, 5)
-    assert.equal(buyerInfo[0], false) // overdrafted
-    assert.equal(buyerInfo[1], overdraftCountAcctTwo.toString()) // lifetime overdraft count
-    assert.equal(buyerInfo[2].toString(), creditAmount.minus(maxSpent).toString()) // credits
-    assert.equal(buyerInfo[3].toString(), lifetimeCreditsUsedBeforeAcctTwo.add(maxSpent).toString()) // lifetime credits used
-    assert.equal(buyerInfo[4].toString(), lifetimeExceededApprovalAmountCountBeforeAcctTwo.plus(new BigNumber('1')).toString()) // lifetimeExceededApprovalAmountCount
+    assert.equal(buyerInfo.overdrafted, false)
+    assert.equal(buyerInfo.lifetimeOverdraftCount.toString(), overdraftCountAcctTwo.toString())
+    assert.equal(buyerInfo.credits.toString(), new BigNumber(creditAmount).minus(maxSpent).toString())
+    assert.equal(
+      buyerInfo.lifetimeCreditsUsed.toString(),
+      new BigNumber(lifetimeCreditsUsedBeforeAcctTwo).plus(maxSpent).toString()
+    )
+    assert.equal(
+      buyerInfo.lifetimeExceededApprovalAmountCount.toString(),
+      new BigNumber(lifetimeExceededApprovalAmountCountBeforeAcctTwo).plus('1').toString()
+    )
   })
 
   it('should only pay the seller the approved amounts.  tests case where owed > approved > credits for acct 2 and owed > credits >= approved for acct 3', async function () {
@@ -761,13 +916,23 @@ contract('APICalls', function (accounts) {
     let ethBalanceAfter = await web3.eth.getBalance(accounts[2])
     let creditsBalanceAfter = await apiCalls.creditsBalanceOf(accounts[2])
 
-    assert.equal(creditsBalanceBefore.add(creditAmount).eq(creditsBalanceAfter), true)
-    assert.equal(ethBalanceBefore.minus(creditAmount).minus(weiConsumedByGas).eq(ethBalanceAfter), true)
+    assert.equal(
+      new BigNumber(creditsBalanceBefore)
+        .plus(creditAmount).eq(creditsBalanceAfter.toString()),
+      true
+    )
+    assert.equal(
+      new BigNumber(ethBalanceBefore)
+        .minus(creditAmount)
+        .minus(weiConsumedByGas)
+        .eq(ethBalanceAfter.toString()),
+      true
+    )
     assert.equal(addCreditsTxn.logs[0].event, 'LogDepositCredits')
 
 
-    let sellerUsername = uuid.v4().substr(0, 32)
-    let apiName = uuid.v4().substr(0, 32)
+    let sellerUsername = web3.utils.toHex(uuid.v4().substr(0, 32))
+    let apiName = web3.utils.toHex(uuid.v4().substr(0, 32))
     let hostname = uuid.v4() + '.com'
     let docsUrl = hostname + '/docs'
     let pricePerCall = new BigNumber('20000')
@@ -798,8 +963,18 @@ contract('APICalls', function (accounts) {
     let totalOwedAfter = await apiCalls.totalOwedForApi(apiId)
     let amountOwedForAcctTwoAfter = await apiCalls.amountOwedForApiForBuyer(apiId, accounts[2])
 
-    assert.equal(totalOwedBefore.add(apiCallCount.times(pricePerCall)).eq(totalOwedAfter), true)
-    assert.equal(amountOwedForAcctTwoBefore.add(apiCallCount.times(pricePerCall)).eq(amountOwedForAcctTwoAfter), true)
+    assert.equal(
+      new BigNumber(totalOwedBefore)
+        .plus(apiCallCount.times(pricePerCall))
+        .eq(totalOwedAfter.toString()),
+      true
+    )
+    assert.equal(
+      new BigNumber(amountOwedForAcctTwoBefore)
+        .plus(apiCallCount.times(pricePerCall))
+        .eq(amountOwedForAcctTwoAfter.toString()),
+      true
+    )
 
     totalOwedBefore = totalOwedAfter
     let amountOwedForAcctThreeBefore = await apiCalls.amountOwedForApiForBuyer(apiId, accounts[3])
@@ -821,8 +996,18 @@ contract('APICalls', function (accounts) {
     totalOwedAfter = await apiCalls.totalOwedForApi(apiId)
     let amountOwedForAcctThreeAfter = await apiCalls.amountOwedForApiForBuyer(apiId, accounts[3])
 
-    assert.equal(totalOwedBefore.add(apiCallCount.times(pricePerCall)).eq(totalOwedAfter), true)
-    assert.equal(amountOwedForAcctThreeBefore.add(apiCallCount.times(pricePerCall)).eq(amountOwedForAcctThreeAfter), true)
+    assert.equal(
+      new BigNumber(totalOwedBefore)
+        .plus(apiCallCount.times(pricePerCall))
+        .eq(totalOwedAfter.toString()),
+      true
+    )
+    assert.equal(
+      new BigNumber(amountOwedForAcctThreeBefore)
+        .plus(apiCallCount.times(pricePerCall))
+        .eq(amountOwedForAcctThreeAfter.toString()),
+      true
+    )
 
     let sellerBalanceBefore = await web3.eth.getBalance(accounts[1])
     let tokenBalanceBefore = await token.balanceOf.call(accounts[1])
@@ -848,7 +1033,7 @@ contract('APICalls', function (accounts) {
 
     buyerInfo = await apiCalls.buyerInfoOf(accounts[2])
     let overdraftCountAcctTwo = buyerInfo[1]
-    let lifetimeCreditsUsedBeforeAcctTwo = buyerInfo[3] 
+    let lifetimeCreditsUsedBeforeAcctTwo = buyerInfo[3]
     let lifetimeExceededApprovalAmountCountBeforeAcctTwo = buyerInfo[4]
 
     let now = new BigNumber(Math.round(new Date().getTime() / 1000))
@@ -873,7 +1058,12 @@ contract('APICalls', function (accounts) {
     // console.log('creditsBalanceBefore: ' + creditsBalanceBefore.toString())
     // console.log('creditsBalanceBefore - maxSpent: ' + creditsBalanceBefore.minus(maxSpent).toString())
     // console.log('creditsBalanceAfter: ' + creditsBalanceAfter.toString())
-    assert.equal(creditsBalanceBefore.minus(creditAmount).eq(creditsBalanceAfter), true)
+    assert.equal(
+      new BigNumber(creditsBalanceBefore)
+        .minus(creditAmount)
+        .eq(creditsBalanceAfter.toString()),
+      true
+    )
 
     assert.equal(result.logs.length, 2) // two events happened - send credits and api paid
     assert.equal(result.logs[0].event, 'LogSpendCredits')
@@ -888,13 +1078,22 @@ contract('APICalls', function (accounts) {
     let tokenBalanceAfter = await token.balanceOf.call(accounts[1])
     let totalPayable = creditAmount
     let saleFee = await apiCalls.saleFee.call()
-    let networkFee = BigNumber(totalPayable.times(saleFee.div(100)))
+    let networkFee = BigNumber(totalPayable.times(saleFee).div(100))
     let calculatedProfit = totalPayable.minus(networkFee)
 
-    assert.equal(sellerBalanceBefore.minus(weiConsumedByGas).plus(calculatedProfit).eq(sellerBalanceAfter), true)
+    assert.equal(
+      new BigNumber(sellerBalanceBefore)
+        .minus(weiConsumedByGas)
+        .plus(calculatedProfit)
+        .eq(sellerBalanceAfter.toString()),
+      true
+    )
 
     if (process.env.DECONET_ACTIVATE_TOKEN_REWARD == "true") {
-      assert.equal(tokenBalanceBefore.plus(tokenReward).toString(), tokenBalanceAfter.toString())
+      assert.equal(
+        new BigNumber(tokenBalanceBefore).plus(tokenReward).toString(),
+        tokenBalanceAfter.toString()
+      )
     } else {
       assert.equal(tokenBalanceBefore.toString(), tokenBalanceAfter.toString())
     }
@@ -908,21 +1107,32 @@ contract('APICalls', function (accounts) {
 
     // check that accounts[3] is overdrafted
     buyerInfo = await apiCalls.buyerInfoOf(accounts[3])
-    assert.equal(buyerInfo.length, 5)
-    assert.equal(buyerInfo[0], true) // overdrafted
-    assert.equal(buyerInfo[1].toString(), overdraftCountAcctThree.add(new BigNumber('1')).toString()) // lifetime overdraft count
-    assert.equal(buyerInfo[2], 0) // credits
-    assert.equal(buyerInfo[3], 0) // lifetime credits used
-    assert.equal(buyerInfo[4], 0) // lifetimeExceededApprovalAmountCount
+    assert.equal(buyerInfo.overdrafted, true)
+    assert.equal(
+      buyerInfo.lifetimeOverdraftCount.toString(),
+      new BigNumber(overdraftCountAcctThree).plus('1').toString()
+    )
+    assert.equal(buyerInfo.credits.toString(), '0')
+    assert.equal(buyerInfo.lifetimeCreditsUsed.toString(), '0')
+    assert.equal(buyerInfo.lifetimeExceededApprovalAmountCount.toString(), '0')
 
-    // check that accounts[2] is overdrafted
+
+    // check that accounts[2] is not overdrafted but has an exceeded amount flag
     buyerInfo = await apiCalls.buyerInfoOf(accounts[2])
-    assert.equal(buyerInfo.length, 5)
-    assert.equal(buyerInfo[0], true) // overdrafted
-    assert.equal(buyerInfo[1], overdraftCountAcctTwo.add(new BigNumber('1')).toString()) // lifetime overdraft count
-    assert.equal(buyerInfo[2].toString(), '0') // credits
-    assert.equal(buyerInfo[3].toString(), lifetimeCreditsUsedBeforeAcctTwo.add(creditAmount).toString()) // lifetime credits used
-    assert.equal(buyerInfo[4].toString(), lifetimeExceededApprovalAmountCountBeforeAcctTwo.toString()) // lifetimeExceededApprovalAmountCount
+    assert.equal(buyerInfo.overdrafted, true)
+    assert.equal(
+      buyerInfo.lifetimeOverdraftCount.toString(),
+      new BigNumber(overdraftCountAcctTwo).plus('1').toString()
+    )
+    assert.equal(buyerInfo.credits.toString(), '0')
+    assert.equal(
+      buyerInfo.lifetimeCreditsUsed.toString(),
+      new BigNumber(lifetimeCreditsUsedBeforeAcctTwo).plus(creditAmount).toString()
+    )
+    assert.equal(
+      buyerInfo.lifetimeExceededApprovalAmountCount.toString(),
+      lifetimeExceededApprovalAmountCountBeforeAcctTwo.toString()
+    )
   })
 
 it('should let buyers set their first use time or use a default one if not set', async function () {
@@ -964,8 +1174,8 @@ it('should let buyers set their first use time or use a default one if not set',
     let ethBalanceAfter = await web3.eth.getBalance(accounts[6])
     let creditsBalanceAfter = await apiCalls.creditsBalanceOf(accounts[6])
 
-    assert.equal(creditsBalanceBefore.add(creditAmount).eq(creditsBalanceAfter), true)
-    assert.equal(ethBalanceBefore.minus(creditAmount).minus(weiConsumedByGas).eq(ethBalanceAfter), true)
+    assert.equal(new BigNumber(creditsBalanceBefore).plus(creditAmount).eq(creditsBalanceAfter.toString()), true)
+    assert.equal(new BigNumber(ethBalanceBefore).minus(creditAmount).minus(weiConsumedByGas).eq(ethBalanceAfter.toString()), true)
     assert.equal(addCreditsTxn.logs[0].event, 'LogDepositCredits')
 
     ethBalanceBefore = await web3.eth.getBalance(accounts[7])
@@ -981,13 +1191,13 @@ it('should let buyers set their first use time or use a default one if not set',
     ethBalanceAfter = await web3.eth.getBalance(accounts[7])
     creditsBalanceAfter = await apiCalls.creditsBalanceOf(accounts[7])
 
-    assert.equal(creditsBalanceBefore.add(creditAmount).eq(creditsBalanceAfter), true)
-    assert.equal(ethBalanceBefore.minus(creditAmount).minus(weiConsumedByGas).eq(ethBalanceAfter), true)
+    assert.equal(new BigNumber(creditsBalanceBefore).plus(creditAmount).eq(creditsBalanceAfter.toString()), true)
+    assert.equal(new BigNumber(ethBalanceBefore).minus(creditAmount).minus(weiConsumedByGas).eq(ethBalanceAfter.toString()), true)
     assert.equal(addCreditsTxn.logs[0].event, 'LogDepositCredits')
 
 
-    let sellerUsername = uuid.v4().substr(0, 32)
-    let apiName = uuid.v4().substr(0, 32)
+    let sellerUsername = web3.utils.toHex(uuid.v4().substr(0, 32))
+    let apiName = web3.utils.toHex(uuid.v4().substr(0, 32))
     let hostname = uuid.v4() + '.com'
     let docsUrl = hostname + '/docs'
     let pricePerCall = new BigNumber('20')
@@ -1019,8 +1229,8 @@ it('should let buyers set their first use time or use a default one if not set',
     let totalOwedAfter = await apiCalls.totalOwedForApi(apiId)
     let amountOwedForAcctAfter = await apiCalls.amountOwedForApiForBuyer(apiId, accounts[6])
 
-    assert.equal(totalOwedBefore.add(apiCallCountAcctSix.times(pricePerCall)).toString(), totalOwedAfter.toString())
-    assert.equal(amountOwedForAcct.add(apiCallCountAcctSix.times(pricePerCall)).toString(), amountOwedForAcctAfter.toString())
+    assert.equal(new BigNumber(totalOwedBefore).plus(apiCallCountAcctSix.times(pricePerCall)).toString(), totalOwedAfter.toString())
+    assert.equal(new BigNumber(amountOwedForAcct).plus(apiCallCountAcctSix.times(pricePerCall)).toString(), amountOwedForAcctAfter.toString())
 
     // report usage from account 7
     totalOwedBefore = await apiCalls.totalOwedForApi(apiId)
@@ -1033,8 +1243,8 @@ it('should let buyers set their first use time or use a default one if not set',
     totalOwedAfter = await apiCalls.totalOwedForApi(apiId)
     amountOwedForAcctAfter = await apiCalls.amountOwedForApiForBuyer(apiId, accounts[7])
 
-    assert.equal(totalOwedBefore.add(apiCallCountAcctSeven.times(pricePerCall)).toString(), totalOwedAfter.toString())
-    assert.equal(amountOwedForAcct.add(apiCallCountAcctSeven.times(pricePerCall)).toString(), amountOwedForAcctAfter.toString())
+    assert.equal(new BigNumber(totalOwedBefore).plus(apiCallCountAcctSeven.times(pricePerCall)).toString(), totalOwedAfter.toString())
+    assert.equal(new BigNumber(amountOwedForAcct).plus(apiCallCountAcctSeven.times(pricePerCall)).toString(), amountOwedForAcctAfter.toString())
 
     // make sure token reward is set to 100
     await apiCalls.setTokenReward(tokenReward.toString())
@@ -1083,12 +1293,12 @@ it('should let buyers set their first use time or use a default one if not set',
     buyerInfo = await apiCalls.buyerInfoOf(accounts[6])
     let overdraftCountAcctSix = buyerInfo[1]
     let lifetimeCreditsUsedAcctSix = buyerInfo[3]
-    let lifetimeExceededApprovalAmountCountAcctSix = buyerInfo[4] 
+    let lifetimeExceededApprovalAmountCountAcctSix = buyerInfo[4]
 
     buyerInfo = await apiCalls.buyerInfoOf(accounts[7])
     let overdraftCountAcctSeven = buyerInfo[1]
     let lifetimeCreditsUsedAcctSeven = buyerInfo[3]
-    let lifetimeExceededApprovalAmountCountAcctSeven = buyerInfo[4] 
+    let lifetimeExceededApprovalAmountCountAcctSeven = buyerInfo[4]
 
     result = await apiCalls.paySeller(apiId, {from: accounts[1], gasPrice: gasPrice.toNumber()})
 
@@ -1113,8 +1323,8 @@ it('should let buyers set their first use time or use a default one if not set',
     let defaultBuyerLastPaidAtTime = now.minus(defaultBuyerLastPaidAt)
     let maxSpentAcctSeven = now.minus(defaultBuyerLastPaidAtTime).times(approvedAmountForAcctSixAndSeven)
 
-    assert.equal(creditsBalanceBeforeAcctSix.minus(maxSpentAcctSix).toString(), creditsBalanceAfterAcctSix.toString())
-    assert.equal(creditsBalanceBeforeAcctSeven.minus(maxSpentAcctSeven).toString(), creditsBalanceAfterAcctSeven.toString())
+    assert.equal(new BigNumber(creditsBalanceBeforeAcctSix).minus(maxSpentAcctSix).toString(), creditsBalanceAfterAcctSix.toString())
+    assert.equal(new BigNumber(creditsBalanceBeforeAcctSeven).minus(maxSpentAcctSeven).toString(), creditsBalanceAfterAcctSeven.toString())
 
     // console.log('results logs: ')
     // console.log(result.logs)
@@ -1124,20 +1334,20 @@ it('should let buyers set their first use time or use a default one if not set',
     assert.equal(result.logs[2].event, 'LogAPICallsPaid')
 
     gasUsed = result.receipt.gasUsed
-    weiConsumedByGas = gasPrice.times(BigNumber(gasUsed))
+    weiConsumedByGas = gasPrice.times(new BigNumber(gasUsed))
 
     let sellerBalanceAfter = await web3.eth.getBalance(accounts[1])
     let tokenBalanceAfter = await token.balanceOf.call(accounts[1])
     let totalPayable = maxSpentAcctSix.plus(maxSpentAcctSeven)
     let saleFee = await apiCalls.saleFee.call()
-    let networkFee = BigNumber(totalPayable.times(saleFee.div(100)))
+    let networkFee = new BigNumber(totalPayable.times(saleFee).div(100))
     let calculatedProfit = Math.round(totalPayable.minus(networkFee))
     // the seller got paid maxSpent
-    assert.equal(sellerBalanceBefore.minus(weiConsumedByGas).plus(calculatedProfit).toString(), sellerBalanceAfter.toString())
+    assert.equal(new BigNumber(sellerBalanceBefore).minus(weiConsumedByGas).plus(calculatedProfit).toString(), sellerBalanceAfter.toString())
 
     if (process.env.DECONET_ACTIVATE_TOKEN_REWARD == "true") {
       // tokens for 2 buyers should be transferred
-      assert.equal(tokenBalanceBefore.plus(tokenReward.times(new BigNumber('2'))).toString(), tokenBalanceAfter.toString())
+      assert.equal(new BigNumber(tokenBalanceBefore).plus(tokenReward.times('2')).toString(), tokenBalanceAfter.toString())
     } else {
       assert.equal(tokenBalanceBefore.toString(), tokenBalanceAfter.toString())
     }
@@ -1148,25 +1358,40 @@ it('should let buyers set their first use time or use a default one if not set',
 
     // check that accounts[6] is not overdrafted but has an exceeded amount flag
     buyerInfo = await apiCalls.buyerInfoOf(accounts[6])
-    assert.equal(buyerInfo.length, 5)
-    assert.equal(buyerInfo[0], false) // overdrafted
-    assert.equal(buyerInfo[1], overdraftCountAcctSix.toString()) // lifetime overdraft count
-    assert.equal(buyerInfo[2].toString(), creditAmount.minus(maxSpentAcctSix).toString()) // credits
-    assert.equal(buyerInfo[3].toString(), lifetimeCreditsUsedAcctSix.plus(maxSpentAcctSix).toString()) // lifetime credits used
-    assert.equal(buyerInfo[4].toString(), lifetimeExceededApprovalAmountCountAcctSix.plus(new BigNumber('1')).toString()) // lifetimeExceededApprovalAmountCount
+    assert.equal(buyerInfo.overdrafted, false)
+    assert.equal(
+      buyerInfo.lifetimeOverdraftCount.toString(),
+      overdraftCountAcctSix.toString()
+    )
+    assert.equal(buyerInfo.credits.toString(), creditAmount.minus(maxSpentAcctSix).toString())
+    assert.equal(
+      buyerInfo.lifetimeCreditsUsed.toString(),
+      new BigNumber(lifetimeCreditsUsedAcctSix).plus(maxSpentAcctSix).toString()
+    )
+    assert.equal(
+      buyerInfo.lifetimeExceededApprovalAmountCount.toString(),
+      new BigNumber(lifetimeExceededApprovalAmountCountAcctSix).plus('1').toString()
+    )
 
     // check that buyerExceededApprovedAmount is true for acct7
     execeededApproval = await apiCalls.buyerExceededApprovedAmount(apiId, accounts[7])
     assert.equal(execeededApproval, true)
 
-    // check that accounts[6] is not overdrafted but has an exceeded amount flag
     buyerInfo = await apiCalls.buyerInfoOf(accounts[7])
-    assert.equal(buyerInfo.length, 5)
-    assert.equal(buyerInfo[0], false) // overdrafted
-    assert.equal(buyerInfo[1], overdraftCountAcctSeven.toString()) // lifetime overdraft count
-    assert.equal(buyerInfo[2].toString(), creditAmount.minus(maxSpentAcctSeven).toString()) // credits
-    assert.equal(buyerInfo[3].toString(), lifetimeCreditsUsedAcctSeven.plus(maxSpentAcctSeven).toString()) // lifetime credits used
-    assert.equal(buyerInfo[4].toString(), lifetimeExceededApprovalAmountCountAcctSeven.plus(new BigNumber('1')).toString()) // lifetimeExceededApprovalAmountCount
+    assert.equal(buyerInfo.overdrafted, false)
+    assert.equal(
+      buyerInfo.lifetimeOverdraftCount.toString(),
+      overdraftCountAcctSeven.toString()
+    )
+    assert.equal(buyerInfo.credits.toString(), new BigNumber(creditAmount).minus(maxSpentAcctSeven).toString())
+    assert.equal(
+      buyerInfo.lifetimeCreditsUsed.toString(),
+      new BigNumber(lifetimeCreditsUsedAcctSeven).plus(maxSpentAcctSeven).toString()
+    )
+    assert.equal(
+      buyerInfo.lifetimeExceededApprovalAmountCount.toString(),
+      new BigNumber(lifetimeExceededApprovalAmountCountAcctSeven).plus('1').toString()
+    )
   })
 
 it('should let buyers use a default first use time of 1 week ago if not set, and process a single buyer at a time', async function () {
@@ -1199,13 +1424,13 @@ it('should let buyers use a default first use time of 1 week ago if not set, and
     ethBalanceAfter = await web3.eth.getBalance(accounts[7])
     creditsBalanceAfter = await apiCalls.creditsBalanceOf(accounts[7])
 
-    assert.equal(creditsBalanceBefore.add(creditAmount).eq(creditsBalanceAfter), true)
-    assert.equal(ethBalanceBefore.minus(creditAmount).minus(weiConsumedByGas).eq(ethBalanceAfter), true)
+    assert.equal(new BigNumber(creditsBalanceBefore).plus(creditAmount).eq(creditsBalanceAfter.toString()), true)
+    assert.equal(new BigNumber(ethBalanceBefore).minus(creditAmount).minus(weiConsumedByGas).eq(ethBalanceAfter.toString()), true)
     assert.equal(addCreditsTxn.logs[0].event, 'LogDepositCredits')
 
 
-    let sellerUsername = uuid.v4().substr(0, 32)
-    let apiName = uuid.v4().substr(0, 32)
+    let sellerUsername = web3.utils.toHex(uuid.v4().substr(0, 32))
+    let apiName = web3.utils.toHex(uuid.v4().substr(0, 32))
     let hostname = uuid.v4() + '.com'
     let docsUrl = hostname + '/docs'
     let pricePerCall = new BigNumber('20')
@@ -1237,8 +1462,8 @@ it('should let buyers use a default first use time of 1 week ago if not set, and
     totalOwedAfter = await apiCalls.totalOwedForApi(apiId)
     amountOwedForAcctAfter = await apiCalls.amountOwedForApiForBuyer(apiId, accounts[7])
 
-    assert.equal(totalOwedBefore.add(apiCallCountAcctSeven.times(pricePerCall)).toString(), totalOwedAfter.toString())
-    assert.equal(amountOwedForAcct.add(apiCallCountAcctSeven.times(pricePerCall)).toString(), amountOwedForAcctAfter.toString())
+    assert.equal(new BigNumber(totalOwedBefore).plus(apiCallCountAcctSeven.times(pricePerCall)).toString(), totalOwedAfter.toString())
+    assert.equal(new BigNumber(amountOwedForAcct).plus(apiCallCountAcctSeven.times(pricePerCall)).toString(), amountOwedForAcctAfter.toString())
 
     // make sure token reward is set to 100
     await apiCalls.setTokenReward(tokenReward.toString())
@@ -1274,7 +1499,7 @@ it('should let buyers use a default first use time of 1 week ago if not set, and
     buyerInfo = await apiCalls.buyerInfoOf(accounts[7])
     let overdraftCountAcctSeven = buyerInfo[1]
     let lifetimeCreditsUsedAcctSeven = buyerInfo[3]
-    let lifetimeExceededApprovalAmountCountAcctSeven = buyerInfo[4] 
+    let lifetimeExceededApprovalAmountCountAcctSeven = buyerInfo[4]
 
     result = await apiCalls.paySellerForBuyer(apiId, accounts[7], {from: accounts[1], gasPrice: gasPrice.toNumber()})
 
@@ -1297,7 +1522,7 @@ it('should let buyers use a default first use time of 1 week ago if not set, and
     let defaultBuyerLastPaidAtTime = now.minus(defaultBuyerLastPaidAt)
     let maxSpentAcctSeven = now.minus(defaultBuyerLastPaidAtTime).times(approvedAmountForAcctSixAndSeven)
 
-    assert.equal(creditsBalanceBeforeAcctSeven.minus(maxSpentAcctSeven).toString(), creditsBalanceAfterAcctSeven.toString())
+    assert.equal(new BigNumber(creditsBalanceBeforeAcctSeven).minus(maxSpentAcctSeven).toString(), creditsBalanceAfterAcctSeven.toString())
 
     // console.log('results logs: ')
     // console.log(result.logs)
@@ -1312,14 +1537,14 @@ it('should let buyers use a default first use time of 1 week ago if not set, and
     let tokenBalanceAfter = await token.balanceOf.call(accounts[1])
     let totalPayable = maxSpentAcctSeven
     let saleFee = await apiCalls.saleFee.call()
-    let networkFee = BigNumber(totalPayable.times(saleFee.div(100)))
+    let networkFee = new BigNumber(totalPayable.times(saleFee).div(100))
     let calculatedProfit = Math.round(totalPayable.minus(networkFee))
     // the seller got paid maxSpent
-    assert.equal(sellerBalanceBefore.minus(weiConsumedByGas).plus(calculatedProfit).toString(), sellerBalanceAfter.toString())
+    assert.equal(new BigNumber(sellerBalanceBefore).minus(weiConsumedByGas).plus(calculatedProfit).toString(), sellerBalanceAfter.toString())
 
     if (process.env.DECONET_ACTIVATE_TOKEN_REWARD == "true") {
       // tokens for 1 buyer should be transferred
-      assert.equal(tokenBalanceBefore.plus(tokenReward).toString(), tokenBalanceAfter.toString())
+      assert.equal(new BigNumber(tokenBalanceBefore).plus(tokenReward).toString(), tokenBalanceAfter.toString())
     } else {
       assert.equal(tokenBalanceBefore.toString(), tokenBalanceAfter.toString())
     }
@@ -1328,14 +1553,21 @@ it('should let buyers use a default first use time of 1 week ago if not set, and
     execeededApproval = await apiCalls.buyerExceededApprovedAmount(apiId, accounts[7])
     assert.equal(execeededApproval, true)
 
-    // check that accounts[6] is not overdrafted but has an exceeded amount flag
     buyerInfo = await apiCalls.buyerInfoOf(accounts[7])
-    assert.equal(buyerInfo.length, 5)
-    assert.equal(buyerInfo[0], false) // overdrafted
-    assert.equal(buyerInfo[1], overdraftCountAcctSeven.toString()) // lifetime overdraft count
-    assert.equal(buyerInfo[2].toString(), creditAmount.minus(maxSpentAcctSeven).toString()) // credits
-    assert.equal(buyerInfo[3].toString(), lifetimeCreditsUsedAcctSeven.plus(maxSpentAcctSeven).toString()) // lifetime credits used
-    assert.equal(buyerInfo[4].toString(), lifetimeExceededApprovalAmountCountAcctSeven.plus(new BigNumber('1')).toString()) // lifetimeExceededApprovalAmountCount
+    assert.equal(buyerInfo.overdrafted, false)
+    assert.equal(
+      buyerInfo.lifetimeOverdraftCount.toString(),
+      overdraftCountAcctSeven.toString()
+    )
+    assert.equal(buyerInfo.credits.toString(), new BigNumber(creditAmount).minus(maxSpentAcctSeven).toString())
+    assert.equal(
+      buyerInfo.lifetimeCreditsUsed.toString(),
+      new BigNumber(lifetimeCreditsUsedAcctSeven).plus(maxSpentAcctSeven).toString()
+    )
+    assert.equal(
+      buyerInfo.lifetimeExceededApprovalAmountCount.toString(),
+      new BigNumber(lifetimeExceededApprovalAmountCountAcctSeven).plus('1').toString()
+    )
   })
 
   it('should let sellers get paid for a single buyer at a time and work for many cycles', async function () {
@@ -1362,13 +1594,13 @@ it('should let buyers use a default first use time of 1 week ago if not set, and
     let ethBalanceAfter = await web3.eth.getBalance(accounts[2])
     let creditsBalanceAfter = await apiCalls.creditsBalanceOf(accounts[2])
 
-    assert.equal(creditsBalanceBefore.add(creditAmount).eq(creditsBalanceAfter), true)
-    assert.equal(ethBalanceBefore.minus(creditAmount).minus(weiConsumedByGas).eq(ethBalanceAfter), true)
+    assert.equal(new BigNumber(creditsBalanceBefore).plus(creditAmount).eq(creditsBalanceAfter.toString()), true)
+    assert.equal(new BigNumber(ethBalanceBefore).minus(creditAmount).minus(weiConsumedByGas).eq(ethBalanceAfter.toString()), true)
     assert.equal(addCreditsTxn.logs[0].event, 'LogDepositCredits')
 
 
-    let sellerUsername = uuid.v4().substr(0, 32)
-    let apiName = uuid.v4().substr(0, 32)
+    let sellerUsername = web3.utils.toHex(uuid.v4().substr(0, 32))
+    let apiName = web3.utils.toHex(uuid.v4().substr(0, 32))
     let hostname = uuid.v4() + '.com'
     let docsUrl = hostname + '/docs'
     let pricePerCall = new BigNumber('20')
@@ -1377,7 +1609,7 @@ it('should let buyers use a default first use time of 1 week ago if not set, and
     let numApisBefore = await apiRegistry.numApis.call()
 
     // list the api
-    await apiRegistry.listApi(pricePerCall.toNumber(), sellerUsername, apiName, hostname, docsUrl, { from: accounts[1] })
+    await apiRegistry.listApi(pricePerCall.toString(), sellerUsername, apiName, hostname, docsUrl, { from: accounts[1] })
 
     let numApisAfter = await apiRegistry.numApis.call()
     assert.equal(numApisAfter.toNumber(), numApisBefore.toNumber() + 1)
@@ -1399,7 +1631,7 @@ it('should let buyers use a default first use time of 1 week ago if not set, and
 
     let accountEntries = {}
 
-    // run through accountsToTest accounts, from accounts[30] to accounts[30 + accountsToTest]  
+    // run through accountsToTest accounts, from accounts[30] to accounts[30 + accountsToTest]
     // set them up with balances, credits, etc
     for (let i = 0; i < accountsToTest; i++) {
       let accountNumber = i + 30
@@ -1440,7 +1672,10 @@ it('should let buyers use a default first use time of 1 week ago if not set, and
       weiConsumedByGas = gasPrice.times(BigNumber(gasUsed))
 
       let balanceAfter = await web3.eth.getBalance(account)
-      assert.equal(balanceBefore.minus(accountEntry.credits).minus(weiConsumedByGas).toString(), balanceAfter.toString())
+      assert.equal(
+        new BigNumber(balanceBefore).minus(accountEntry.credits).minus(weiConsumedByGas).toString(),
+        balanceAfter.toString()
+      )
 
       // set approval limit
       await apiCalls.approveAmountAndSetFirstUseTime(apiId, account, accountEntry.approved.toString(), accountEntry.firstUseTime.toString(), {from: account})
@@ -1478,7 +1713,7 @@ it('should let buyers use a default first use time of 1 week ago if not set, and
         result = await apiCalls.reportUsage(apiId, accountEntry.apiCalls.toNumber(), account, {from: accounts[9]})
         assert.equal(result.logs[0].event, 'LogAPICallsMade')
         let amountOwedAfter = await apiCalls.amountOwedForApiForBuyer(apiId, account)
-        assert.equal(amountOwedAfter.minus(amountOwedBefore).toString(), accountEntry.apiCalls.times(pricePerCall).toString())
+        assert.equal(new BigNumber(amountOwedAfter).minus(amountOwedBefore).toString(), accountEntry.apiCalls.times(pricePerCall).toString())
         assert.notEqual(amountOwedBefore.toString(), amountOwedAfter.toString())
 
         let buyerInfo = await apiCalls.buyerInfoOf(account)
@@ -1494,7 +1729,7 @@ it('should let buyers use a default first use time of 1 week ago if not set, and
         let sellerBalanceAfter = await web3.eth.getBalance(accounts[1])
         let sellerTokenBalanceAfter = await token.balanceOf(accounts[1])
         let buyerCreditsAfter = await apiCalls.creditsBalanceOf(account)
-        let buyerSpent = buyerCreditsBefore.minus(buyerCreditsAfter)
+        let buyerSpent = new BigNumber(buyerCreditsBefore).minus(buyerCreditsAfter)
 
         let blockNum = result.receipt.blockNumber
         let blockNumInfo = await web3.eth.getBlock(blockNum)
@@ -1511,10 +1746,10 @@ it('should let buyers use a default first use time of 1 week ago if not set, and
         let lifetimeExceededApprovalAmountCountAfter = buyerInfo[4]
 
         // confirm that lifetimeCreditsUsed is working correctly
-        assert.equal(buyerSpent.toString(), lifetimeCreditsUsedAfter.minus(lifetimeCreditsUsedBefore).toString())
+        assert.equal(buyerSpent.toString(), new BigNumber(lifetimeCreditsUsedAfter).minus(lifetimeCreditsUsedBefore).toString())
 
         // confirm that the buyer spent less than their approved limit in maxApprovedAmount
-        assert(maxApprovedAmount.minus(buyerSpent).isGreaterThanOrEqualTo(new BigNumber('0')), true)
+        assert(maxApprovedAmount.minus(buyerSpent).isGreaterThanOrEqualTo('0'), true)
 
         // determine whether or not account is in nonzeroAddresses
         let nonzeroAddresses = []
@@ -1533,12 +1768,12 @@ it('should let buyers use a default first use time of 1 week ago if not set, and
           assert.equal(lifetimeOverdraftCountAfter.toString(), lifetimeOverdraftCountBefore.toString()) // lifetime overdraft count.  should not have increased
           if (maxApprovedAmount.isGreaterThanOrEqualTo(accountEntry.owed)) {
             assert.equal(buyerExceededApprovedAmount, false)
-            assert.equal(buyerInfo[4].toString(), lifetimeExceededApprovalAmountCountBefore.toString()) // lifetimeExceededAmounts should be unchanged
+            assert.equal(buyerInfo.lifetimeExceededApprovalAmountCount.toString(), lifetimeExceededApprovalAmountCountBefore.toString()) // lifetimeExceededAmounts should be unchanged
             // verify that buyer paid what they owe in entirety
-            assert.equal(accountEntry.owed.toString(), buyerCreditsBefore.minus(buyerCreditsAfter).toString())
+            assert.equal(accountEntry.owed.toString(), new BigNumber(buyerCreditsBefore).minus(buyerCreditsAfter).toString())
             if (process.env.DECONET_ACTIVATE_TOKEN_REWARD == "true") {
               // verify that seller was rewarded tokens
-              assert.equal(sellerTokenBalanceAfter.minus(sellerTokenBalanceBefore).toString(), tokenReward.toString())
+              assert.equal(new BigNumber(sellerTokenBalanceAfter).minus(sellerTokenBalanceBefore).toString(), tokenReward.toString())
             } else {
               assert.equal(sellerTokenBalanceAfter.toString(), sellerTokenBalanceBefore.toString())
             }
@@ -1550,15 +1785,18 @@ it('should let buyers use a default first use time of 1 week ago if not set, and
 
           } else {
             assert.equal(buyerExceededApprovedAmount, true)
-            assert.equal(buyerInfo[4].toString(), lifetimeExceededApprovalAmountCountBefore.plus(new BigNumber('1')).toString()) // lifetimeExceededAmounts should have increased by 1
+            assert.equal(
+              buyerInfo.lifetimeExceededApprovalAmountCount.toString(),
+              new BigNumber(lifetimeExceededApprovalAmountCountBefore).plus('1').toString()
+            ) // lifetimeExceededAmounts should have increased by 1
             // verify that buyer paid max amount spendable
-            assert.equal(maxApprovedAmount.toString(), buyerCreditsBefore.minus(buyerCreditsAfter).toString())
+            assert.equal(maxApprovedAmount.toString(), new BigNumber(buyerCreditsBefore).minus(buyerCreditsAfter).toString())
             // verifu seller was rewarded if some eth was paid
             if (!buyerSpent.eq(new BigNumber('0'))) {
               if (process.env.DECONET_ACTIVATE_TOKEN_REWARD == "true") {
-                assert.equal(sellerTokenBalanceAfter.minus(sellerTokenBalanceBefore).toString(), tokenReward.toString())
+                assert.equal(new BigNumber(sellerTokenBalanceAfter).minus(sellerTokenBalanceBefore).toString(), tokenReward.toString())
               } else {
-                assert.equal(sellerTokenBalanceAfter.toString(), sellerTokenBalanceBefore.toString())
+                assert.equal(new BigNumber(sellerTokenBalanceAfter).toString(), sellerTokenBalanceBefore.toString())
               }
               assert.equal(result.logs[0].event, 'LogSpendCredits')
               assert.equal(result.logs[1].event, 'LogAPICallsPaid')
@@ -1569,31 +1807,39 @@ it('should let buyers use a default first use time of 1 week ago if not set, and
         } else {
           // overdraft
           assert.equal(overdraftedAfter, true) // overdrafted should be true
-          assert.equal(lifetimeOverdraftCountAfter.toString(), lifetimeOverdraftCountBefore.plus(new BigNumber('1')).toString()) // lifetime overdraft count.  This should have 1 added to it
+          assert.equal(
+            lifetimeOverdraftCountAfter.toString(),
+            new BigNumber(lifetimeOverdraftCountBefore).plus(new BigNumber('1')).toString()) // lifetime overdraft count.  This should have 1 added to it
 
           // verify that the buyer is still in nonzeroAddresses array
           assert.notEqual(nonzeroAddresses.indexOf(account), -1)
 
           if (accountEntry.credits.isGreaterThanOrEqualTo(maxApprovedAmount)) {
-            assert.equal(maxApprovedAmount.toString(), buyerCreditsBefore.minus(buyerCreditsAfter).toString())
+            assert.equal(
+              maxApprovedAmount.toString(),
+              new BigNumber(buyerCreditsBefore).minus(buyerCreditsAfter).toString()
+            )
             // verifu seller was rewarded if some eth was paid
             if (!buyerSpent.eq(new BigNumber('0'))) {
               if (process.env.DECONET_ACTIVATE_TOKEN_REWARD == "true") {
-                assert.equal(sellerTokenBalanceAfter.minus(sellerTokenBalanceBefore).toString(), tokenReward.toString())
+                assert.equal(new BigNumber(sellerTokenBalanceAfter).minus(sellerTokenBalanceBefore).toString(), tokenReward.toString())
               } else {
-                assert.equal(sellerTokenBalanceAfter.toString(), sellerTokenBalanceBefore.toString())
+                assert.equal(new BigNumber(sellerTokenBalanceAfter).toString(), sellerTokenBalanceBefore.toString())
               }
               assert.equal(result.logs[0].event, 'LogSpendCredits')
               assert.equal(result.logs[1].event, 'LogAPICallsPaid')
             }
           } else {
-            assert.equal(accountEntry.credits.toString(), buyerCreditsBefore.minus(buyerCreditsAfter).toString())
+            assert.equal(
+              accountEntry.credits.toString(),
+              new BigNumber(buyerCreditsBefore).minus(buyerCreditsAfter).toString()
+            )
             // verifu seller was rewarded if some eth was paid
             if (!buyerSpent.eq(new BigNumber('0'))) {
               if (process.env.DECONET_ACTIVATE_TOKEN_REWARD == "true") {
-                assert.equal(sellerTokenBalanceAfter.minus(sellerTokenBalanceBefore).toString(), tokenReward.toString())
+                assert.equal(new BigNumber(sellerTokenBalanceAfter).minus(sellerTokenBalanceBefore).toString(), tokenReward.toString())
               } else {
-                assert.equal(sellerTokenBalanceAfter.toString(), sellerTokenBalanceBefore.toString())
+                assert.equal(new BigNumber(sellerTokenBalanceAfter).toString(), sellerTokenBalanceBefore.toString())
               }
               assert.equal(result.logs[0].event, 'LogSpendCredits')
               assert.equal(result.logs[1].event, 'LogAPICallsPaid')
@@ -1612,13 +1858,13 @@ it('should let buyers use a default first use time of 1 week ago if not set, and
       }
     }
   })
-  
+
 
   it('should only let the contract owner or withdraw address actually withdraw', async function () {
     let apiCalls = await APICalls.deployed()
     let exceptionOccured = false
     try {
-      await apiCalls.withdrawEther(1, {from: accounts[4]})
+      await apiCalls.withdrawEther('1', {from: accounts[4]})
     } catch (e) {
       exceptionOccured = true
     }
@@ -1630,7 +1876,7 @@ it('should let buyers use a default first use time of 1 week ago if not set, and
     let contractBalance = await web3.eth.getBalance(apiCalls.address)
     let exceptionOccured = false
     try {
-      await apiCalls.withdrawEther(contractBalance.plus(new BigNumber('100')).toString(), {from: accounts[1]})
+      await apiCalls.withdrawEther(new BigNumber('100').plus(contractBalance).toString(), {from: accounts[1]})
     } catch (e) {
       exceptionOccured = true
     }
@@ -1642,7 +1888,7 @@ it('should let buyers use a default first use time of 1 week ago if not set, and
     let safeWithdrawAmount = await apiCalls.safeWithdrawAmount.call()
     let exceptionOccured = false
     try {
-      await apiCalls.withdrawEther(safeWithdrawAmount.plus(new BigNumber('100')).toString(), {from: accounts[1]})
+      await apiCalls.withdrawEther(new BigNumber('100').plus(safeWithdrawAmount).toString(), {from: accounts[1]})
     } catch (e) {
       exceptionOccured = true
     }
@@ -1678,8 +1924,8 @@ it('should let buyers use a default first use time of 1 week ago if not set, and
     let contractBalanceAfter = await token.balanceOf(apiCalls.address)
     let ownerBalanceAfter = await token.balanceOf(accounts[0])
 
-    assert.equal(contractBalanceBefore.minus(tokenAmount).toString(), contractBalanceAfter.toString())
-    assert.equal(ownerBalanceBefore.plus(tokenAmount).toString(), ownerBalanceAfter.toString())
+    assert.equal(new BigNumber(contractBalanceBefore).minus(tokenAmount).toString(), contractBalanceAfter.toString())
+    assert.equal(new BigNumber(ownerBalanceBefore).plus(tokenAmount).toString(), ownerBalanceAfter.toString())
   })
 
   it('should be possible to set the sale fee', async function () {

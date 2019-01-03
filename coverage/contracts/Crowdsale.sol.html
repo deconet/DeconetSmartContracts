@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <title>Code coverage report for contracts/APIRegistry.sol</title>
+    <title>Code coverage report for contracts/Crowdsale.sol</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../prettify.css" />
     <link rel="stylesheet" href="../base.css" />
@@ -16,28 +16,28 @@
 <div class='wrapper'>
   <div class='pad1'>
     <h1>
-      <a href="../index.html">all files</a> / <a href="index.html">contracts/</a> APIRegistry.sol
+      <a href="../index.html">all files</a> / <a href="index.html">contracts/</a> Crowdsale.sol
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
         <span class="strong">100% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>44/44</span>
+        <span class='fraction'>38/38</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">100% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>12/12</span>
+        <span class='fraction'>26/26</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">100% </span>
         <span class="quiet">Functions</span>
-        <span class='fraction'>8/8</span>
+        <span class='fraction'>15/15</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">100% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>44/44</span>
+        <span class='fraction'>42/42</span>
       </div>
     </div>
   </div>
@@ -214,7 +214,9 @@
 169
 170
 171
-172</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+172
+173
+174</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -241,15 +243,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3×</span>
-<span class="cline-any cline-yes">3×</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -257,23 +250,52 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">15×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">13×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">11×</span>
-<span class="cline-any cline-yes">11×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">11×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">11×</span>
-<span class="cline-any cline-yes">11×</span>
-<span class="cline-any cline-yes">11×</span>
-<span class="cline-any cline-yes">11×</span>
-<span class="cline-any cline-yes">11×</span>
-<span class="cline-any cline-yes">11×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">23×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">23×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">24×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">25×</span>
+<span class="cline-any cline-yes">25×</span>
+<span class="cline-any cline-yes">25×</span>
+<span class="cline-any cline-yes">23×</span>
+<span class="cline-any cline-yes">20×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">17×</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-yes">4×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -283,83 +305,22 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-yes">9×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">80×</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">80×</span>
-<span class="cline-any cline-yes">80×</span>
-<span class="cline-any cline-yes">80×</span>
-<span class="cline-any cline-yes">80×</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4×</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4×</span>
-<span class="cline-any cline-yes">4×</span>
-<span class="cline-any cline-yes">4×</span>
-<span class="cline-any cline-yes">4×</span>
-<span class="cline-any cline-yes">4×</span>
-<span class="cline-any cline-yes">4×</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3×</span>
-<span class="cline-any cline-yes">3×</span>
-<span class="cline-any cline-yes">1×</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2×</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2×</span>
-<span class="cline-any cline-yes">2×</span>
-<span class="cline-any cline-yes">2×</span>
-<span class="cline-any cline-yes">2×</span>
-<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">8×</span>
 <span class="cline-any cline-yes">2×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -368,52 +329,157 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">10×</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">8×</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">8×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-yes">5×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">6×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4×</span>
-<span class="cline-any cline-yes">4×</span>
-<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">9×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">24×</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-yes">20×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">18×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">14×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">14×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">14×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">14×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">14×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">14×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">29×</span>
+<span class="cline-any cline-yes">17×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">pragma solidity 0.4.25;
 &nbsp;
 import "../node_modules/openzeppelin-solidity/contracts/ownership/Ownable.sol";
+import "./DeconetToken.sol";
+import "./Medianizer.sol";
 import "../node_modules/openzeppelin-solidity/contracts/token/ERC20/ERC20.sol";
+import "../other_dependencies/ds-math/src/math.sol";
 &nbsp;
 &nbsp;
-contract APIRegistry is Ownable {
+// ----------------------------------------------------------------------------
+// Handles the crowdsale of tokens
+// ----------------------------------------------------------------------------
+contract Crowdsale is Ownable, DSMath {
+    Medianizer public priceFeedContract;
 &nbsp;
-    struct APIForSale {
-        uint pricePerCall;
-        bytes32 sellerUsername;
-        bytes32 apiName;
-        address sellerAddress;
-        string hostname;
-        string docsUrl;
-    }
+    address public opsAdmin;
 &nbsp;
-    mapping(string =&gt; uint) internal apiIds;
-    mapping(uint =&gt; APIForSale) public apis;
+    uint public ethMinContributionAmount = 0;
 &nbsp;
-    uint public numApis;
+    uint256 public tokensPerDollar = 1;
+    uint256 public usdRaised;
+    uint256 public ethRaised;
+&nbsp;
+    mapping(address =&gt; uint256) public ethContributions;
+    bool public crowdsaleClosed = true;
+    mapping (address =&gt; bool) public whitelistedAddresses;
+&nbsp;
+    event SaleEnded(uint totalEthRaised, uint totalUsdRaised);
+    event FundTransfer(address indexed backer, uint tokenAmount, uint usdAmount, uint ethPrice);
+    event WhitelistUpdated(address indexed _account, uint8 _phase);
+&nbsp;
+&nbsp;
+    // the token address
+    DeconetToken public tokenContract;
+&nbsp;
+    // this contract version
     uint public version;
 &nbsp;
+    // the address that is authorized to withdraw eth
+    address private withdrawAddress;
+&nbsp;
     // ------------------------------------------------------------------------
-    // Constructor, establishes ownership because contract is owned
+    // Constructor
     // ------------------------------------------------------------------------
     constructor() public {
-        numApis = 0;
         version = 1;
+&nbsp;
+        // default withdrawAddress is owner
+        withdrawAddress = msg.sender;
+    }
+&nbsp;
+    function () public payable {
+        deposit();
+    }
+&nbsp;
+    // get the eth price from the makerdao oracle
+    function getEthPrice() public view returns (uint256) {
+        bytes32 price;
+        bool success;
+        (price, success) = priceFeedContract.compute();
+        require(success, "ETH price could not be retrieved");
+        return uint256(price);
+    }
+&nbsp;
+    // add a user to the crowdsale whitelist
+    function updateWhitelist(address _account, uint8 _phase) public onlyOps {
+        if (_phase == 0) {
+            whitelistedAddresses[_account] = false;
+            emit WhitelistUpdated(_account, _phase);
+        } else if (_phase == 1) {
+            whitelistedAddresses[_account] = true;
+            emit WhitelistUpdated(_account, _phase);
+        }
+    }
+&nbsp;
+    // close or open the crowdsale
+    function setCrowdsaleClosed(bool _newValue) public onlyOwner {
+        crowdsaleClosed = _newValue;
+        if (_newValue) {
+            emit SaleEnded(ethRaised, usdRaised);
+        }
+    }
+&nbsp;
+    // set the tokens per dollar
+    function setTokensPerDollar(uint256 _newValue) public onlyOwner {
+        tokensPerDollar = _newValue;
+    }
+&nbsp;
+    function setPriceFeedContractAddress(address _priceFeedAddress) public onlyOwner {
+        require(_priceFeedAddress != address(0), "Price feed contract address must not be zero.");
+        priceFeedContract = Medianizer(_priceFeedAddress);
     }
 &nbsp;
     // ------------------------------------------------------------------------
@@ -424,136 +490,76 @@ contract APIRegistry is Ownable {
     }
 &nbsp;
     // ------------------------------------------------------------------------
-    // Lets a user list an API to sell
+    // Owner can transfer out any ETH
     // ------------------------------------------------------------------------
-    function listApi(uint pricePerCall, bytes32 sellerUsername, bytes32 apiName, string hostname, string docsUrl) public {
-        // make sure input params are valid
-        require(pricePerCall != 0 &amp;&amp; sellerUsername != "" &amp;&amp; apiName != "" &amp;&amp; bytes(hostname).length != 0);
-&nbsp;
-        // make sure the name isn't already taken
-        require(apiIds[hostname] == 0);
-&nbsp;
-        numApis += 1;
-        apiIds[hostname] = numApis;
-&nbsp;
-        APIForSale storage api = apis[numApis];
-&nbsp;
-        api.pricePerCall = pricePerCall;
-        api.sellerUsername = sellerUsername;
-        api.apiName = apiName;
-        api.sellerAddress = msg.sender;
-        api.hostname = hostname;
-        api.docsUrl = docsUrl;
+    function withdrawEther() public {
+        require(msg.sender == withdrawAddress, "Sender must be withdrawal address");
+        withdrawAddress.transfer(address(this).balance);
     }
 &nbsp;
     // ------------------------------------------------------------------------
-    // Get the ID number of an API given it's hostname
+    // Owner can set address of who can withdraw
     // ------------------------------------------------------------------------
-    function getApiId(string hostname) public view returns (uint) {
-        return apiIds[hostname];
+    function setWithdrawAddress(address _withdrawAddress) public onlyOwner {
+        require(_withdrawAddress != address(0), "Withdraw address must not be zero.");
+        withdrawAddress = _withdrawAddress;
+    }
+&nbsp;
+    function setOpsAdminAddress(address _opsAdminAddress) public onlyOwner {
+        require(_opsAdminAddress != address(0), "Ops admin address must not be zero.");
+        opsAdmin = _opsAdminAddress;
     }
 &nbsp;
     // ------------------------------------------------------------------------
-    // Get info stored for the API but without the dynamic members, because solidity can't return dynamics to other smart contracts yet
+    // Owner can set address of token contract
     // ------------------------------------------------------------------------
-    function getApiByIdWithoutDynamics(
-        uint apiId
-    )
-        public
-        view
-        returns (
-            uint pricePerCall,
-            bytes32 sellerUsername,
-            bytes32 apiName,
-            address sellerAddress
-        )
-    {
-        APIForSale storage api = apis[apiId];
-&nbsp;
-        pricePerCall = api.pricePerCall;
-        sellerUsername = api.sellerUsername;
-        apiName = api.apiName;
-        sellerAddress = api.sellerAddress;
+    function setTokenContractAddress(address _tokenContractAddress) public onlyOwner {
+        require(_tokenContractAddress != address(0), "Token contract address must not be zero.");
+        tokenContract = DeconetToken(_tokenContractAddress);
     }
 &nbsp;
     // ------------------------------------------------------------------------
-    // Get info stored for an API by id
+    // Owner can set ETH minumum contribution amount
     // ------------------------------------------------------------------------
-    function getApiById(
-        uint apiId
-    )
-        public
-        view
-        returns (
-            uint pricePerCall,
-            bytes32 sellerUsername,
-            bytes32 apiName,
-            address sellerAddress,
-            string hostname,
-            string docsUrl
-        )
-    {
-        APIForSale storage api = apis[apiId];
-&nbsp;
-        pricePerCall = api.pricePerCall;
-        sellerUsername = api.sellerUsername;
-        apiName = api.apiName;
-        sellerAddress = api.sellerAddress;
-        hostname = api.hostname;
-        docsUrl = api.docsUrl;
+    function setEthMinContributionAmount(uint _amount) public onlyOwner {
+        ethMinContributionAmount = _amount;
     }
 &nbsp;
-    // ------------------------------------------------------------------------
-    // Get info stored for an API by hostname
-    // ------------------------------------------------------------------------
-    function getApiByName(
-        string _hostname
-    )
-        public
-        view
-        returns (
-            uint pricePerCall,
-            bytes32 sellerUsername,
-            bytes32 apiName,
-            address sellerAddress,
-            string hostname,
-            string docsUrl
-        )
-    {
-        uint apiId = apiIds[_hostname];
-        if (apiId == 0) {
-            return;
-        }
-        APIForSale storage api = apis[apiId];
-&nbsp;
-        pricePerCall = api.pricePerCall;
-        sellerUsername = api.sellerUsername;
-        apiName = api.apiName;
-        sellerAddress = api.sellerAddress;
-        hostname = api.hostname;
-        docsUrl = api.docsUrl;
-    }
-&nbsp;
-    // ------------------------------------------------------------------------
-    // Edit an API listing
-    // ------------------------------------------------------------------------
-    function editApi(uint apiId, uint pricePerCall, address sellerAddress, string docsUrl) public {
-        require(apiId != 0 &amp;&amp; pricePerCall != 0 &amp;&amp; sellerAddress != address(0));
-&nbsp;
-        APIForSale storage api = apis[apiId];
-&nbsp;
-        // prevent editing an empty api (effectively listing an api)
+    function deposit() internal {
+        require(!crowdsaleClosed, "The crowdsale is closed");
+        require(whitelistedAddresses[msg.sender], "You are not on the token sale whitelist");
         require(
-            api.pricePerCall != 0 &amp;&amp; api.sellerUsername != "" &amp;&amp; api.apiName != "" &amp;&amp;  bytes(api.hostname).length != 0 &amp;&amp; api.sellerAddress != address(0)
+            msg.value &gt;= ethMinContributionAmount,
+            "Contribution amount must be greater than configured minimum."
         );
 &nbsp;
-        // require that sender is the original api lister, or the contract owner
-        // the contract owner clause lets us recover a api listing if a dev loses access to their privkey
-        require(msg.sender == api.sellerAddress || msg.sender == owner);
+        // get eth price from makerdao oracle
+        uint256 ethPrice = getEthPrice();
 &nbsp;
-        api.pricePerCall = pricePerCall;
-        api.sellerAddress = sellerAddress;
-        api.docsUrl = docsUrl;
+        // calculate how much they are buying in USD based on current eth price
+        uint256 usdBought = wmul(msg.value, ethPrice);
+&nbsp;
+        // calculate how many tokens they get for that usd
+        uint256 tokensBought = wmul(usdBought, tokensPerDollar);
+&nbsp;
+        // log the contribution
+        ethContributions[msg.sender] = add(ethContributions[msg.sender], msg.value);
+&nbsp;
+        // add to the total USD raised
+        usdRaised = add(usdRaised, usdBought);
+&nbsp;
+        // add to the total ETH raised
+        ethRaised = add(ethRaised, msg.value);
+&nbsp;
+        // transfer the tokens to the buyer
+        tokenContract.transfer(msg.sender, tokensBought);
+&nbsp;
+        emit FundTransfer(msg.sender, tokensBought, usdBought, ethPrice);
+    }
+&nbsp;
+    modifier onlyOps() {
+        require(msg.sender == owner || msg.sender == opsAdmin, "Only ops users can use this function");
+        _;
     }
 }
 &nbsp;</pre></td></tr>

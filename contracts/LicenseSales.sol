@@ -1,10 +1,10 @@
-pragma solidity 0.4.24;
+pragma solidity 0.4.25;
 
-import "../node_modules/zeppelin-solidity/contracts/ownership/Ownable.sol";
+import "../node_modules/openzeppelin-solidity/contracts/ownership/Ownable.sol";
 import "./Relay.sol";
 import "./Registry.sol";
 import "./DeconetToken.sol";
-import "../node_modules/zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
+import "../node_modules/openzeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 
 
 // ----------------------------------------------------------------------------
@@ -49,7 +49,7 @@ contract LicenseSales is Ownable {
     constructor() public {
         version = 1;
 
-        // default token reward of 100 tokens.  
+        // default token reward of 100 tokens.
         // token has 18 decimal places so that's why 100 * 10^18
         tokenReward = 100 * 10**18;
 
@@ -141,7 +141,7 @@ contract LicenseSales is Ownable {
         require(sellerUsername != "" && moduleName != "" && sellerAddress != address(0) && licenseId != "");
 
         // calculate fee and payout
-        uint fee = msg.value.mul(saleFee).div(100); 
+        uint fee = msg.value.mul(saleFee).div(100);
         uint payout = msg.value.sub(fee);
 
         // log the sale
@@ -159,7 +159,7 @@ contract LicenseSales is Ownable {
 
         // give seller some tokens for the sale
         rewardTokens(sellerAddress);
-        
+
         // pay seller the ETH
         sellerAddress.transfer(payout);
     }
